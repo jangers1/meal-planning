@@ -1,5 +1,7 @@
+import {HomePage} from "./pages/HomePage.tsx";
+
 function App() {
-  return <></>
+    return <HomePage/>
 }
 
 export default App
