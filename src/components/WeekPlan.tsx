@@ -5,7 +5,7 @@ import Typography from '@mui/joy/Typography';
 const DAYS_OF_WEEK = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 const MEAL_TYPES = ['Breakfast', 'Lunch', 'Dinner'];
 
-export default function WeeklyMealPlanner() {
+export default function WeekPlan() {
     return (
         <Box sx={{
             width: 'min-content',

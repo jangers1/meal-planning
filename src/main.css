@@ -1,10 +1,10 @@
 :root {
     /* Light Theme - Primary Colors */
-    --lavender-web: #e8e1ef;
-    --mint-green: #d9fff8;
-    --tea-green: #c7ffda;
-    --tea-green-2: #c4f4c7;
-    --cambridge-blue: #9bb291;
+    --lavender-web: rgba(232, 225, 239, 0.5);
+    --mint-green: rgba(217, 255, 248, 0.5);
+    --tea-green: rgba(199, 255, 218, 0.5);
+    --tea-green-2: rgba(196, 244, 199, 0.5);
+    --cambridge-blue: rgba(155, 178, 145, 0.5);
 
     /* Dark Theme Alternatives */
     --lavender-web-dark: #3a2f47;
@@ -14,38 +14,20 @@
     --cambridge-blue-dark: #4a5a41;
 
     /* Semantic Color Assignments */
-    --primary: var(--lavender-web);
-    --primary-dark: var(--lavender-web-dark);
+    --primary-color: var(--lavender-web);
+    --primary-dark-color: var(--lavender-web-dark);
 
-    --secondary: var(--mint-green);
-    --secondary-dark: var(--mint-green-dark);
+    --secondary-color: var(--mint-green);
+    --secondary-dark-color: var(--mint-green-dark);
 
-    --accent: var(--tea-green);
-    --accent-dark: var(--tea-green-dark);
+    --accent-color: var(--tea-green);
+    --accent-dark-color: var(--tea-green-dark);
 
-    --accent-alt: var(--tea-green-2);
-    --accent-alt-dark: var(--tea-green-2-dark);
+    --accent-alt-color: var(--tea-green-2);
+    --accent-alt-dark-color: var(--tea-green-2-dark);
 
-    --neutral: var(--cambridge-blue);
-    --neutral-dark: var(--cambridge-blue-dark);
-
-    /* Surface & Text Colors */
-    --surface-light: #fafafa;
-    --surface: #ffffff;
-    --surface-dark: #f5f5f5;
-
-    --text-primary: #1a1a1a;
-    --text-secondary: #666666;
-    --text-disabled: #999999;
-
-    /* Dark mode surface & text alternatives */
-    --surface-light-dark: #2a2a2a;
-    --surface-dark-mode: #1e1e1e;
-    --surface-dark-dark: #333333;
-
-    --text-primary-dark: #e0e0e0;
-    --text-secondary-dark: #b0b0b0;
-    --text-disabled-dark: #666666;
+    --neutral-color: var(--cambridge-blue);
+    --neutral-dark-color: var(--cambridge-blue-dark);
 
     /* Sizes */
     --border-radius: 15px;
