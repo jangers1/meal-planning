@@ -1,4 +1,4 @@
-import React, {useLayoutEffect, useRef, useState} from 'react';
+import {useLayoutEffect, useRef, useState} from 'react';
 import {Box, List, ListItem, ListItemButton, Typography} from '@mui/joy';
 import {styled} from '@mui/joy/styles';
 

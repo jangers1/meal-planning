@@ -36,7 +36,7 @@ const ServingSelector: React.FC<ServingSelectorProps> = ({
                     width: 'min-content'
                 }}
             >
-                <Typography level="body" sx={{
+                <Typography level={'body-md'} sx={{
                     minWidth: '80px',
                     textAlign: 'center'
                 }}>
