@@ -1,5 +1,7 @@
+import Header from './components/layout_components/Header';
+
 function App() {
-    return <div></div>
+    return <div><Header user_name={'Roshan'}/></div>
 }
 
 export default App
