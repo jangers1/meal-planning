@@ -1,7 +1,35 @@
 import Header from './components/layout_components/Header';
+import NavBar from './components/layout_components/NavBar';
+import { Box } from "@mui/joy";
 
 function App() {
-    return <div><Header user_name={'Roshan'}/></div>
+    return (
+        <Box sx={{
+            height: '100vh',
+            display: 'flex',
+            flexDirection: 'column',
+            overflow: 'hidden'
+        }}>
+            <Box sx={{ flexShrink: 0 }}>
+                <Header user_name="Roshan" />
+            </Box>
+            <Box sx={{
+                flex: 1,
+                display: 'flex',
+                overflow: 'hidden'
+            }}>
+                <NavBar
+                    onItemSelect={(itemId) => console.log(`Selected item: ${itemId}`)}
+                />
+                <Box sx={{
+                    flex: 1,
+                    overflow: 'auto'
+                }}>
+                    {/* Your main content will go here */}
+                </Box>
+            </Box>
+        </Box>
+    )
 }
 
 export default App

@@ -14,7 +14,7 @@ function Header({ user_name }: HeaderProps) {
                 sx={{
                     display: 'flex',
                     flexDirection: 'row',
-                    maxHeight: '10vh',
+                    height: 'min-content',
                     alignItems: 'center',
                     justifyContent: 'space-between',
                     px: 3,
