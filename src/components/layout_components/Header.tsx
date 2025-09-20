@@ -29,10 +29,7 @@ function Header({ user_name }: HeaderProps) {
                     Welcome {user_name}!
                 </Typography>
                 <IconButton
-                    sx={{
-                        maxWidth: '20px',
-                        maxHeight: '20px'
-                    }}
+                    size={'sm'}
                     variant={'outlined'}
                 >
                     <MenuIcon />
