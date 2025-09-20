@@ -1,10 +1,10 @@
 :root {
     /* Light Theme - Primary Colors */
-    --lavender-web: rgba(232, 225, 239, 0.5);
-    --mint-green: rgba(195, 213, 255, 0.5);
-    --tea-green: rgba(199, 255, 218, 0.5);
-    --tea-green-2: rgba(196, 244, 199, 0.5);
-    --cambridge-blue: rgba(155, 178, 145, 0.5);
+    --lavender-web: rgba(232, 225, 239);
+    --mint-green: rgba(215, 224, 253);
+    --tea-green: rgba(216, 253, 227);
+    --tea-green-2: rgba(196, 244, 199);
+    --cambridge-blue: rgba(155, 178, 145);
 
     /* Dark Theme Alternatives */
     --lavender-web-dark: #3a2f47;
@@ -30,7 +30,7 @@
     --neutral-dark-color: var(--cambridge-blue-dark);
 
     /* Sizes */
-    --border-radius: 15px;
+    --border-radius: 20px;
 }
 
 * {

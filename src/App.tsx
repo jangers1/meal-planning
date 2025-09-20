@@ -1,6 +1,7 @@
 import Header from './components/layout_components/Header';
 import NavBar from './components/layout_components/NavBar';
 import { Box } from "@mui/joy";
+import Recipe from "./components/ui_components/Recipe.tsx";
 
 function App() {
     return (
@@ -25,8 +26,10 @@ function App() {
                     flex: 1,
                     overflow: 'auto',
                     backgroundColor: 'var(--secondary-color)',
+                    px: 2,
+                    py: 1,
                 }}>
-                    {/* Your main content will go here */}
+                    <Recipe />
                 </Box>
             </Box>
         </Box>
