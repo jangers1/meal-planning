@@ -30,11 +30,13 @@ const StyledListItemButton = styled(ListItemButton)(() => ({
 }));
 
 // Animated highlight box
-const HighlightBox = styled(Box)<{ top: number; height: number; showTransition: boolean }>(({
-                                                                                                top,
-                                                                                                height,
-                                                                                                showTransition
-                                                                                            }) => ({
+const HighlightBox = styled(Box, {
+    shouldForwardProp: (prop) => prop !== 'showTransition'
+})<{ top: number; height: number; showTransition: boolean }>(({
+                                                                  top,
+                                                                  height,
+                                                                  showTransition
+                                                              }) => ({
     position: 'absolute',
     left: '12px',
     right: '12px',
@@ -127,7 +129,7 @@ function NavBar({onItemSelect}: NavBarProps) {
                                 sx={{
                                     color: activeItem === item.id ? 'black' : '#2f2f2f',
                                     fontWeight: activeItem === item.id ? boldFont : normalFont,
-                                    fontSize: '1.1rem'
+                                    fontSize: '1.4rem'
                                 }}
                             >
                                 {item.label}
