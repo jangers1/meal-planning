@@ -4,60 +4,47 @@ import {createEditor, Editor, Element as SlateElement, Transforms} from 'slate';
 import {Editable, ReactEditor, Slate, useSlate, withReact} from 'slate-react';
 import {withHistory} from 'slate-history';
 import {Box, Button, ButtonGroup, Divider, Option, Select, Sheet, Typography} from '@mui/joy';
-import {
-    Code,
-    FormatBold,
-    FormatItalic,
-    FormatListBulleted,
-    FormatListNumbered,
-    FormatUnderlined
-} from '@mui/icons-material';
+import {FormatBold, FormatItalic, FormatListBulleted, FormatListNumbered, FormatUnderlined} from '@mui/icons-material';
 
-// Define types for our custom elements and marks
-type ParagraphElement = {
-    type: 'paragraph';
-    children: CustomText[];
-};
-
-type HeadingElement = {
-    type: 'heading-one' | 'heading-two';
-    children: CustomText[];
-};
-
-type BlockQuoteElement = {
-    type: 'block-quote';
-    children: CustomText[];
-};
-
-type CodeBlockElement = {
-    type: 'code-block';
-    children: CustomText[];
-};
-
-type ListElement = {
-    type: 'bulleted-list' | 'numbered-list';
-    children: ListItemElement[];
-};
-
-type ListItemElement = {
-    type: 'list-item';
-    children: CustomText[];
-};
-
-type CustomElement =
-    ParagraphElement
-    | HeadingElement
-    | BlockQuoteElement
-    | CodeBlockElement
-    | ListElement
-    | ListItemElement;
-
+// Types
 type CustomText = {
     text: string;
     bold?: boolean;
     italic?: boolean;
     underline?: boolean;
-    code?: boolean;
+};
+
+type CustomElement =
+    | { type: 'paragraph'; children: CustomText[] }
+    | { type: 'heading-one' | 'heading-two'; children: CustomText[] }
+    | { type: 'block-quote'; children: CustomText[] }
+    | { type: 'bulleted-list' | 'numbered-list'; children: ListItemElement[] }
+    | { type: 'list-item'; children: CustomText[] };
+
+type ListItemElement = { type: 'list-item'; children: CustomText[] };
+
+type ElementProps = {
+    attributes: Record<string, unknown>;
+    children: React.ReactNode;
+    element: CustomElement;
+};
+
+type LeafProps = {
+    attributes: Record<string, unknown>;
+    children: React.ReactNode;
+    leaf: CustomText;
+};
+
+type RenderElementProps = {
+    attributes: Record<string, unknown>;
+    children: React.ReactNode;
+    element: CustomElement;
+};
+
+type RenderLeafProps = {
+    attributes: Record<string, unknown>;
+    children: React.ReactNode;
+    leaf: CustomText;
 };
 
 declare module 'slate' {
@@ -68,68 +55,86 @@ declare module 'slate' {
     }
 }
 
-// Helper functions for formatting
-const LIST_TYPES = ['numbered-list', 'bulleted-list'];
-const TEXT_ALIGN_TYPES = ['left', 'center', 'right', 'justify'];
+// Constants
+const LIST_TYPES = ['numbered-list', 'bulleted-list'] as const;
+const MARK_HOTKEYS = {
+    'b': 'bold',
+    'i': 'italic',
+    'u': 'underline'
+} as const;
 
-const isBlockActive = (editor: Editor, format: string, blockType = 'type') => {
+type ListType = typeof LIST_TYPES[number];
+
+// Helper functions
+const isListType = (type: string): type is ListType => {
+    return LIST_TYPES.includes(type as ListType);
+};
+
+const isBlockActive = (editor: Editor, format: string) => {
     const {selection} = editor;
     if (!selection) return false;
 
     const [match] = Array.from(
         Editor.nodes(editor, {
             at: Editor.unhangRange(editor, selection),
-            match: n =>
-                !Editor.isEditor(n) &&
-                SlateElement.isElement(n) &&
-                n[blockType as keyof CustomElement] === format,
+            match: n => !Editor.isEditor(n) && SlateElement.isElement(n) && n.type === format,
         })
     );
+    return !!match;
+};
 
+const isListActive = (editor: Editor, format: string) => {
+    const {selection} = editor;
+    if (!selection) return false;
+
+    const [match] = Array.from(
+        Editor.nodes(editor, {
+            at: Editor.unhangRange(editor, selection),
+            match: n => {
+                if (!SlateElement.isElement(n)) return false;
+
+                if (n.type === format) return true;
+
+                if (n.type === 'list-item') {
+                    try {
+                        const nodePath = ReactEditor.findPath(editor, n);
+                        const parentPath = Editor.parent(editor, nodePath);
+                        return SlateElement.isElement(parentPath[0]) && parentPath[0].type === format;
+                    } catch {
+                        return false;
+                    }
+                }
+                return false;
+            },
+        })
+    );
     return !!match;
 };
 
 const isMarkActive = (editor: Editor, format: keyof CustomText) => {
     const marks = Editor.marks(editor);
-    return marks ? marks[format as keyof typeof marks] === true : false;
+    return marks && format in marks ? Boolean(marks[format as keyof typeof marks]) : false;
 };
 
 const toggleBlock = (editor: Editor, format: string) => {
-    const isActive = isBlockActive(
-        editor,
-        format,
-        TEXT_ALIGN_TYPES.includes(format) ? 'align' : 'type'
-    );
-    const isList = LIST_TYPES.includes(format);
+    const isList = isListType(format);
+    const isActive = isList ? isListActive(editor, format) : isBlockActive(editor, format);
 
     Transforms.unwrapNodes(editor, {
-        match: n =>
-            !Editor.isEditor(n) &&
-            SlateElement.isElement(n) &&
-            LIST_TYPES.includes(n.type),
+        match: n => SlateElement.isElement(n) && isListType(n.type),
         split: true,
     });
 
-    let newProperties: Partial<CustomElement>;
-    if (TEXT_ALIGN_TYPES.includes(format)) {
-        newProperties = {} as Partial<CustomElement>;
-    } else {
-        newProperties = {
-            type: isActive ? 'paragraph' : (format as CustomElement['type']),
-        };
-    }
-
-    Transforms.setNodes<CustomElement>(editor, newProperties);
+    const newType = isActive ? 'paragraph' : (isList ? 'list-item' : format as CustomElement['type']);
+    Transforms.setNodes<SlateElement>(editor, {type: newType});
 
     if (!isActive && isList) {
-        const block = {type: format as CustomElement['type'], children: []};
-        Transforms.wrapNodes(editor, block);
+        Transforms.wrapNodes(editor, {type: format as CustomElement['type'], children: []});
     }
 };
 
 const toggleMark = (editor: Editor, format: keyof CustomText) => {
     const isActive = isMarkActive(editor, format);
-
     if (isActive) {
         Editor.removeMark(editor, format);
     } else {
@@ -137,35 +142,75 @@ const toggleMark = (editor: Editor, format: keyof CustomText) => {
     }
 };
 
+const handleTabInList = (editor: Editor, event: React.KeyboardEvent) => {
+    const {selection} = editor;
+    if (!selection) return false;
+
+    const [listItemMatch] = Array.from(
+        Editor.nodes(editor, {
+            at: selection,
+            match: n => SlateElement.isElement(n) && n.type === 'list-item',
+        })
+    );
+
+    if (!listItemMatch) return false;
+
+    event.preventDefault();
+
+    if (event.shiftKey) {
+        Transforms.liftNodes(editor, {
+            match: n => SlateElement.isElement(n) && n.type === 'list-item',
+        });
+    } else {
+        const parentPath = Editor.parent(editor, listItemMatch[1]);
+        const parentListType = SlateElement.isElement(parentPath[0]) ? parentPath[0].type : 'bulleted-list';
+
+        Transforms.wrapNodes(editor, {
+            type: parentListType as 'bulleted-list' | 'numbered-list',
+            children: []
+        }, {
+            match: n => SlateElement.isElement(n) && n.type === 'list-item',
+        });
+    }
+    return true;
+};
+
+// Component types
+type ButtonProps = {
+    format: string;
+    icon: React.ReactNode;
+};
+
 // Toolbar components
-const MarkButton = ({format, icon, ...props}: { format: keyof CustomText; icon: React.ReactNode }) => {
+const MarkButton = ({format, icon}: ButtonProps & { format: keyof CustomText }) => {
     const editor = useSlate();
     return (
         <Button
             variant={isMarkActive(editor, format) ? 'solid' : 'outlined'}
             size="sm"
-            onMouseDown={(event: React.MouseEvent) => {
+            onMouseDown={(event) => {
                 event.preventDefault();
                 toggleMark(editor, format);
             }}
-            {...props}
         >
             {icon}
         </Button>
     );
 };
 
-const BlockButton = ({format, icon, ...props}: { format: string; icon: React.ReactNode }) => {
+const BlockButton = ({format, icon}: ButtonProps) => {
     const editor = useSlate();
+    const isList = isListType(format);
+    const isActive = isList ? isListActive(editor, format) : isBlockActive(editor, format);
+
     return (
         <Button
-            variant={isBlockActive(editor, format) ? 'solid' : 'outlined'}
+            variant={isActive ? 'solid' : 'outlined'}
             size="sm"
-            onMouseDown={(event: React.MouseEvent) => {
+            onMouseDown={(event) => {
                 event.preventDefault();
                 toggleBlock(editor, format);
             }}
-            {...props}
         >
             {icon}
         </Button>
@@ -175,54 +220,44 @@ const BlockButton = ({format, icon, ...props}: { format: string; icon: React.Rea
 const Toolbar = () => {
     const editor = useSlate();
 
+    const getCurrentBlockType = () => {
+        if (isBlockActive(editor, 'heading-one')) return 'heading-one';
+        if (isBlockActive(editor, 'heading-two')) return 'heading-two';
+        if (isBlockActive(editor, 'block-quote')) return 'block-quote';
+        return 'paragraph';
+    };
+
     return (
-        <Box
-            sx={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 1,
-                padding: 1,
-                borderBottom: '1px solid',
-                borderColor: 'divider',
-                flexWrap: 'wrap'
-            }}
-        >
-            {/* Text Format Dropdown */}
+        <Box sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1,
+            padding: 1,
+            borderBottom: '1px solid',
+            borderColor: 'divider',
+            flexWrap: 'wrap'
+        }}>
             <Select
                 size="sm"
-                value={
-                    isBlockActive(editor, 'heading-one') ? 'heading-one' :
-                        isBlockActive(editor, 'heading-two') ? 'heading-two' :
-                            isBlockActive(editor, 'block-quote') ? 'block-quote' :
-                                isBlockActive(editor, 'code-block') ? 'code-block' :
-                                    'paragraph'
-                }
-                onChange={(_, value) => {
-                    if (value) {
-                        toggleBlock(editor, value);
-                    }
-                }}
+                value={getCurrentBlockType()}
+                onChange={(_, value) => value && toggleBlock(editor, value)}
             >
                 <Option value="paragraph">Paragraph</Option>
                 <Option value="heading-one">Heading 1</Option>
                 <Option value="heading-two">Heading 2</Option>
                 <Option value="block-quote">Quote</Option>
-                <Option value="code-block">Code Block</Option>
             </Select>
 
             <Divider orientation="vertical"/>
 
-            {/* Text Formatting */}
             <ButtonGroup variant="outlined" size="sm">
                 <MarkButton format="bold" icon={<FormatBold/>}/>
                 <MarkButton format="italic" icon={<FormatItalic/>}/>
                 <MarkButton format="underline" icon={<FormatUnderlined/>}/>
-                <MarkButton format="code" icon={<Code/>}/>
             </ButtonGroup>
 
             <Divider orientation="vertical"/>
 
-            {/* Lists */}
             <ButtonGroup variant="outlined" size="sm">
                 <BlockButton format="bulleted-list" icon={<FormatListBulleted/>}/>
                 <BlockButton format="numbered-list" icon={<FormatListNumbered/>}/>
@@ -231,164 +266,101 @@ const Toolbar = () => {
     );
 };
 
-// Define proper types for Slate render props
-type ElementRenderProps = {
-    attributes: {
-        'data-slate-node': 'element';
-        'data-slate-inline'?: true;
-        'data-slate-void'?: true;
-        dir?: 'rtl';
-        ref: React.RefObject<HTMLElement>;
+// Render components
+const Element = ({attributes, children, element}: ElementProps) => {
+    const commonListStyles = {
+        paddingLeft: 3,
+        marginLeft: 0,
+        listStylePosition: 'outside' as const
     };
-    children: React.ReactNode;
-    element: CustomElement;
-};
 
-type LeafRenderProps = {
-    attributes: {
-        'data-slate-leaf': true;
-    };
-    children: React.ReactNode;
-    leaf: CustomText;
-};
-
-// Render functions for different elements
-const Element = ({attributes, children, element}: ElementRenderProps) => {
     switch (element.type) {
         case 'block-quote':
             return (
-                <Box
-                    {...attributes}
-                    component="blockquote"
-                    sx={{
-                        borderLeft: '4px solid',
-                        borderColor: 'primary.main',
-                        paddingLeft: 2,
-                        marginLeft: 0,
-                        fontStyle: 'italic',
-                        backgroundColor: 'neutral.50'
-                    }}
-                >
+                <Box {...attributes} component="blockquote" sx={{
+                    borderLeft: '4px solid',
+                    borderColor: 'primary.main',
+                    paddingLeft: 2,
+                    marginLeft: 0,
+                    fontStyle: 'italic',
+                    backgroundColor: 'neutral.50'
+                }}>
                     {children}
                 </Box>
             );
         case 'bulleted-list':
             return (
-                <Box {...attributes} component="ul">
-                    {children}
-                </Box>
-            );
-        case 'heading-one':
-            return (
-                <Typography level="h1" {...attributes}>
-                    {children}
-                </Typography>
-            );
-        case 'heading-two':
-            return (
-                <Typography level="h2" {...attributes}>
-                    {children}
-                </Typography>
-            );
-        case 'list-item':
-            return (
-                <Box {...attributes} component="li">
+                <Box {...attributes} component="ul" sx={{...commonListStyles, listStyleType: 'disc'}}>
                     {children}
                 </Box>
             );
         case 'numbered-list':
             return (
-                <Box {...attributes} component="ol">
+                <Box {...attributes} component="ol" sx={{...commonListStyles, listStyleType: 'decimal'}}>
                     {children}
                 </Box>
             );
-        case 'code-block':
+        case 'heading-one':
+            return <Typography level="h1" {...attributes}>{children}</Typography>;
+        case 'heading-two':
+            return <Typography level="h2" {...attributes}>{children}</Typography>;
+        case 'list-item':
             return (
-                <Box
-                    {...attributes}
-                    component="pre"
-                    sx={{
-                        backgroundColor: 'neutral.100',
-                        padding: 2,
-                        borderRadius: 1,
-                        fontFamily: 'monospace',
-                        overflow: 'auto'
-                    }}
-                >
-                    <code>{children}</code>
+                <Box {...attributes} component="li" sx={{paddingLeft: 1, marginBottom: 0.5}}>
+                    {children}
                 </Box>
             );
         default:
-            return (
-                <Typography {...attributes}>
-                    {children}
-                </Typography>
-            );
+            return <Typography {...attributes}>{children}</Typography>;
     }
 };
 
-const Leaf = ({attributes, children, leaf}: LeafRenderProps) => {
-    if (leaf.bold) {
-        children = <strong>{children}</strong>;
-    }
+const Leaf = ({attributes, children, leaf}: LeafProps) => {
+    let result: React.ReactNode = children;
 
-    if (leaf.code) {
-        children = (
-            <Box
-                component="code"
-                sx={{
-                    backgroundColor: 'neutral.100',
-                    padding: '2px 4px',
-                    borderRadius: '4px',
-                    fontFamily: 'monospace',
-                    fontSize: '0.9em'
-                }}
-            >
-                {children}
-            </Box>
-        );
-    }
+    if (leaf.bold) result = <strong>{result}</strong>;
+    if (leaf.italic) result = <em>{result}</em>;
+    if (leaf.underline) result = <u>{result}</u>;
 
-    if (leaf.italic) {
-        children = <em>{children}</em>;
-    }
-
-    if (leaf.underline) {
-        children = <u>{children}</u>;
-    }
-
-    return <span {...attributes}>{children}</span>;
+    return <span {...attributes}>{result}</span>;
 };
 
-// Main SlateJS component
+// Main component
 const RichTextField: React.FC = () => {
-    const renderElement = useCallback((props: ElementRenderProps) => <Element {...props} />, []);
-    const renderLeaf = useCallback((props: LeafRenderProps) => <Leaf {...props} />, []);
+    const renderElement = useCallback((props: RenderElementProps) => <Element {...props} />, []);
+    const renderLeaf = useCallback((props: RenderLeafProps) => <Leaf {...props} />, []);
     const editor = useMemo(() => withHistory(withReact(createEditor())), []);
 
-    const [value, setValue] = useState<Descendant[]>([]);
+    const [value, setValue] = useState<Descendant[]>([{
+        type: 'paragraph',
+        children: [{text: ''}]
+    }]);
+
+    const handleKeyDown = (event: React.KeyboardEvent) => {
+        const isHotkey = (event.ctrlKey || event.metaKey) && MARK_HOTKEYS[event.key as keyof typeof MARK_HOTKEYS];
+
+        if (isHotkey) {
+            event.preventDefault();
+            toggleMark(editor, MARK_HOTKEYS[event.key as keyof typeof MARK_HOTKEYS] as keyof CustomText);
+        } else if (event.key === 'Tab') {
+            handleTabInList(editor, event);
+        }
+    };
 
     return (
-        <Sheet
-            variant="outlined"
-            sx={{
-                maxWidth: '800px',
-                margin: '0 auto',
-                borderRadius: 'md',
-                overflow: 'hidden'
-            }}
-        >
+        <Sheet variant="outlined" sx={{
+            maxWidth: '800px',
+            margin: '0 auto',
+            borderRadius: 'md',
+            overflow: 'hidden'
+        }}>
             <Slate editor={editor} initialValue={value} onValueChange={setValue}>
                 <Toolbar/>
-                <Box
-                    sx={{
-                        padding: 3,
-                        minHeight: '400px',
-                        '& > *': {
-                            marginBottom: 1
-                        }
-                    }}
-                >
+                <Box sx={{
+                    padding: 3,
+                    minHeight: '400px',
+                    '& > *': {marginBottom: 1}
+                }}>
                     <Editable
                         renderElement={renderElement}
                         renderLeaf={renderLeaf}
@@ -399,33 +371,7 @@ const RichTextField: React.FC = () => {
                             minHeight: '350px',
                             outline: 'none'
                         }}
-                        onKeyDown={(event) => {
-                            // Handle keyboard shortcuts
-                            if (event.ctrlKey || event.metaKey) {
-                                switch (event.key) {
-                                    case 'b': {
-                                        event.preventDefault();
-                                        toggleMark(editor, 'bold');
-                                        break;
-                                    }
-                                    case 'i': {
-                                        event.preventDefault();
-                                        toggleMark(editor, 'italic');
-                                        break;
-                                    }
-                                    case 'u': {
-                                        event.preventDefault();
-                                        toggleMark(editor, 'underline');
-                                        break;
-                                    }
-                                    case '`': {
-                                        event.preventDefault();
-                                        toggleMark(editor, 'code');
-                                        break;
-                                    }
-                                }
-                            }
-                        }}
+                        onKeyDown={handleKeyDown}
                     />
                 </Box>
             </Slate>
