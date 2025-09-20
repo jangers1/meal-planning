@@ -129,7 +129,7 @@ function NavBar({onItemSelect}: NavBarProps) {
                                 sx={{
                                     color: activeItem === item.id ? 'black' : '#2f2f2f',
                                     fontWeight: activeItem === item.id ? boldFont : normalFont,
-                                    fontSize: '1.4rem'
+                                    fontSize: '1rem'
                                 }}
                             >
                                 {item.label}

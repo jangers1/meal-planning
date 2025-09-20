@@ -1,5 +1,3 @@
-import '../../stylesheets/header.css'
-
 import {IconButton, Sheet} from "@mui/joy";
 import MenuIcon from '@mui/icons-material/Menu';
 import Typography from "@mui/joy/Typography";
@@ -26,12 +24,15 @@ function Header({ user_name }: HeaderProps) {
                 <Typography sx={{
                     textAlign: 'center',
                     flex: 1,
-                    fontSize: '1.5rem'
+                    fontSize: '1rem'
                 }}>
                     Welcome {user_name}!
                 </Typography>
                 <IconButton
-                    size={'lg'}
+                    sx={{
+                        maxWidth: '20px',
+                        maxHeight: '20px'
+                    }}
                     variant={'outlined'}
                 >
                     <MenuIcon />
