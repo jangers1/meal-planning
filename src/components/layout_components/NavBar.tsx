@@ -9,7 +9,7 @@ const normalFont = 400;
 const NavContainer = styled(Box)(() => ({
     width: '200px',
     height: '100%',
-    backgroundColor: '#2c3e50',
+    backgroundColor: 'var(--primary-color)',
     display: 'flex',
     flexDirection: 'column',
     boxShadow: '2px 0 10px rgba(0,0,0,0.1)',
@@ -40,10 +40,10 @@ const HighlightBox = styled(Box)<{ top: number; height: number; showTransition: 
     right: '12px',
     top: `${top}px`,
     height: `${height}px`,
-    backgroundColor: '#3498db',
     borderRadius: '8px',
     transition: showTransition ? 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)' : 'none',
     zIndex: 1,
+    boxShadow: 'inset 2px 2px 12px #c8d0e7, -2px -2px 12px #ffffff',
 }));
 
 // Navigation items data
@@ -125,9 +125,9 @@ function NavBar({onItemSelect}: NavBarProps) {
                             <Typography
                                 level="body-md"
                                 sx={{
-                                    color: activeItem === item.id ? '#ffffff' : '#bdc3c7',
+                                    color: activeItem === item.id ? 'black' : '#2f2f2f',
                                     fontWeight: activeItem === item.id ? boldFont : normalFont,
-                                    fontSize: '0.95rem'
+                                    fontSize: '1.1rem'
                                 }}
                             >
                                 {item.label}
@@ -136,24 +136,6 @@ function NavBar({onItemSelect}: NavBarProps) {
                     </ListItem>
                 ))}
             </List>
-
-            <Box
-                sx={{
-                    p: 2,
-                    borderTop: '1px solid #34495e',
-                    textAlign: 'center'
-                }}
-            >
-                <Typography
-                    level="body-sm"
-                    sx={{
-                        color: '#7f8c8d',
-                        fontSize: '0.8rem'
-                    }}
-                >
-                    v1.0.0
-                </Typography>
-            </Box>
         </NavContainer>
     );
 }

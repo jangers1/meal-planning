@@ -23,7 +23,8 @@ function App() {
                 />
                 <Box sx={{
                     flex: 1,
-                    overflow: 'auto'
+                    overflow: 'auto',
+                    backgroundColor: 'var(--secondary-color)',
                 }}>
                     {/* Your main content will go here */}
                 </Box>
