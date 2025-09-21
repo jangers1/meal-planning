@@ -2,10 +2,14 @@ import React, {useEffect, useRef, useState} from 'react';
 import {Box, Button, Card, List, ListItem, ListItemButton, Typography} from '@mui/joy';
 import {KeyboardArrowDown, KeyboardArrowRight} from '@mui/icons-material';
 
-interface CategoryItem {
+export interface CategoryItem {
     id: string;
     name: string;
     subCategories?: CategoryItem[];
+}
+
+interface CategorySelectionProps {
+    categories: CategoryItem[];
 }
 
 // Constants
@@ -13,62 +17,7 @@ const MAX_DROPDOWN_LEVELS = 5;
 const SUBMENU_WIDTH = 200;
 const SUBMENU_MAX_HEIGHT = 300;
 
-// Sample hierarchical data - can go up to 5 levels
-const CATEGORIES: CategoryItem[] = [
-    {
-        id: 'appetizers',
-        name: 'Appetizers',
-        subCategories: [
-            {id: 'cold-apps', name: 'Cold Appetizers'},
-            {id: 'hot-apps', name: 'Hot Appetizers'},
-            {
-                id: 'dips',
-                name: 'Dips & Spreads',
-                subCategories: [
-                    {id: 'cheese-dips', name: 'Cheese Dips'},
-                    {
-                        id: 'veggie-dips',
-                        name: 'Vegetable Dips',
-                        subCategories: [
-                            {id: 'hummus', name: 'Hummus Varieties'},
-                            {id: 'bean-dips', name: 'Bean Dips'}
-                        ]
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        id: 'main-courses',
-        name: 'Main Courses',
-        subCategories: [
-            {
-                id: 'meat',
-                name: 'Meat Dishes',
-                subCategories: [
-                    {
-                        id: 'beef',
-                        name: 'Beef',
-                        subCategories: [
-                            {id: 'steaks', name: 'Steaks'},
-                            {id: 'roasts', name: 'Roasts'}
-                        ]
-                    },
-                    {id: 'chicken', name: 'Chicken'},
-                    {id: 'pork', name: 'Pork'}
-                ]
-            },
-            {id: 'seafood', name: 'Seafood'},
-            {id: 'vegetarian', name: 'Vegetarian'}
-        ]
-    },
-    {
-        id: 'beverages',
-        name: 'Beverages'
-    }
-];
-
-function CategorySelection() {
+function CategorySelection({categories}: CategorySelectionProps) {
     const [selectedCategory, setSelectedCategory] = useState<string>('');
     const [openDropdowns, setOpenDropdowns] = useState<boolean[]>(
         Array.from({length: MAX_DROPDOWN_LEVELS}, () => false)
@@ -205,7 +154,7 @@ function CategorySelection() {
 
     const getItemsForLevel = (level: number): CategoryItem[] => {
         if (level === 0) {
-            return CATEGORIES;
+            return categories;
         }
         return selectedItems[level - 1]?.subCategories || [];
     };
@@ -318,7 +267,7 @@ function CategorySelection() {
                             }}
                         >
                             <List sx={{p: 0}}>
-                                {CATEGORIES.map((item) => renderMenuItem(item, 0))}
+                                {categories.map((item) => renderMenuItem(item, 0))}
                             </List>
                         </Card>
                     )}
