@@ -1,4 +1,4 @@
-import {Box, Chip} from "@mui/joy";
+import {Box, Chip, Stack} from "@mui/joy";
 import Typography from "@mui/joy/Typography";
 import ServingSelector from "./ServingSelector.tsx";
 
@@ -26,12 +26,7 @@ function Recipe() {
                     <Typography level="body-sm">
                         Main Category | Sub Category 1 | Sub Category 2
                     </Typography>
-                    <Box sx={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        gap: 1,
-                        mt: 2,
-                    }}>
+                    <Stack direction="row" spacing={1} mt={2}>
                         {recipeTags.map(({tag, color}) => (
                             <Chip
                                 key={tag}
@@ -39,6 +34,7 @@ function Recipe() {
                                 size="sm"
                                 sx={{
                                     px: 2,
+                                    pb: 0.5,
                                     backgroundColor: color,
                                     color: 'white'
                                 }}
@@ -46,7 +42,7 @@ function Recipe() {
                                 {tag}
                             </Chip>
                         ))}
-                    </Box>
+                    </Stack>
                 </Box>
                 <ServingSelector/>
             </Box>

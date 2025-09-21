@@ -30,7 +30,7 @@ const ServingSelector: React.FC<ServingSelectorProps> = ({
             <Box
                 sx={{
                     display: 'flex',
-                    alignItems: 'flex-start',
+                    alignItems: 'flex-end',
                     gap: 1,
                     padding: 1,
                     width: 'min-content'
