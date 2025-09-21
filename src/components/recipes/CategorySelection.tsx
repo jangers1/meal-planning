@@ -240,7 +240,7 @@ function CategorySelection({categories}: CategorySelectionProps) {
                     dropdownRefs.current[0] = el;
                 }}>
                     <Button
-                        variant="outlined"
+                        variant={selectedCategory ? 'soft' : 'outlined'}
                         size={'md'}
                         endDecorator={<KeyboardArrowDown/>}
                         onClick={handleMainButtonClick}
