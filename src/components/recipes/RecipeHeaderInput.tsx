@@ -1,11 +1,14 @@
 import {useState} from 'react';
-import {Box, Input} from "@mui/joy";
+import {Box, IconButton, Input} from "@mui/joy";
 import ChipManager from "./ChipManager.tsx";
 import {type ChipData} from "./ChipCreateForm.tsx";
 import CategorySelection, {type CategoryItem} from "./CategorySelection.tsx";
+import CloseIcon from '@mui/icons-material/Close';
+import Stack from "@mui/joy/Stack";
 
 function RecipeHeaderInput() {
     const [recipeTags, setRecipeTags] = useState<ChipData[]>([]);
+    const [title, setTitle] = useState('');
     const RECIPE_CATEGORIES: CategoryItem[] = [
         {
             id: 'appetizers',
@@ -75,15 +78,40 @@ function RecipeHeaderInput() {
 
     return (
         <>
-            <Box sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                p: 2,
-                gap: 2
-            }}>
-                <Box>
-                    <Input placeholder={'Enter Recipe Title'} variant="outlined" size="lg" color={'primary'}/>
-                </Box>
+            <Stack
+                direction={'column'}
+                spacing={2}
+                sx={{
+                    p: 2
+                }}
+            >
+                <Stack
+                    direction={'row'}
+                    spacing={2}
+                >
+                    <Input
+                        placeholder={'Enter Recipe Title'}
+                        variant={title ? "soft" : "outlined"}
+                        size="lg"
+                        color={'primary'}
+                        sx ={{
+                            flex: 1
+                        }}
+                        value={title}
+                        onChange={e => setTitle(e.target.value)}
+                    />
+                    <IconButton
+                        variant={'outlined'}
+                        color={'primary'}
+                        sx={{
+                            borderStyle: 'dashed',
+                            px: 1
+                        }}
+                        onClick={() => {setTitle('')}}
+                    >
+                        <CloseIcon/>
+                    </IconButton>
+                </Stack>
 
                 <Box>
                     <CategorySelection categories={RECIPE_CATEGORIES}/>
@@ -102,7 +130,7 @@ function RecipeHeaderInput() {
                         inputSize="sm"
                     />
                 </Box>
-            </Box>
+            </Stack>
         </>
     )
 }
