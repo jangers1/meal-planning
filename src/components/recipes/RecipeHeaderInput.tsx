@@ -8,7 +8,25 @@ import Stack from "@mui/joy/Stack";
 
 function RecipeHeaderInput() {
     const [recipeTags, setRecipeTags] = useState<ChipData[]>([]);
+    const [availableTags, setAvailableTags] = useState<ChipData[]>([
+        // Some default tags to start with
+        { text: 'Quick', color: 'success' },
+        { text: 'Vegetarian', color: 'primary' },
+        { text: 'Spicy', color: 'danger' },
+        { text: 'Healthy', color: 'success' },
+        { text: 'Comfort Food', color: 'warning' },
+        { text: 'Holiday', color: 'primary' },
+        { text: 'Budget-Friendly', color: 'neutral' }
+    ]);
     const [title, setTitle] = useState('');
+
+    const handleNewTagCreated = (newTag: ChipData) => {
+        // Add the new tag to available tags if it doesn't already exist
+        if (!availableTags.some(tag => tag.text === newTag.text)) {
+            setAvailableTags(prev => [...prev, newTag]);
+        }
+    };
+
     const RECIPE_CATEGORIES: CategoryItem[] = [
         {
             id: 'appetizers',
@@ -125,13 +143,8 @@ function RecipeHeaderInput() {
                     <ChipManager
                         chips={recipeTags}
                         onChipsChange={setRecipeTags}
-                        placeholder="Enter Tag"
-                        addButtonText="Add Tag"
-                        variant="soft"
-                        defaultColor="primary"
-                        chipSize="lg"
-                        buttonSize="sm"
-                        inputSize="sm"
+                        availableTags={availableTags}
+                        onNewTagCreated={handleNewTagCreated}
                     />
                 </Box>
             </Stack>

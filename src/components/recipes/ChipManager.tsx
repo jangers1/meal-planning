@@ -6,32 +6,30 @@ import ChipCreateForm, {type ChipData} from './ChipCreateForm.tsx';
 interface ChipManagerProps {
     chips: ChipData[];
     onChipsChange: (chips: ChipData[]) => void;
-    placeholder?: string;
-    variant?: 'soft' | 'solid' | 'outlined' | 'plain';
-    defaultColor?: 'primary' | 'neutral' | 'danger' | 'success' | 'warning';
-    chipSize?: 'sm' | 'md' | 'lg';
-    buttonSize?: 'sm' | 'md' | 'lg';
-    inputSize?: 'sm' | 'md' | 'lg';
-    addButtonText?: string;
+    availableTags?: ChipData[];
+    onNewTagCreated?: (newTag: ChipData) => void;
 }
 
 function ChipManager({
                          chips,
                          onChipsChange,
-                         placeholder = "Enter text",
-                         variant = 'soft',
-                         defaultColor = 'primary',
-                         chipSize = 'md',
-                         buttonSize = 'md',
-                         inputSize = 'md',
-                         addButtonText = "Add"
+                         availableTags,
+                         onNewTagCreated
                      }: ChipManagerProps) {
     const [isCreating, setIsCreating] = useState(false);
 
+    const isChipDuplicate = (newChip: ChipData): boolean => {
+        return chips.some(chip => chip.text === newChip.text);
+    };
+
     const handleAddChip = (newChip: ChipData) => {
-        if (newChip.text && !chips.some(chip => chip.text === newChip.text)) {
-            onChipsChange([...chips, newChip]);
+        if (!newChip.text || isChipDuplicate(newChip)) {
+            setIsCreating(false);
+            return;
         }
+
+        onChipsChange([...chips, newChip]);
+        onNewTagCreated?.(newChip);
         setIsCreating(false);
     };
 
@@ -43,47 +41,55 @@ function ChipManager({
         setIsCreating(false);
     };
 
+    const handleStartCreate = () => {
+        setIsCreating(true);
+    };
+
+    const renderChip = (chip: ChipData) => (
+        <Chip
+            key={`${chip.text}-${chip.color}`}
+            variant={'soft'}
+            color={chip.color}
+            size={'lg'}
+            endDecorator={
+                <ChipDelete onDelete={() => handleDeleteChip(chip)}/>
+            }
+        >
+            {chip.text}
+        </Chip>
+    );
+
+    const renderCreateForm = () => (
+        <ChipCreateForm
+            onSave={handleAddChip}
+            onCancel={handleCancelCreate}
+            availableTags={availableTags}
+        />
+    );
+
+    const renderAddButton = () => (
+        <Button
+            variant="outlined"
+            color={'primary'}
+            size={'md'}
+            startDecorator={<AddRounded/>}
+            onClick={handleStartCreate}
+            sx={{
+                borderStyle: 'dashed',
+                '&:hover': {
+                    borderStyle: 'solid'
+                }
+            }}
+        >
+            {'Add Tag'}
+        </Button>
+    );
+
     return (
         <Box>
             <Stack direction="row" spacing={2} sx={{flexWrap: 'wrap'}}>
-                {chips.map((chip, index) => (
-                    <Chip
-                        key={index}
-                        variant={variant}
-                        color={chip.color}
-                        size={chipSize}
-                        endDecorator={
-                            <ChipDelete onDelete={() => handleDeleteChip(chip)}/>
-                        }
-                    >
-                        {chip.text}
-                    </Chip>
-                ))}
-
-                {isCreating ? (
-                    <ChipCreateForm
-                        onSave={handleAddChip}
-                        onCancel={handleCancelCreate}
-                        placeholder={placeholder}
-                        size={inputSize}
-                    />
-                ) : (
-                    <Button
-                        variant="outlined"
-                        color={defaultColor}
-                        size={buttonSize}
-                        startDecorator={<AddRounded/>}
-                        onClick={() => setIsCreating(true)}
-                        sx={{
-                            borderStyle: 'dashed',
-                            '&:hover': {
-                                borderStyle: 'solid'
-                            }
-                        }}
-                    >
-                        {addButtonText}
-                    </Button>
-                )}
+                {chips.map(renderChip)}
+                {isCreating ? renderCreateForm() : renderAddButton()}
             </Stack>
         </Box>
     );
