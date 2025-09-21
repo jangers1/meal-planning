@@ -45,7 +45,7 @@ function ChipManager({
 
     return (
         <Box>
-            <Stack direction="row" spacing={1} sx={{flexWrap: 'wrap', gap: 1, mb: 2}}>
+            <Stack direction="row" spacing={2} sx={{flexWrap: 'wrap'}}>
                 {chips.map((chip, index) => (
                     <Chip
                         key={index}

@@ -94,7 +94,7 @@ function RecipeHeaderInput() {
                         variant={title ? "soft" : "outlined"}
                         size="lg"
                         color={'primary'}
-                        sx ={{
+                        sx={{
                             flex: 1
                         }}
                         value={title}
@@ -107,14 +107,18 @@ function RecipeHeaderInput() {
                             borderStyle: 'dashed',
                             px: 1
                         }}
-                        onClick={() => {setTitle('')}}
+                        onClick={() => {
+                            setTitle('')
+                        }}
                     >
                         <CloseIcon/>
                     </IconButton>
                 </Stack>
 
                 <Box>
-                    <CategorySelection categories={RECIPE_CATEGORIES}/>
+                    <CategorySelection
+                        categories={RECIPE_CATEGORIES}
+                    />
                 </Box>
 
                 <Box>

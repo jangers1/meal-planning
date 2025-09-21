@@ -1,6 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {Box, Button, Card, List, ListItem, ListItemButton, Typography} from '@mui/joy';
 import {KeyboardArrowDown, KeyboardArrowRight} from '@mui/icons-material';
+import Stack from "@mui/joy/Stack";
 
 export interface CategoryItem {
     id: string;
@@ -234,7 +235,10 @@ function CategorySelection({categories}: CategorySelectionProps) {
     };
 
     return (
-        <Box sx={{display: 'flex', flexDirection: 'row', gap: 4, alignItems: 'center'}}>
+        <Stack
+            direction="row"
+            spacing={2}
+        >
             <Box sx={{position: 'relative', display: 'inline-block', width: 'fit-content'}}>
                 <Box ref={(el: HTMLDivElement | null) => {
                     dropdownRefs.current[0] = el;
@@ -287,7 +291,7 @@ function CategorySelection({categories}: CategorySelectionProps) {
             >
                 Clear Selection
             </Button>
-        </Box>
+        </Stack>
     );
 }
 
