@@ -2,6 +2,7 @@ import { useState } from 'react';
 import {Box, Input} from "@mui/joy";
 import ChipManager from "./ChipManager.tsx";
 import { type ChipData } from "./ChipCreateForm.tsx";
+import CategorySelection from "./CategorySelection.tsx";
 
 function RecipeHeaderInput() {
     const [recipeTags, setRecipeTags] = useState<ChipData[]>([
@@ -19,6 +20,10 @@ function RecipeHeaderInput() {
             }}>
                 <Box>
                     <Input placeholder={'Enter Recipe Title'} variant="outlined" size="lg" color={'primary'}/>
+                </Box>
+
+                <Box>
+                    <CategorySelection />
                 </Box>
 
                 <Box>
