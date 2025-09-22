@@ -4,31 +4,6 @@ interface NameDisplayProps {
     name: string;
 }
 
-function ChipContent({name}: { name: string }) {
-    return (
-        <>
-            <Box
-                sx={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    gap: 1,
-                    alignItems: 'center',
-                    p: 0.5
-                }}
-            >
-                <Avatar
-                    sx={{
-                        width: '30px',
-                        height: '30px',
-                        borderRadius: '50%'
-                    }}
-                />
-                {name}
-            </Box>
-        </>
-    )
-}
-
 function NameDisplay({name}: NameDisplayProps) {
     return (
         <>
@@ -39,7 +14,24 @@ function NameDisplay({name}: NameDisplayProps) {
                     '--Chip-radius': '5px'
                 }}
             >
-                <ChipContent name={name}/>
+                <Box
+                    sx={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        gap: 1,
+                        alignItems: 'center',
+                        p: 0.5
+                    }}
+                >
+                    <Avatar
+                        sx={{
+                            width: '30px',
+                            height: '30px',
+                            borderRadius: '50%'
+                        }}
+                    />
+                    {name}
+                </Box>
             </Chip>
         </>
     )
