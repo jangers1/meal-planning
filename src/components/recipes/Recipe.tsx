@@ -3,16 +3,15 @@ import Typography from "@mui/joy/Typography";
 import ServingSelector from "./ServingSelector.tsx";
 import NameDisplay from "./NameDisplay.tsx";
 import {useState} from "react";
-
-const recipeTags = [
-    {tag: "Vegetarian", color: "rgba(0, 128, 0, 0.7)"},
-    {tag: "Gluten-Free", color: "rgba(255, 165, 0, 0.7)"},
-    {tag: "Quick & Easy", color: "rgba(30, 144, 255, 0.7)"},
-    {tag: "Dessert", color: "rgba(255, 20, 147, 0.7)"},
-]
+import type {JoyColours} from "../../types.ts";
 
 function Recipe() {
-    const [recipeOwner] = useState(("Roshan"));
+    const [recipeOwner] = useState<string>(("Roshan"));
+    const [recipeTags] = useState<{ tag: string, color: JoyColours }[]>([
+        {tag: 'Vegetarian', color: 'primary'},
+        {tag: 'Gluten-Free', color: 'warning'},
+        {tag: 'Dessert', color: 'success'}
+    ]);
 
     return (
         <>
@@ -36,11 +35,10 @@ function Recipe() {
                                 key={tag}
                                 variant="soft"
                                 size="sm"
+                                color= {color}
                                 sx={{
                                     px: 2,
-                                    pb: 0.5,
-                                    backgroundColor: color,
-                                    color: 'white'
+                                    pb: 0.5
                                 }}
                             >
                                 {tag}
@@ -73,6 +71,8 @@ function Recipe() {
             }}>
 
             </Box>
+
+            {/*Recipe Instructions*/}
             <Box sx={{
                 borderRadius: 'var(--border-radius)',
                 backgroundColor: 'var(--primary-color)',

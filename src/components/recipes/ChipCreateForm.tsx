@@ -1,12 +1,11 @@
 import React, {useState} from 'react';
 import {Autocomplete, Box, Chip, Option, Select, useTheme} from '@mui/joy';
 import {CheckRounded, CloseRounded} from '@mui/icons-material';
-
-export type ChipColor = 'primary' | 'neutral' | 'danger' | 'success' | 'warning';
+import type {JoyColours} from "../../types.ts";
 
 export interface ChipData {
     text: string;
-    color: ChipColor;
+    color: JoyColours;
 }
 
 interface ChipCreateFormProps {
@@ -21,11 +20,10 @@ function ChipCreateForm({
                             availableTags = []
                         }: ChipCreateFormProps) {
     const [value, setValue] = useState('');
-    const [selectedColor, setSelectedColor] = useState<ChipColor>('primary');
+    const [selectedColor, setSelectedColor] = useState<JoyColours>('primary');
     const theme = useTheme();
 
-    const getColorFromTheme = (colorValue: ChipColor): string => {
-        // Prefer Joy UI CSS vars for deterministic colors without unsafe casts
+    const getColorFromTheme = (colorValue: JoyColours): string => {
         const palette = theme.vars?.palette as Record<string, { solidBg?: string }> | undefined;
         return palette?.[colorValue]?.solidBg ?? theme.vars.palette.primary.solidBg;
     };
@@ -84,12 +82,12 @@ function ChipCreateForm({
         }
     };
 
-    const CHIP_COLORS: readonly ChipColor[] = ['primary', 'neutral', 'danger', 'success', 'warning'] as const;
+    const CHIP_COLORS: readonly JoyColours[] = ['primary', 'neutral', 'danger', 'success', 'warning'] as const;
 
     const renderColorSelector = () => (
         <Select
             value={selectedColor}
-            onChange={(_, newValue) => setSelectedColor((newValue || 'primary') as ChipColor)}
+            onChange={(_, newValue) => setSelectedColor((newValue || 'primary') as JoyColours)}
             size={'md'}
             sx={{
                 minWidth: '40px',
@@ -104,7 +102,7 @@ function ChipCreateForm({
                         width: 16,
                         height: 16,
                         borderRadius: '50%',
-                        backgroundColor: getColorFromTheme((selected?.value as ChipColor) || 'primary'),
+                        backgroundColor: getColorFromTheme((selected?.value as JoyColours) || 'primary'),
                         border: '1px solid',
                         borderColor: 'divider'
                     }}

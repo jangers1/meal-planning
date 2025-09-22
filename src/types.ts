@@ -1,0 +1,1 @@
+export type JoyColours = 'primary' | 'neutral' | 'danger' | 'success' | 'warning';
