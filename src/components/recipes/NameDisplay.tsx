@@ -1,10 +1,6 @@
 import {Avatar, Box, Chip} from "@mui/joy";
 
-interface NameDisplayProps {
-    name: string;
-}
-
-function NameDisplay({name}: NameDisplayProps) {
+function NameDisplay({name}: { name: string }) {
     return (
         <>
             <Chip
