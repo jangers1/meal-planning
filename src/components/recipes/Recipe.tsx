@@ -1,6 +1,8 @@
 import {Box, Chip, Stack} from "@mui/joy";
 import Typography from "@mui/joy/Typography";
 import ServingSelector from "./ServingSelector.tsx";
+import NameDisplay from "./NameDisplay.tsx";
+import {useState} from "react";
 
 const recipeTags = [
     {tag: "Vegetarian", color: "rgba(0, 128, 0, 0.7)"},
@@ -10,6 +12,8 @@ const recipeTags = [
 ]
 
 function Recipe() {
+    const [recipeOwner] = useState(("Roshan"));
+
     return (
         <>
             {/*Recipe Header*/}
@@ -44,7 +48,17 @@ function Recipe() {
                         ))}
                     </Stack>
                 </Box>
-                <ServingSelector/>
+                <Box
+                    sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'flex-end',
+                        justifyContent: 'space-between'
+                    }}
+                >
+                    <NameDisplay name={recipeOwner}/>
+                    <ServingSelector/>
+                </Box>
             </Box>
 
             {/*Recipe Ingredients*/}
