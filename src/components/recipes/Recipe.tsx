@@ -83,6 +83,7 @@ function Recipe() {
                 {/*Recipe Instructions*/}
                 <RecipeBox
                     title={'Instructions'}
+                    maxHeight={'60%'}
                 >
                     Placeholder
                 </RecipeBox>

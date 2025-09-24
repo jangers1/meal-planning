@@ -1,6 +1,7 @@
 import {Stack} from "@mui/joy";
 import RecipeHeaderInput from "./RecipeHeaderInput.tsx";
 import RecipeIngredientCreate from "./RecipeIngredientCreate.tsx";
+import RecipeMethodCreate from "./RecipeMethodCreate.tsx";
 
 function RecipeCreate(){
     return (
@@ -16,6 +17,7 @@ function RecipeCreate(){
             >
                 <RecipeHeaderInput/>
                 <RecipeIngredientCreate/>
+                <RecipeMethodCreate/>
             </Stack>
         </>
     )

@@ -4,9 +4,11 @@ import React from "react";
 interface RecipeBoxProps {
     children: React.ReactNode
     title?: string
+    minHeight?: string
+    maxHeight?: string
 }
 
-function RecipeBox({ children, title }: RecipeBoxProps) {
+function RecipeBox({children, title, minHeight = '20%', maxHeight = '40%'}: RecipeBoxProps) {
     return (
         <>
             <Box
@@ -14,8 +16,8 @@ function RecipeBox({ children, title }: RecipeBoxProps) {
                     borderRadius: 'var(--border-radius)',
                     backgroundColor: 'var(--primary-color)',
                     boxShadow: '2px 2px 8px rgba(0, 0, 0, 0.1)',
-                    minHeight: '20%',
-                    maxHeight: '40%',
+                    minHeight: {minHeight},
+                    maxHeight: {maxHeight},
                     p: 2
                 }}
             >
