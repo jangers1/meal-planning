@@ -1,11 +1,12 @@
-import { Box } from "@mui/joy";
+import { Box, Typography } from "@mui/joy";
 import React from "react";
 
 interface RecipeBoxProps {
     children: React.ReactNode
+    title?: string
 }
 
-function RecipeBox({ children }: RecipeBoxProps) {
+function RecipeBox({ children, title }: RecipeBoxProps) {
     return (
         <>
             <Box
@@ -18,6 +19,9 @@ function RecipeBox({ children }: RecipeBoxProps) {
                     p: 2
                 }}
             >
+                <Typography level="h3" sx={{pb: 2}}>
+                    {title}
+                </Typography>
                 {children}
             </Box>
         </>

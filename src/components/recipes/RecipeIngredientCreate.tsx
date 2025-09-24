@@ -1,7 +1,6 @@
 import {useState} from 'react';
 import {Autocomplete, Box, Button, Input, Sheet, Tooltip} from '@mui/joy';
 import Stack from '@mui/joy/Stack';
-import Typography from '@mui/joy/Typography';
 import {CheckRounded, CloseRounded} from '@mui/icons-material';
 import ActionButton from '../ui_components/ActionButton.tsx';
 import RecipeBox from "./RecipeBox.tsx";
@@ -224,11 +223,9 @@ function RecipeIngredientCreate() {
     const hasIngredients = ingredients.length > 0;
 
     return (
-        <RecipeBox>
-            <Typography level="h3" sx={{pb: 2}}>
-                Ingredients
-            </Typography>
-
+        <RecipeBox
+            title={'Ingredients'}
+        >
             <Box sx={{
                 px: 2,
                 '& .measure': {ml: 3}

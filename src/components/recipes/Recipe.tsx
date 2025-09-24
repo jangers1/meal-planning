@@ -74,12 +74,16 @@ function Recipe() {
                 </Box>
 
                 {/*Recipe Ingredients*/}
-                <RecipeBox>
+                <RecipeBox
+                    title={'Ingredients'}
+                >
                     Placeholder
                 </RecipeBox>
 
                 {/*Recipe Instructions*/}
-                <RecipeBox>
+                <RecipeBox
+                    title={'Instructions'}
+                >
                     Placeholder
                 </RecipeBox>
             </Stack>
