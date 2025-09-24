@@ -1,7 +1,8 @@
 import React, {useState} from 'react';
-import {Autocomplete, Box, Chip, Option, Select, useTheme} from '@mui/joy';
+import {Autocomplete, Box, Option, Select, useTheme} from '@mui/joy';
 import {CheckRounded, CloseRounded} from '@mui/icons-material';
 import type {JoyColours} from "../../types.ts";
+import ActionButton from '../ui_components/ActionButton.tsx';
 
 export interface ChipData {
     text: string;
@@ -158,28 +159,8 @@ function ChipCreateForm({
         );
     };
 
-    const renderActionButton = (
-        color: 'success' | 'danger',
-        icon: React.ReactNode,
-        onClick: () => void,
-        disabled = false
-    ) => (
-        <Chip
-            variant="outlined"
-            color={color}
-            size={'md'}
-            onClick={onClick}
-            disabled={disabled}
-            sx={{cursor: 'pointer', minWidth: 'auto', px: 0.5}}
-        >
-            <Box sx={{fontSize: 16}}>
-                {icon}
-            </Box>
-        </Chip>
-    );
-
     return (
-        <Box sx={{display: 'inline-flex', alignItems: 'center', gap: 0.5}}>
+        <Box sx={{display: 'inline-flex', alignItems: 'center', gap: 1}}>
             {renderColorSelector()}
 
             <Autocomplete
@@ -200,8 +181,17 @@ function ChipCreateForm({
                 }}
             />
 
-            {renderActionButton('success', <CheckRounded/>, handleSave, !value.trim())}
-            {renderActionButton('danger', <CloseRounded/>, handleCancel)}
+            <ActionButton
+                color="success"
+                icon={<CheckRounded/>}
+                onClick={handleSave}
+                disabled={!value.trim()}
+            />
+            <ActionButton
+                color="danger"
+                icon={<CloseRounded/>}
+                onClick={handleCancel}
+            />
         </Box>
     );
 }
