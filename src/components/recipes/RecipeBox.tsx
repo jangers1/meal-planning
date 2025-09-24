@@ -1,6 +1,6 @@
-import { Box, Typography } from "@mui/joy";
+import {Box, Typography} from "@mui/joy";
 import React from "react";
-import {style, type SxProps} from "@mui/system";
+import {type SxProps} from "@mui/system";
 
 interface RecipeBoxProps {
     children: React.ReactNode
