@@ -5,24 +5,7 @@ import RichTextField from "./RichTextField.tsx";
 import RecipeBox from "./RecipeBox.tsx";
 import ActionButton from "../ui_components/ActionButton.tsx";
 import Box from "@mui/joy/Box";
-import SvgIcon, {type SvgIconProps} from '@mui/material/SvgIcon';
-
-function CheckIcon(props: SvgIconProps) {
-    return (
-        <SvgIcon {...props}>
-            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-        </SvgIcon>
-    );
-}
-
-function CloseIcon(props: SvgIconProps) {
-    return (
-        <SvgIcon {...props}>
-            <path
-                d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-        </SvgIcon>
-    );
-}
+import {CheckRounded, CloseRounded} from "@mui/icons-material";
 
 function RecipeCreate() {
     return (
@@ -59,7 +42,7 @@ function RecipeCreate() {
                 <ActionButton
                     color="success"
                     variant={'solid'}
-                    icon={<CheckIcon sx={{fontSize: '20px'}}/>}
+                    icon={<CheckRounded sx={{fontSize: '20px'}}/>}
                     onClick={() => {
                         console.log('Save Recipe')
                     }}
@@ -72,7 +55,7 @@ function RecipeCreate() {
                 <ActionButton
                     color="danger"
                     variant={'solid'}
-                    icon={<CloseIcon sx={{fontSize: '20px'}}/>}
+                    icon={<CloseRounded sx={{fontSize: '20px'}}/>}
                     onClick={() => {
                         console.log('Cancel Recipe Creation')
                     }}
