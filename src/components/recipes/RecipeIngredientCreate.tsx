@@ -4,6 +4,7 @@ import Stack from '@mui/joy/Stack';
 import Typography from '@mui/joy/Typography';
 import {CheckRounded, CloseRounded} from '@mui/icons-material';
 import ActionButton from '../ui_components/ActionButton.tsx';
+import RecipeBox from "./RecipeBox.tsx";
 
 // Constants
 const MEASUREMENT_UNITS = [
@@ -223,16 +224,7 @@ function RecipeIngredientCreate() {
     const hasIngredients = ingredients.length > 0;
 
     return (
-        <Box
-            sx={{
-                borderRadius: 'var(--border-radius)',
-                backgroundColor: 'var(--primary-color)',
-                boxShadow: '2px 2px 8px rgba(0, 0, 0, 0.1)',
-                minHeight: '20%',
-                maxHeight: '40%',
-                p: 2
-            }}
-        >
+        <RecipeBox>
             <Typography level="h3" sx={{pb: 2}}>
                 Ingredients
             </Typography>
@@ -275,7 +267,7 @@ function RecipeIngredientCreate() {
                     Add Ingredient
                 </Button>
             )}
-        </Box>
+        </RecipeBox>
     );
 }
 

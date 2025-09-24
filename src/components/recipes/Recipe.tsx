@@ -4,6 +4,7 @@ import ServingSelector from "./ServingSelector.tsx";
 import NameDisplay from "./NameDisplay.tsx";
 import {useState} from "react";
 import type {JoyColours} from "../../types.ts";
+import RecipeBox from "./RecipeBox.tsx";
 
 function Recipe() {
     const [recipeOwner] = useState<string>(("Roshan"));
@@ -24,7 +25,7 @@ function Recipe() {
                 spacing={4}
                 sx={{
                     display: "flex",
-                    m:2,
+                    m: 2,
                     flex: 1
                 }}
             >
@@ -73,27 +74,14 @@ function Recipe() {
                 </Box>
 
                 {/*Recipe Ingredients*/}
-                <Box sx={{
-                    borderRadius: 'var(--border-radius)',
-                    backgroundColor: 'var(--primary-color)',
-                    boxShadow: '2px 2px 8px rgba(0, 0, 0, 0.1)',
-                    minHeight: '20%',
-                    maxHeight: '40%',
-                    p: 2
-                }}>
-
-                </Box>
+                <RecipeBox>
+                    Placeholder
+                </RecipeBox>
 
                 {/*Recipe Instructions*/}
-                <Box sx={{
-                    borderRadius: 'var(--border-radius)',
-                    backgroundColor: 'var(--primary-color)',
-                    boxShadow: '2px 2px 8px rgba(0, 0, 0, 0.1)',
-                    minHeight: '40%',
-                    p: 2
-                }}>
-
-                </Box>
+                <RecipeBox>
+                    Placeholder
+                </RecipeBox>
             </Stack>
         </>
     )
