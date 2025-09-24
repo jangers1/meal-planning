@@ -12,77 +12,89 @@ function Recipe() {
         {tag: 'Gluten-Free', color: 'warning'},
         {tag: 'Dessert', color: 'success'}
     ]);
+    const [servings] = useState<number>(2);
+    const [categories] = useState<string[]>(['Main Category', 'Sub Category 1', 'Sub Category 2']);
+    const [recipeTitle] = useState<string>('Recipe Title');
 
     return (
         <>
             {/*Recipe Header*/}
-            <Box sx={{
-                display: 'flex',
-                flexDirection: 'row',
-                p: 2,
-                justifyContent: 'space-between',
-            }}>
-                <Box>
-                    <Typography level="h1">
-                        Recipe Title
-                    </Typography>
-                    <Typography level="body-sm">
-                        Main Category | Sub Category 1 | Sub Category 2
-                    </Typography>
-                    <Stack direction="row" spacing={1} mt={2}>
-                        {recipeTags.map(({tag, color}) => (
-                            <Chip
-                                key={tag}
-                                variant="soft"
-                                size="sm"
-                                color= {color}
-                                sx={{
-                                    px: 2,
-                                    pb: 0.5
-                                }}
-                            >
-                                {tag}
-                            </Chip>
-                        ))}
-                    </Stack>
-                </Box>
+            <Stack
+                direction={'column'}
+                spacing={4}
+                sx={{
+                    display: "flex",
+                    m:2,
+                    flex: 1
+                }}
+            >
                 <Box
                     sx={{
                         display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'flex-end',
-                        justifyContent: 'space-between'
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
                     }}
                 >
-                    <NameDisplay name={recipeOwner}/>
-                    <ServingSelector/>
+                    <Box>
+                        <Typography level="h1">
+                            {recipeTitle}
+                        </Typography>
+                        <Typography level="body-sm">
+                            {categories.join(' | ')}
+                        </Typography>
+                        <Stack direction="row" spacing={1} mt={2}>
+                            {recipeTags.map(({tag, color}) => (
+                                <Chip
+                                    key={tag}
+                                    variant="soft"
+                                    size="sm"
+                                    color={color}
+                                    sx={{
+                                        px: 2,
+                                        pb: 0.5
+                                    }}
+                                >
+                                    {tag}
+                                </Chip>
+                            ))}
+                        </Stack>
+                    </Box>
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'flex-end',
+                            justifyContent: 'space-between'
+                        }}
+                    >
+                        <NameDisplay name={recipeOwner}/>
+                        <ServingSelector initialServings={servings}/>
+                    </Box>
                 </Box>
-            </Box>
 
-            {/*Recipe Ingredients*/}
-            <Box sx={{
-                borderRadius: 'var(--border-radius)',
-                backgroundColor: 'var(--primary-color)',
-                boxShadow: '2px 2px 8px rgba(0, 0, 0, 0.1)',
-                minHeight: '20%',
-                maxHeight: '40%',
-                mt: 1,
-                mx: 2
-            }}>
+                {/*Recipe Ingredients*/}
+                <Box sx={{
+                    borderRadius: 'var(--border-radius)',
+                    backgroundColor: 'var(--primary-color)',
+                    boxShadow: '2px 2px 8px rgba(0, 0, 0, 0.1)',
+                    minHeight: '20%',
+                    maxHeight: '40%',
+                    p: 2
+                }}>
 
-            </Box>
+                </Box>
 
-            {/*Recipe Instructions*/}
-            <Box sx={{
-                borderRadius: 'var(--border-radius)',
-                backgroundColor: 'var(--primary-color)',
-                boxShadow: '2px 2px 8px rgba(0, 0, 0, 0.1)',
-                minHeight: '40%',
-                mt: 5,
-                mx: 2
-            }}>
+                {/*Recipe Instructions*/}
+                <Box sx={{
+                    borderRadius: 'var(--border-radius)',
+                    backgroundColor: 'var(--primary-color)',
+                    boxShadow: '2px 2px 8px rgba(0, 0, 0, 0.1)',
+                    minHeight: '40%',
+                    p: 2
+                }}>
 
-            </Box>
+                </Box>
+            </Stack>
         </>
     )
 }
