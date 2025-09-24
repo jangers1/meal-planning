@@ -32,7 +32,7 @@ const ServingSelector: React.FC<ServingSelectorProps> = ({
                     display: 'flex',
                     alignItems: 'flex-end',
                     gap: 1,
-                    padding: 1,
+                    m: 1,
                     width: 'min-content'
                 }}
             >
