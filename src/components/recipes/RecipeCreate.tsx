@@ -1,9 +1,10 @@
 import {Stack} from "@mui/joy";
 import RecipeHeaderInput from "./RecipeHeaderInput.tsx";
 import RecipeIngredientCreate from "./RecipeIngredientCreate.tsx";
-import RecipeMethodCreate from "./RecipeMethodCreate.tsx";
+import RichTextField from "./RichTextField.tsx";
+import RecipeBox from "./RecipeBox.tsx";
 
-function RecipeCreate(){
+function RecipeCreate() {
     return (
         <>
             <Stack
@@ -11,13 +12,19 @@ function RecipeCreate(){
                 spacing={4}
                 sx={{
                     display: "flex",
-                    m:2,
+                    m: 2,
                     flex: 1
                 }}
             >
                 <RecipeHeaderInput/>
                 <RecipeIngredientCreate/>
-                <RecipeMethodCreate/>
+                <RecipeBox
+                    title={'Instructions'}
+                    minHeight={'50%'}
+                    maxHeight={'100%'}
+                >
+                    <RichTextField/>
+                </RecipeBox>
             </Stack>
         </>
     )
