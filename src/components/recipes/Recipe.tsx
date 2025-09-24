@@ -5,6 +5,8 @@ import NameDisplay from "./NameDisplay.tsx";
 import {useState} from "react";
 import type {JoyColours} from "../../types.ts";
 import RecipeBox from "./RecipeBox.tsx";
+import ActionButton from "../ui_components/ActionButton.tsx";
+import EditIcon from '@mui/icons-material/Edit';
 
 function Recipe() {
     const [recipeOwner] = useState<string>(("Roshan"));
@@ -89,6 +91,22 @@ function Recipe() {
                     Placeholder
                 </RecipeBox>
             </Stack>
+            <ActionButton
+                color="warning"
+                variant={'solid'}
+                icon={<EditIcon sx={{fontSize: '20px'}}/>}
+                onClick={() => {
+                    console.log('Save Recipe')
+                }}
+                style={{
+                    position: 'absolute',
+                    bottom: 20,
+                    right: 20,
+                    height: '50px',
+                    padding: '0 15px',
+                    boxShadow: '0px 10px 18px rgba(0, 0, 0, 0.5)'
+                }}
+            />
         </>
     )
 }
