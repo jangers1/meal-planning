@@ -10,7 +10,7 @@ interface ActionButtonProps {
     disabled?: boolean;
     size?: JoySizes;
     variant?: JoyVariants;
-    style?: SxProps
+    style?: SxProps;
 }
 
 function ActionButton({
@@ -39,7 +39,7 @@ function ActionButton({
                 ...style
             }}
         >
-            < Box sx={{fontSize: 16}}>
+            <Box>
                 {icon}
             </Box>
         </Chip>
