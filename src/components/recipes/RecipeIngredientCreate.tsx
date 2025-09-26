@@ -1,7 +1,7 @@
 import {useState} from 'react';
 import {Autocomplete, Box, Button, Input, Sheet, Tooltip} from '@mui/joy';
 import Stack from '@mui/joy/Stack';
-import {CheckRounded, CloseRounded} from '@mui/icons-material';
+import {CheckRounded, CloseRounded, DeleteRounded} from '@mui/icons-material';
 import ActionButton from '../ui_components/ActionButton.tsx';
 import RecipeBox from "./RecipeBox.tsx";
 
@@ -11,6 +11,8 @@ interface Ingredient {
     name: string;
     quantity: string;
     measure: string;
+    type?: 'regular' | 'equal-amounts-group';
+    subItems?: string[];
 }
 
 type NewIngredient = Omit<Ingredient, 'id'>;
@@ -21,6 +23,7 @@ interface IngredientFormProps {
     measurementUnits: string[];
     editingIngredient?: Ingredient;
     shouldApplyMargin?: boolean;
+    onDelete?: () => void;
 }
 
 // Helper functions
@@ -37,16 +40,33 @@ const formatMeasure = (quantity: string, measure: string): string => {
 };
 
 const isFormValid = (name: string, quantity: string, measure: string): boolean => {
-    return Boolean(
-        name.trim() &&
-        quantity.trim() &&
-        measure.trim() &&
-        isValidQuantity(quantity)
-    );
+    const hasName = Boolean(name.trim());
+    const hasQuantity = Boolean(quantity.trim());
+    const hasMeasure = Boolean(measure.trim());
+
+    // Must have name
+    if (!hasName) return false;
+
+    // If no quantity and no measure, it's valid (ingredient only)
+    if (!hasQuantity && !hasMeasure) return true;
+
+    // If either quantity or measure is provided, both must be provided and quantity must be valid
+    if (hasQuantity || hasMeasure) {
+        return hasQuantity && hasMeasure && isValidQuantity(quantity);
+    }
+
+    return false;
 };
 
 // Components
-function IngredientForm({onConfirm, onCancel, measurementUnits, editingIngredient, shouldApplyMargin}: IngredientFormProps) {
+function IngredientForm({
+                            onConfirm,
+                            onCancel,
+                            measurementUnits,
+                            editingIngredient,
+                            shouldApplyMargin,
+                            onDelete
+                        }: IngredientFormProps) {
     const [name, setName] = useState(editingIngredient?.name || '');
     const [quantity, setQuantity] = useState(editingIngredient?.quantity || '');
     const [measure, setMeasure] = useState(editingIngredient?.measure || '');
@@ -105,10 +125,18 @@ function IngredientForm({onConfirm, onCancel, measurementUnits, editingIngredien
                 />
                 <ActionButton
                     color="danger"
-                    icon={<CloseRounded/>}
+                    icon={editingIngredient ? <CloseRounded/> : <DeleteRounded/>}
                     onClick={handleCancel}
                     style={{width: '30px', height: '25px'}}
                 />
+                {editingIngredient && onDelete && (
+                    <ActionButton
+                        color="danger"
+                        icon={<DeleteRounded/>}
+                        onClick={onDelete}
+                        style={{width: '30px', height: '25px'}}
+                    />
+                )}
             </Stack>
 
             <Box
@@ -170,6 +198,8 @@ function IngredientItem({
         transition: 'all 0.2s ease',
     };
 
+    const hasMeasurement = ingredient.quantity.trim() && ingredient.measure.trim();
+
     return (
         <Tooltip title="Click to edit" followCursor>
             <Box
@@ -189,19 +219,151 @@ function IngredientItem({
                 }}
             >
                 <li className="ingredient" style={itemStyle}>
-                    {ingredient.name}
+                    {ingredient.type === 'equal-amounts-group' ? 'Equal amounts of:' : ingredient.name}
                 </li>
-                <li className="measure" style={itemStyle}>
-                    {formatMeasure(ingredient.quantity, ingredient.measure)}
-                </li>
+                {hasMeasurement && ingredient.type !== 'equal-amounts-group' && (
+                    <ul style={{ marginLeft: '20px'}}>
+                        <li style={{ ...itemStyle, fontSize: '0.9em' }}>
+                            {formatMeasure(ingredient.quantity, ingredient.measure)}
+                        </li>
+                    </ul>
+                )}
+                {ingredient.type === 'equal-amounts-group' && ingredient.subItems && (
+                    <ul style={{marginLeft: '20px'}}>
+                        {ingredient.subItems.map((item, index) => (
+                            <li key={index} style={{...itemStyle, fontSize: '0.9em'}}>
+                                {item}
+                            </li>
+                        ))}
+                    </ul>
+                )}
             </Box>
         </Tooltip>
+    );
+}
+
+interface EqualAmountFormProps {
+    onConfirm: (items: string[]) => void;
+    onCancel: () => void;
+    shouldApplyMargin?: boolean;
+    editingIngredient?: Ingredient;
+    onDelete?: () => void;
+}
+
+function EqualAmountForm({onConfirm, onCancel, shouldApplyMargin, editingIngredient, onDelete}: EqualAmountFormProps) {
+    const [items, setItems] = useState<string[]>(() => {
+        // Initialize with existing subItems if editing, otherwise default to empty array
+        if (editingIngredient?.subItems && editingIngredient.subItems.length > 0) {
+            return editingIngredient.subItems;
+        }
+        return ['', ''];
+    });
+
+    const addItem = () => {
+        setItems(prev => [...prev, '']);
+    };
+
+    const updateItem = (index: number, value: string) => {
+        setItems(prev => prev.map((item, i) => i === index ? value : item));
+    };
+
+    const handleConfirm = () => {
+        const validItems = items.filter(item => item.trim() !== '');
+        if (validItems.length >= 2) {
+            onConfirm(validItems);
+            setItems(['', '']);
+        }
+    };
+
+    const handleCancel = () => {
+        setItems(['', '']);
+        onCancel();
+    };
+
+    const handleDelete = () => {
+        if (editingIngredient && onDelete) {
+            onDelete();
+        }
+    };
+
+    const isFormValid = items.filter(item => item.trim() !== '').length >= 2;
+
+    return (
+        <Sheet
+            sx={{
+                backgroundColor: 'transparent',
+                mt: shouldApplyMargin ? 2 : 0
+            }}
+        >
+            <Stack
+                direction="row"
+                spacing={1}
+                sx={{display: 'flex', alignItems: 'flex-start'}}
+            >
+                <Stack direction="column" spacing={1} sx={{flex: 1}}>
+                    {items.map((item, index) => (
+                        <Input
+                            key={index}
+                            variant="outlined"
+                            color="warning"
+                            placeholder="Ingredient"
+                            value={item}
+                            onChange={(e) => updateItem(index, e.target.value)}
+                            sx={{flex: 1}}
+                        />
+                    ))}
+                    <Stack
+                        direction="row"
+                        spacing={1}
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                        }}
+                    >
+                        <Button
+                            variant="outlined"
+                            color="warning"
+                            size="sm"
+                            onClick={addItem}
+                            sx={{
+                                borderStyle: 'dashed',
+                                alignSelf: 'flex-start'
+                            }}
+                        >
+                            Add Ingredient
+                        </Button>
+                        <ActionButton
+                            color="success"
+                            icon={<CheckRounded/>}
+                            onClick={handleConfirm}
+                            disabled={!isFormValid}
+                            style={{width: '30px', height: '25px'}}
+                        />
+                        <ActionButton
+                            color="danger"
+                            icon={editingIngredient ? <CloseRounded/> : <DeleteRounded/>}
+                            onClick={handleCancel}
+                            style={{width: '30px', height: '25px'}}
+                        />
+                        {editingIngredient && (
+                            <ActionButton
+                                color="danger"
+                                icon={<DeleteRounded/>}
+                                onClick={handleDelete}
+                                style={{width: '30px', height: '25px'}}
+                            />
+                        )}
+                    </Stack>
+                </Stack>
+            </Stack>
+        </Sheet>
     );
 }
 
 function RecipeIngredientCreate() {
     const [ingredients, setIngredients] = useState<Ingredient[]>([]);
     const [showForm, setShowForm] = useState(false);
+    const [formType, setFormType] = useState<'regular' | 'equal-amounts'>('regular');
     const [hoveredIngredient, setHoveredIngredient] = useState<string | null>(null);
     const [editingIngredient, setEditingIngredient] = useState<Ingredient | null>(null);
     const [measurementUnits, setMeasurementUnits] = useState<string[]>([
@@ -243,11 +405,45 @@ function RecipeIngredientCreate() {
     const handleEditIngredient = (ingredient: Ingredient) => {
         setEditingIngredient(ingredient);
         setShowForm(true);
+        // Set form type based on ingredient type
+        setFormType(ingredient.type === 'equal-amounts-group' ? 'equal-amounts' : 'regular');
     };
 
     const handleCancelForm = () => {
         setEditingIngredient(null);
         setShowForm(false);
+        setFormType('regular');
+    };
+
+    const handleEqualAmountsConfirm = (items: string[]) => {
+        const ingredient: Ingredient = {
+            id: Date.now().toString(),
+            name: '',
+            quantity: '',
+            measure: '',
+            type: 'equal-amounts-group',
+            subItems: items
+        };
+        setIngredients(prev => [...prev, ingredient]);
+        setShowForm(false);
+        setFormType('regular');
+    };
+
+    const handleShowRegularForm = () => {
+        setFormType('regular');
+        setShowForm(true);
+    };
+
+    const handleShowEqualAmountsForm = () => {
+        setFormType('equal-amounts');
+        setShowForm(true);
+    };
+
+    const handleDeleteIngredient = (ingredientId: string) => {
+        setIngredients(prev => prev.filter(ingredient => ingredient.id !== ingredientId));
+        setEditingIngredient(null);
+        setShowForm(false);
+        setFormType('regular');
     };
 
     const hasIngredients = ingredients.length > 0;
@@ -266,12 +462,32 @@ function RecipeIngredientCreate() {
                     {ingredients.map((ingredient) => (
                         editingIngredient && editingIngredient.id === ingredient.id ? (
                             <li key={ingredient.id}>
-                                <IngredientForm
-                                    onConfirm={handleAddIngredient}
-                                    onCancel={handleCancelForm}
-                                    measurementUnits={measurementUnits}
-                                    editingIngredient={editingIngredient}
-                                />
+                                {editingIngredient.type === 'equal-amounts-group' ? (
+                                    <EqualAmountForm
+                                        onConfirm={(items) => {
+                                            const updatedIngredient: Ingredient = {
+                                                ...editingIngredient,
+                                                subItems: items
+                                            };
+                                            setIngredients(prev => prev.map(ing =>
+                                                ing.id === editingIngredient.id ? updatedIngredient : ing
+                                            ));
+                                            setEditingIngredient(null);
+                                            setShowForm(false);
+                                        }}
+                                        onCancel={handleCancelForm}
+                                        editingIngredient={editingIngredient}
+                                        onDelete={() => handleDeleteIngredient(editingIngredient.id)}
+                                    />
+                                ) : (
+                                    <IngredientForm
+                                        onConfirm={handleAddIngredient}
+                                        onCancel={handleCancelForm}
+                                        measurementUnits={measurementUnits}
+                                        editingIngredient={editingIngredient}
+                                        onDelete={() => handleDeleteIngredient(editingIngredient.id)}
+                                    />
+                                )}
                             </li>
                         ) : (
                             <IngredientItem
@@ -289,25 +505,51 @@ function RecipeIngredientCreate() {
 
             {!editingIngredient && (
                 showForm ? (
-                    <IngredientForm
-                        onConfirm={handleAddIngredient}
-                        onCancel={handleCancelForm}
-                        measurementUnits={measurementUnits}
-                        shouldApplyMargin={shouldApplyMargin}
-                    />
+                    formType === 'regular' ? (
+                        <IngredientForm
+                            onConfirm={handleAddIngredient}
+                            onCancel={handleCancelForm}
+                            measurementUnits={measurementUnits}
+                            shouldApplyMargin={shouldApplyMargin}
+                        />
+                    ) : (
+                        <EqualAmountForm
+                            onConfirm={handleEqualAmountsConfirm}
+                            onCancel={handleCancelForm}
+                            shouldApplyMargin={shouldApplyMargin}
+                        />
+                    )
                 ) : (
-                    <Button
-                        variant="outlined"
-                        color="primary"
-                        size="md"
-                        onClick={() => setShowForm(true)}
+                    <Stack
+                        direction="row"
+                        spacing={2}
                         sx={{
-                            borderStyle: 'dashed',
                             mt: shouldApplyMargin ? 2 : 0
                         }}
                     >
-                        Add Ingredient
-                    </Button>
+                        <Button
+                            variant="outlined"
+                            color="primary"
+                            size="md"
+                            onClick={handleShowRegularForm}
+                            sx={{
+                                borderStyle: 'dashed'
+                            }}
+                        >
+                            Add Ingredient
+                        </Button>
+                        <Button
+                            variant="outlined"
+                            color="primary"
+                            size="md"
+                            onClick={handleShowEqualAmountsForm}
+                            sx={{
+                                borderStyle: 'dashed'
+                            }}
+                        >
+                            Add Equal Amounts Of...
+                        </Button>
+                    </Stack>
                 )
             )}
         </RecipeBox>
