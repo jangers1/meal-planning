@@ -5,12 +5,6 @@ import {CheckRounded, CloseRounded} from '@mui/icons-material';
 import ActionButton from '../ui_components/ActionButton.tsx';
 import RecipeBox from "./RecipeBox.tsx";
 
-// Constants
-const MEASUREMENT_UNITS = [
-    'tsp', 'tbsp', 'cup', 'ml', 'l', 'g', 'kg', 'oz', 'lb',
-    'pinch', 'dash', 'clove', 'slice', 'piece'
-] as const;
-
 // Types
 interface Ingredient {
     id: string;
@@ -25,6 +19,7 @@ interface IngredientFormProps {
     onConfirm: (ingredient: NewIngredient) => void;
     onCancel: () => void;
     ingredients: Ingredient[];
+    measurementUnits: string[];
 }
 
 // Helper functions
@@ -50,7 +45,7 @@ const isFormValid = (name: string, quantity: string, measure: string): boolean =
 };
 
 // Components
-function IngredientForm({onConfirm, onCancel, ingredients}: IngredientFormProps) {
+function IngredientForm({onConfirm, onCancel, ingredients, measurementUnits}: IngredientFormProps) {
     const [name, setName] = useState('');
     const [quantity, setQuantity] = useState('');
     const [measure, setMeasure] = useState('');
@@ -137,13 +132,14 @@ function IngredientForm({onConfirm, onCancel, ingredients}: IngredientFormProps)
                     }}
                 />
                 <Autocomplete
+                    freeSolo
                     variant="outlined"
                     size="sm"
                     color="warning"
                     placeholder="Measure"
                     value={measure}
-                    onChange={(_, newValue) => setMeasure(newValue || '')}
-                    options={MEASUREMENT_UNITS}
+                    onInputChange={(_, newInputValue) => setMeasure(newInputValue || '')}
+                    options={measurementUnits}
                     sx={{
                         width: '300px'
                     }}
@@ -206,8 +202,22 @@ function RecipeIngredientCreate() {
     const [ingredients, setIngredients] = useState<Ingredient[]>([]);
     const [showForm, setShowForm] = useState(false);
     const [hoveredIngredient, setHoveredIngredient] = useState<string | null>(null);
+    const [measurementUnits, setMeasurementUnits] = useState<string[]>([
+        'cup', 'cups', 'tbsp', 'tsp', 'oz', 'lb', 'g', 'kg', 'ml', 'l', 'liter',
+        'gallon', 'quart', 'pint', 'piece', 'pieces', 'slice', 'slices', 'clove',
+        'cloves', 'bunch', 'can', 'jar', 'bottle', 'package', 'bag', 'box'
+    ]);
+
+    // Add a helper to add a measurement unit if not present
+    const addMeasurementUnit = (unit: string) => {
+        if (unit && !measurementUnits.includes(unit)) {
+            setMeasurementUnits(prev => [...prev, unit]);
+        }
+    };
 
     const handleAddIngredient = (newIngredient: NewIngredient) => {
+        // Always add the measure if not present
+        addMeasurementUnit(newIngredient.measure);
         const ingredient: Ingredient = {
             ...newIngredient,
             id: Date.now().toString()
@@ -225,6 +235,7 @@ function RecipeIngredientCreate() {
     return (
         <RecipeBox
             title={'Ingredients'}
+
         >
             <Box sx={{
                 px: 2,
@@ -249,6 +260,7 @@ function RecipeIngredientCreate() {
                     onConfirm={handleAddIngredient}
                     onCancel={() => setShowForm(false)}
                     ingredients={ingredients}
+                    measurementUnits={measurementUnits}
                 />
             ) : (
                 <Button
