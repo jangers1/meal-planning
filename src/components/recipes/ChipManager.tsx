@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {Box, Button, Chip, ChipDelete, Stack} from '@mui/joy';
+import {Box, Button, Chip, ChipDelete} from '@mui/joy';
 import {AddRounded} from '@mui/icons-material';
 import ChipCreateForm, {type ChipData} from './ChipCreateForm.tsx';
 
@@ -86,11 +86,16 @@ function ChipManager({
     );
 
     return (
-        <Box>
-            <Stack direction="row" spacing={2} sx={{flexWrap: 'wrap'}}>
-                {chips.map(renderChip)}
-                {isCreating ? renderCreateForm() : renderAddButton()}
-            </Stack>
+        <Box
+            sx={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                gap: 2,
+                alignItems: 'center'
+            }}
+        >
+            {chips.map(renderChip)}
+            {isCreating ? renderCreateForm() : renderAddButton()}
         </Box>
     );
 }
