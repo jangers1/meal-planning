@@ -18,7 +18,7 @@ export const isBlockActive = (editor: Editor, format: string) => {
 export const isMarkActive = (editor: Editor, format: keyof CustomText) => {
     const marks = Editor.marks(editor);
     if (!marks || format === 'text') return false;
-    return Boolean(marks[format as keyof typeof marks]);
+    return Boolean(marks[format]);
 };
 
 export const isListItemActive = (editor: Editor) => {
