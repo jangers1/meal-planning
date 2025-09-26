@@ -4,6 +4,7 @@ import ChipManager from "./ChipManager.tsx";
 import {type ChipData} from "./ChipCreateForm.tsx";
 import Stack from "@mui/joy/Stack";
 import { DeleteRounded } from "@mui/icons-material";
+import ServingSelector from "./ServingSelector.tsx";
 
 function RecipeHeaderInput() {
     const [recipeTags, setRecipeTags] = useState<ChipData[]>([]);
@@ -96,13 +97,21 @@ function RecipeHeaderInput() {
                     </IconButton>
                 </Stack>
 
-                <Box>
+                <Box
+                    sx={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        alignItems: 'center'
+                    }}
+                >
                     <ChipManager
                         chips={recipeTags}
                         onChipsChange={setRecipeTags}
                         availableTags={availableTags}
                         onNewTagCreated={handleNewTagCreated}
                     />
+                    <ServingSelector/>
                 </Box>
             </Stack>
         </>
