@@ -18,8 +18,9 @@ type NewIngredient = Omit<Ingredient, 'id'>;
 interface IngredientFormProps {
     onConfirm: (ingredient: NewIngredient) => void;
     onCancel: () => void;
-    ingredients: Ingredient[];
     measurementUnits: string[];
+    editingIngredient?: Ingredient;
+    shouldApplyMargin?: boolean;
 }
 
 // Helper functions
@@ -45,10 +46,10 @@ const isFormValid = (name: string, quantity: string, measure: string): boolean =
 };
 
 // Components
-function IngredientForm({onConfirm, onCancel, ingredients, measurementUnits}: IngredientFormProps) {
-    const [name, setName] = useState('');
-    const [quantity, setQuantity] = useState('');
-    const [measure, setMeasure] = useState('');
+function IngredientForm({onConfirm, onCancel, measurementUnits, editingIngredient, shouldApplyMargin}: IngredientFormProps) {
+    const [name, setName] = useState(editingIngredient?.name || '');
+    const [quantity, setQuantity] = useState(editingIngredient?.quantity || '');
+    const [measure, setMeasure] = useState(editingIngredient?.measure || '');
 
     const resetForm = () => {
         setName('');
@@ -79,7 +80,7 @@ function IngredientForm({onConfirm, onCancel, ingredients, measurementUnits}: In
         <Sheet
             sx={{
                 backgroundColor: 'transparent',
-                mt: ingredients.length > 0 ? 2 : 0
+                mt: shouldApplyMargin ? 2 : 0
             }}
         >
             <Stack
@@ -154,7 +155,7 @@ interface IngredientItemProps {
     isHovered: boolean;
     onMouseEnter: () => void;
     onMouseLeave: () => void;
-    onDelete: () => void;
+    onEdit: () => void;
 }
 
 function IngredientItem({
@@ -162,19 +163,19 @@ function IngredientItem({
                             isHovered,
                             onMouseEnter,
                             onMouseLeave,
-                            onDelete
+                            onEdit
                         }: IngredientItemProps) {
     const itemStyle = {
-        textDecoration: isHovered ? 'line-through' : 'none',
+        textDecoration: isHovered ? 'underline' : 'none',
         transition: 'all 0.2s ease',
     };
 
     return (
-        <Tooltip title="Click to remove" followCursor>
+        <Tooltip title="Click to edit" followCursor>
             <Box
                 onMouseEnter={onMouseEnter}
                 onMouseLeave={onMouseLeave}
-                onClick={onDelete}
+                onClick={onEdit}
                 sx={{
                     cursor: 'pointer',
                     backgroundColor: isHovered ? 'rgba(255, 255, 255, 0.3)' : 'transparent',
@@ -202,6 +203,7 @@ function RecipeIngredientCreate() {
     const [ingredients, setIngredients] = useState<Ingredient[]>([]);
     const [showForm, setShowForm] = useState(false);
     const [hoveredIngredient, setHoveredIngredient] = useState<string | null>(null);
+    const [editingIngredient, setEditingIngredient] = useState<Ingredient | null>(null);
     const [measurementUnits, setMeasurementUnits] = useState<string[]>([
         'cup', 'cups', 'tbsp', 'tsp', 'oz', 'lb', 'g', 'kg', 'ml', 'l', 'liter',
         'gallon', 'quart', 'pint', 'piece', 'pieces', 'slice', 'slices', 'clove',
@@ -218,24 +220,43 @@ function RecipeIngredientCreate() {
     const handleAddIngredient = (newIngredient: NewIngredient) => {
         // Always add the measure if not present
         addMeasurementUnit(newIngredient.measure);
-        const ingredient: Ingredient = {
-            ...newIngredient,
-            id: Date.now().toString()
-        };
-        setIngredients(prev => [...prev, ingredient]);
+
+        if (editingIngredient) {
+            // Update existing ingredient
+            setIngredients(prev => prev.map(ingredient =>
+                ingredient.id === editingIngredient.id
+                    ? {...newIngredient, id: editingIngredient.id}
+                    : ingredient
+            ));
+            setEditingIngredient(null);
+        } else {
+            // Add new ingredient
+            const ingredient: Ingredient = {
+                ...newIngredient,
+                id: Date.now().toString()
+            };
+            setIngredients(prev => [...prev, ingredient]);
+        }
         setShowForm(false);
     };
 
-    const handleDeleteIngredient = (id: string) => {
-        setIngredients(prev => prev.filter(ingredient => ingredient.id !== id));
+    const handleEditIngredient = (ingredient: Ingredient) => {
+        setEditingIngredient(ingredient);
+        setShowForm(true);
+    };
+
+    const handleCancelForm = () => {
+        setEditingIngredient(null);
+        setShowForm(false);
     };
 
     const hasIngredients = ingredients.length > 0;
+    // Don't apply margin for inline editing (when editingIngredient exists)
+    const shouldApplyMargin = !editingIngredient && hasIngredients;
 
     return (
         <RecipeBox
             title={'Ingredients'}
-
         >
             <Box sx={{
                 px: 2,
@@ -243,38 +264,51 @@ function RecipeIngredientCreate() {
             }}>
                 <ul>
                     {ingredients.map((ingredient) => (
-                        <IngredientItem
-                            key={ingredient.id}
-                            ingredient={ingredient}
-                            isHovered={hoveredIngredient === ingredient.id}
-                            onMouseEnter={() => setHoveredIngredient(ingredient.id)}
-                            onMouseLeave={() => setHoveredIngredient(null)}
-                            onDelete={() => handleDeleteIngredient(ingredient.id)}
-                        />
+                        editingIngredient && editingIngredient.id === ingredient.id ? (
+                            <li key={ingredient.id}>
+                                <IngredientForm
+                                    onConfirm={handleAddIngredient}
+                                    onCancel={handleCancelForm}
+                                    measurementUnits={measurementUnits}
+                                    editingIngredient={editingIngredient}
+                                />
+                            </li>
+                        ) : (
+                            <IngredientItem
+                                key={ingredient.id}
+                                ingredient={ingredient}
+                                isHovered={hoveredIngredient === ingredient.id}
+                                onMouseEnter={() => setHoveredIngredient(ingredient.id)}
+                                onMouseLeave={() => setHoveredIngredient(null)}
+                                onEdit={() => handleEditIngredient(ingredient)}
+                            />
+                        )
                     ))}
                 </ul>
             </Box>
 
-            {showForm ? (
-                <IngredientForm
-                    onConfirm={handleAddIngredient}
-                    onCancel={() => setShowForm(false)}
-                    ingredients={ingredients}
-                    measurementUnits={measurementUnits}
-                />
-            ) : (
-                <Button
-                    variant="outlined"
-                    color="primary"
-                    size="md"
-                    onClick={() => setShowForm(true)}
-                    sx={{
-                        borderStyle: 'dashed',
-                        mt: hasIngredients ? 2 : 0
-                    }}
-                >
-                    Add Ingredient
-                </Button>
+            {!editingIngredient && (
+                showForm ? (
+                    <IngredientForm
+                        onConfirm={handleAddIngredient}
+                        onCancel={handleCancelForm}
+                        measurementUnits={measurementUnits}
+                        shouldApplyMargin={shouldApplyMargin}
+                    />
+                ) : (
+                    <Button
+                        variant="outlined"
+                        color="primary"
+                        size="md"
+                        onClick={() => setShowForm(true)}
+                        sx={{
+                            borderStyle: 'dashed',
+                            mt: shouldApplyMargin ? 2 : 0
+                        }}
+                    >
+                        Add Ingredient
+                    </Button>
+                )
             )}
         </RecipeBox>
     );
