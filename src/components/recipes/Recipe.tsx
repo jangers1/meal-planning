@@ -84,8 +84,6 @@ function Recipe() {
                 {/*Recipe Instructions*/}
                 <RecipeBox
                     title={'Instructions'}
-                    minHeight={'40%'}
-                    maxHeight={'60%'}
                 >
                     Placeholder
                 </RecipeBox>
@@ -98,7 +96,7 @@ function Recipe() {
                     console.log('Save Recipe')
                 }}
                 style={{
-                    position: 'absolute',
+                    position: 'fixed',
                     bottom: 20,
                     right: 20,
                     height: '50px',

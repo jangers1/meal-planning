@@ -23,8 +23,6 @@ function RecipeCreate() {
                 <RecipeIngredientCreate/>
                 <RecipeBox
                     title={'Instructions'}
-                    minHeight={'50%'}
-                    maxHeight={'100%'}
                 >
                     <RichTextField/>
                 </RecipeBox>
@@ -33,7 +31,7 @@ function RecipeCreate() {
                 sx={{
                     display: 'flex',
                     flexDirection: 'row',
-                    position: "absolute",
+                    position: "fixed",
                     bottom: 20,
                     right: 20,
                     gap: 2
