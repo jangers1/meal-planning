@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {Box, IconButton, Input} from "@mui/joy";
+import {Box, IconButton, Input, Textarea} from "@mui/joy";
 import ChipManager from "./ChipManager.tsx";
 import {type ChipData} from "./ChipCreateForm.tsx";
 import CloseIcon from '@mui/icons-material/Close';
@@ -18,6 +18,7 @@ function RecipeHeaderInput() {
         {text: 'Budget-Friendly', color: 'neutral'}
     ]);
     const [title, setTitle] = useState('');
+    const [description, setDescription] = useState('');
 
     const handleNewTagCreated = (newTag: ChipData) => {
         // Add the new tag to available tags if it doesn't already exist
@@ -56,6 +57,39 @@ function RecipeHeaderInput() {
                         }}
                         onClick={() => {
                             setTitle('')
+                        }}
+                    >
+                        <CloseIcon/>
+                    </IconButton>
+                </Stack>
+
+                <Stack
+                    direction={'row'}
+                    spacing={2}
+                >
+                    <Textarea
+                        placeholder="Enter recipe description..."
+                        size='sm'
+                        minRows={2}
+                        maxRows={2}
+                        variant={description ? "soft" : "outlined"}
+                        color="primary"
+                        value={description}
+                        onChange={e => setDescription(e.target.value)}
+                        sx={{
+                            flex: 1
+                        }}
+                    />
+
+                    <IconButton
+                        variant={'outlined'}
+                        color={'primary'}
+                        sx={{
+                            borderStyle: 'dashed',
+                            px: 1
+                        }}
+                        onClick={() => {
+                            setDescription('')
                         }}
                     >
                         <CloseIcon/>

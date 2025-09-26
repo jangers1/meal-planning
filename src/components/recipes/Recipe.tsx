@@ -1,5 +1,4 @@
-import {Box, Chip, Stack} from "@mui/joy";
-import Typography from "@mui/joy/Typography";
+import {Box, Chip, Stack, Typography} from "@mui/joy";
 import ServingSelector from "./ServingSelector.tsx";
 import NameDisplay from "./NameDisplay.tsx";
 import {useState} from "react";
@@ -16,8 +15,8 @@ function Recipe() {
         {tag: 'Dessert', color: 'success'}
     ]);
     const [servings] = useState<number>(2);
-    const [categories] = useState<string[]>(['Main Category', 'Sub Category 1', 'Sub Category 2']);
     const [recipeTitle] = useState<string>('Recipe Title');
+    const [recipeDescription] = useState<string>('Recipe Description');
 
     return (
         <>
@@ -42,8 +41,8 @@ function Recipe() {
                         <Typography level="h1">
                             {recipeTitle}
                         </Typography>
-                        <Typography level="body-sm">
-                            {categories.join(' | ')}
+                        <Typography level="body-lg">
+                            {recipeDescription}
                         </Typography>
                         <Stack direction="row" spacing={1} mt={2}>
                             {recipeTags.map(({tag, color}) => (
