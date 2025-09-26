@@ -2,8 +2,8 @@ import {useState} from 'react';
 import {Box, IconButton, Input, Textarea} from "@mui/joy";
 import ChipManager from "./ChipManager.tsx";
 import {type ChipData} from "./ChipCreateForm.tsx";
-import CloseIcon from '@mui/icons-material/Close';
 import Stack from "@mui/joy/Stack";
+import { DeleteRounded } from "@mui/icons-material";
 
 function RecipeHeaderInput() {
     const [recipeTags, setRecipeTags] = useState<ChipData[]>([]);
@@ -59,7 +59,7 @@ function RecipeHeaderInput() {
                             setTitle('')
                         }}
                     >
-                        <CloseIcon/>
+                        <DeleteRounded/>
                     </IconButton>
                 </Stack>
 
@@ -92,7 +92,7 @@ function RecipeHeaderInput() {
                             setDescription('')
                         }}
                     >
-                        <CloseIcon/>
+                        <DeleteRounded/>
                     </IconButton>
                 </Stack>
 
