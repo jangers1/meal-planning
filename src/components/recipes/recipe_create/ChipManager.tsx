@@ -2,6 +2,7 @@ import {useState} from 'react';
 import {Box, Button, Chip, ChipDelete} from '@mui/joy';
 import {AddRounded} from '@mui/icons-material';
 import ChipCreateForm, {type ChipData} from './ChipCreateForm.tsx';
+import {useAlerts} from '../../ui_components/alerts/AlertProvider.tsx';
 
 interface ChipManagerProps {
     chips: ChipData[];
@@ -16,6 +17,7 @@ function ChipManager({
                          availableTags,
                          onNewTagCreated
                      }: ChipManagerProps) {
+    const alerts = useAlerts();
     const [isCreating, setIsCreating] = useState(false);
 
     const isChipDuplicate = (newChip: ChipData): boolean => {
@@ -23,7 +25,13 @@ function ChipManager({
     };
 
     const handleAddChip = (newChip: ChipData) => {
-        if (!newChip.text || isChipDuplicate(newChip)) {
+        if (!newChip.text) {
+            setIsCreating(false);
+            return;
+        }
+
+        if (isChipDuplicate(newChip)) {
+            alerts.pushWarning('Chip already exists');
             setIsCreating(false);
             return;
         }
