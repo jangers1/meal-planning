@@ -3,7 +3,7 @@ import RecipeHeaderInput from "./RecipeHeaderInput.tsx";
 import RecipeIngredientCreate from "./RecipeIngredientCreate.tsx";
 import RichTextField from "./RichTextField.tsx";
 import RecipeBox from "./RecipeBox.tsx";
-import ActionButton from "../ui_components/ActionButton.tsx";
+import ActionButton from "../../ui_components/ActionButton.tsx";
 import Box from "@mui/joy/Box";
 import {CheckRounded, CloseRounded} from "@mui/icons-material";
 

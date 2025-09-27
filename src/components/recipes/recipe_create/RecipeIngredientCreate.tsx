@@ -1,10 +1,10 @@
 import { Box, Button } from '@mui/joy';
 import Stack from '@mui/joy/Stack';
-import RecipeBox from './RecipeBox';
-import { IngredientForm } from './components/IngredientForm';
-import { IngredientItem } from './components/IngredientItem';
-import { EqualAmountForm } from './components/EqualAmountForm';
-import { useIngredientManager } from './hooks/useIngredientManager';
+import RecipeBox from './RecipeBox.tsx';
+import { IngredientForm } from '../components/IngredientForm.tsx';
+import { IngredientItem } from '../components/IngredientItem.tsx';
+import { EqualAmountForm } from '../components/EqualAmountForm.tsx';
+import { useIngredientManager } from '../hooks/useIngredientManager.ts';
 
 function RecipeIngredientCreate() {
     const {

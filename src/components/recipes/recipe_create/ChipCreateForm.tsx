@@ -1,8 +1,8 @@
 import React, {useState} from 'react';
 import {Autocomplete, Box, Option, Select, useTheme} from '@mui/joy';
 import {CheckRounded, CloseRounded} from '@mui/icons-material';
-import type {JoyColours} from "../../types.ts";
-import ActionButton from '../ui_components/ActionButton.tsx';
+import type {JoyColours} from "../../../types.ts";
+import ActionButton from '../../ui_components/ActionButton.tsx';
 
 export interface ChipData {
     text: string;

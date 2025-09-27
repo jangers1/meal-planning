@@ -4,11 +4,11 @@ import {createEditor} from 'slate';
 import {Editable, Slate, withReact} from 'slate-react';
 import {withHistory} from 'slate-history';
 import {Box, Sheet} from '@mui/joy';
-import {Toolbar} from './components/richtext/Toolbar';
-import {Element} from './components/richtext/Element';
-import {Leaf} from './components/richtext/Leaf';
-import {HOTKEYS, indentListItem, isListItemActive, toggleMark, unindentListItem} from './components/richtext/utils';
-import type {CustomText, RenderElementProps, RenderLeafProps} from './types/richtext.types';
+import {Toolbar} from '../components/richtext/Toolbar.tsx';
+import {Element} from '../components/richtext/Element.tsx';
+import {Leaf} from '../components/richtext/Leaf.tsx';
+import {HOTKEYS, indentListItem, isListItemActive, toggleMark, unindentListItem} from '../components/richtext/utils.ts';
+import type {CustomText, RenderElementProps, RenderLeafProps} from '../types/richtext.types.ts';
 
 const RichTextField: React.FC = () => {
     const editor = useMemo(() => withHistory(withReact(createEditor())), []);

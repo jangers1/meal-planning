@@ -1,10 +1,10 @@
 import {Box, Chip, Stack, Typography} from "@mui/joy";
-import ServingSelector from "./ServingSelector.tsx";
+import ServingSelector from "../recipe_create/ServingSelector.tsx";
 import NameDisplay from "./NameDisplay.tsx";
 import {useState} from "react";
-import type {JoyColours} from "../../types.ts";
-import RecipeBox from "./RecipeBox.tsx";
-import ActionButton from "../ui_components/ActionButton.tsx";
+import type {JoyColours} from "../../../types.ts";
+import RecipeBox from "../recipe_create/RecipeBox.tsx";
+import ActionButton from "../../ui_components/ActionButton.tsx";
 import EditIcon from '@mui/icons-material/Edit';
 
 function Recipe() {
