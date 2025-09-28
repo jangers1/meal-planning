@@ -207,10 +207,10 @@ const AlertViewport: React.FC<AlertViewportProps> = ({alerts, dismiss, position,
 };
 
 const AnimatedAlert: React.FC<{ alert: InternalAlert; onDismiss: (id: string) => void; alignEnd: boolean; }> = ({
-                                                                                                                    alert,
-                                                                                                                    onDismiss,
-                                                                                                                    alignEnd
-                                                                                                                }) => {
+    alert,
+    onDismiss,
+    alignEnd
+}) => {
     const {id, status, title, message, loading, withProgress, progress, action, icon, disableCloseButton} = alert;
 
     // Build dynamic styles for entry / exit animations
@@ -219,7 +219,7 @@ const AnimatedAlert: React.FC<{ alert: InternalAlert; onDismiss: (id: string) =>
         transition: 'transform 0.28s cubic-bezier(.4,0,.2,1), opacity 0.28s cubic-bezier(.4,0,.2,1)',
         transform: status === 'active' ? 'translateX(0) scale(1)' : `${baseTranslate} scale(.96)`,
         opacity: status === 'active' ? 1 : 0,
-        pointerEvents: 'auto',
+        pointerEvents: status === 'active' ? 'auto' : 'none', // prevent blocking underlying UI when hidden
         maxWidth: 600,
         width: '100%',
         boxShadow: 'lg'
@@ -228,14 +228,23 @@ const AnimatedAlert: React.FC<{ alert: InternalAlert; onDismiss: (id: string) =>
     const showProgress = withProgress || typeof progress === 'number';
     const determinate = typeof progress === 'number';
 
+    const handleTransitionEnd: React.TransitionEventHandler<HTMLDivElement> = (e) => {
+        if (status === 'exit' && e.propertyName === 'opacity') {
+            // Force immediate removal by setting a zero autoHide duration + dismiss again if still present
+            // Actual removal handled already by timeout, but we can shorten perceived blocking just in case.
+        }
+    };
+
     return (
         <Alert
             role="alert"
             aria-live="assertive"
             aria-atomic={false}
+            aria-hidden={status !== 'active'}
             color={alert.color || 'neutral'}
             variant={alert.variant || 'soft'}
             sx={style}
+            onTransitionEnd={handleTransitionEnd}
             startDecorator={loading ? <CircularProgress size="sm"/> : (icon || undefined)}
             endDecorator={
                 <Stack direction="row" spacing={1} alignItems="center">
