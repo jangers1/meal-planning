@@ -26,7 +26,6 @@ function Recipe() {
                 spacing={4}
                 sx={{
                     display: "flex",
-                    m: 2,
                     flex: 1
                 }}
             >
