@@ -112,19 +112,16 @@ function ChipCreateForm({
         >
             {CHIP_COLORS.map((colorValue) => (
                 <Option key={colorValue} value={colorValue}>
-                    <Box sx={{display: 'flex', alignItems: 'center', gap: 1}}>
-                        <Box
-                            sx={{
-                                width: 12,
-                                height: 12,
-                                borderRadius: '50%',
-                                backgroundColor: getColorFromTheme(colorValue),
-                                border: '1px solid',
-                                borderColor: 'divider'
-                            }}
-                        />
-                        {colorValue.charAt(0).toUpperCase() + colorValue.slice(1)}
-                    </Box>
+                    <Box
+                        sx={{
+                            width: 60,
+                            height: 12,
+                            borderRadius: 10,
+                            backgroundColor: getColorFromTheme(colorValue),
+                            border: '1px solid',
+                            borderColor: 'divider'
+                        }}
+                    />
                 </Option>
             ))}
         </Select>
