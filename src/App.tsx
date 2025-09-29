@@ -29,10 +29,8 @@ function App() {
                     display: 'flex',
                     flex: 1,
                     overflow: 'auto',
-                    backgroundColor: 'var(--secondary-color)',
                     mx: 4,
-                    my: 2,
-                    p: 2
+                    my: 2
                 }}>
                     <Routes>
                         <Route path="/" element={<Dashboard/>} />
