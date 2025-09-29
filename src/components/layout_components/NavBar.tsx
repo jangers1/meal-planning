@@ -2,57 +2,68 @@ import {useEffect, useLayoutEffect, useRef, useState} from 'react';
 import {Box, List, ListItem, ListItemButton, Typography} from '@mui/joy';
 import {styled} from '@mui/joy/styles';
 import {useLocation, useNavigate} from 'react-router-dom';
+import DashboardRoundedIcon from '@mui/icons-material/DashboardRounded';
+import CalendarMonthRoundedIcon from '@mui/icons-material/CalendarMonthRounded';
+import MenuBookRoundedIcon from '@mui/icons-material/MenuBookRounded';
+import KitchenIcon from '@mui/icons-material/Kitchen';
+import ChevronLeftRoundedIcon from '@mui/icons-material/ChevronLeftRounded';
+import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
 
 const boldFont = 600;
 const normalFont = 400;
 
-// Styled container for the navigation bar
-const NavContainer = styled(Box)(() => ({
-    width: '200px',
+// Styled container for the navigation bar (collapsible)
+const NavContainer = styled(Box, { shouldForwardProp: (prop) => prop !== 'collapsed' })< { collapsed: boolean } >(({ collapsed }) => ({
+    width: collapsed ? '68px' : '200px',
+    transition: 'width 300ms cubic-bezier(0.4,0,0.2,1)',
     height: '100%',
     backgroundColor: 'var(--primary-color)',
     display: 'flex',
     flexDirection: 'column',
     boxShadow: '2px 0 10px rgba(0,0,0,0.1)',
     position: 'relative',
+    overflow: 'hidden'
 }));
 
 // Styled list item button without individual active styling
-const StyledListItemButton = styled(ListItemButton)(() => ({
-    padding: '16px 24px',
+const StyledListItemButton = styled(ListItemButton, { shouldForwardProp: (prop) => prop !== 'collapsed' })< { collapsed?: boolean } >(({ collapsed }) => ({
+    padding: collapsed ? '12px 16px' : '16px 24px',
     margin: '4px 12px',
     borderRadius: '8px',
-    transition: 'background-color 0.3s ease',
+    transition: 'background-color 0.3s ease, padding 180ms cubic-bezier(0.4,0,0.2,1)',
     position: 'relative',
     zIndex: 2,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: collapsed ? 'center' : 'flex-start',
+    gap: collapsed ? 0 : '12px',
     '&:hover': {
-        backgroundColor: 'transparent !important', // Removes default hover background
+        backgroundColor: 'transparent !important',
     },
 }));
 
-// Animated highlight box
-const HighlightBox = styled(Box)<{ top: number; height: number; showTransition: boolean }>(({
-                                                                                                top,
-                                                                                                height,
-                                                                                                showTransition
-                                                                                            }) => ({
+// Animated highlight box (transform-based for better Chrome perf)
+const HighlightBox = styled(Box, { shouldForwardProp: (prop) => !['y','height','show','collapsed'].includes(String(prop)) })< { y: number; height: number; show: boolean; collapsed: boolean } >(({ y, height, show, collapsed }) => ({
     position: 'absolute',
-    left: '12px',
-    right: '12px',
-    top: `${top}px`,
+    left: collapsed ? '8px' : '12px',
+    right: collapsed ? '8px' : '12px',
+    top: 0,
+    transform: `translate3d(0, ${y}px, 0)`,
     height: `${height}px`,
     borderRadius: '8px',
-    transition: showTransition ? 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)' : 'none',
+    transition: show ? 'transform 300ms cubic-bezier(0.33,0.66,0.4,1), left 180ms, right 180ms' : 'none',
+    opacity: height ? 1 : 0,
     zIndex: 1,
     boxShadow: 'inset 2px 2px 12px #c8d0e7, -2px -2px 12px #ffffff',
+    willChange: 'transform',
 }));
 
-// Navigation items data
+// Navigation items data WITH icons
 const navItems = [
-    {id: 'dashboard', label: 'Dashboard', path: '/'},
-    {id: 'meal-plan', label: 'Meal Plan', path: '/meal-plan'},
-    {id: 'recipes', label: 'Recipes', path: '/recipes'},
-    {id: 'pantry', label: 'Pantry', path: '/pantry'}
+    {id: 'dashboard', label: 'Dashboard', path: '/', icon: DashboardRoundedIcon},
+    {id: 'meal-plan', label: 'Meal Plan', path: '/meal-plan', icon: CalendarMonthRoundedIcon},
+    {id: 'recipes', label: 'Recipes', path: '/recipes', icon: MenuBookRoundedIcon},
+    {id: 'pantry', label: 'Pantry', path: '/pantry', icon: KitchenIcon},
 ];
 
 // Move pathToId map outside component so its identity is stable
@@ -83,23 +94,28 @@ function NavBar({onItemSelect}: NavBarProps) {
     const navigate = useNavigate();
 
     const [activeItem, setActiveItem] = useState<string>(() => computeActiveItem(location.pathname));
-    const [highlightPosition, setHighlightPosition] = useState({top: 0, height: 0});
+    const [highlightPosition, setHighlightPosition] = useState({y: 0, height: 0});
     const [showTransition, setShowTransition] = useState(false);
+    const [collapsed, setCollapsed] = useState<boolean>(() => {
+        if (typeof window === 'undefined') return false;
+        try {
+            const saved = localStorage.getItem('navCollapsed');
+            return saved === 'true';
+        } catch { return false; }
+    });
     const itemRefs = useRef<{ [key: string]: HTMLElement | null }>({});
     const listRef = useRef<HTMLUListElement>(null);
 
     const updateHighlight = (itemId: string) => {
         const itemElement = itemRefs.current[itemId];
         const listElement = listRef.current;
-
         if (itemElement && listElement) {
             const listRect = listElement.getBoundingClientRect();
             const itemRect = itemElement.getBoundingClientRect();
             const relativeTop = itemRect.top - listRect.top;
-
-            setHighlightPosition({
-                top: relativeTop,
-                height: itemRect.height,
+            setHighlightPosition(prev => {
+                if (prev.y === relativeTop && prev.height === itemRect.height) return prev;
+                return { y: relativeTop, height: itemRect.height };
             });
         }
     };
@@ -122,6 +138,19 @@ function NavBar({onItemSelect}: NavBarProps) {
         });
     }, [location.pathname]);
 
+    useEffect(() => {
+        const handleResize = () => updateHighlight(activeItem);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, [activeItem]);
+
+    useEffect(() => {
+        try { localStorage.setItem('navCollapsed', String(collapsed)); } catch {}
+        // Re-run highlight after width transition completes
+        const id = setTimeout(() => updateHighlight(activeItem), 190);
+        return () => clearTimeout(id);
+    }, [collapsed, activeItem]);
+
     const handleItemClick = (itemId: string) => {
         setActiveItem(itemId);
         const target = navItems.find(n => n.id === itemId);
@@ -131,8 +160,10 @@ function NavBar({onItemSelect}: NavBarProps) {
         onItemSelect?.(itemId);
     };
 
+    const toggleCollapsed = () => setCollapsed(c => !c);
+
     return (
-        <NavContainer>
+        <NavContainer collapsed={collapsed}>
             <List
                 ref={listRef}
                 sx={{
@@ -142,35 +173,57 @@ function NavBar({onItemSelect}: NavBarProps) {
                 }}
             >
                 <HighlightBox
-                    top={highlightPosition.top}
+                    y={highlightPosition.y}
                     height={highlightPosition.height}
-                    showTransition={showTransition}
+                    show={showTransition}
+                    collapsed={collapsed}
                 />
-                {navItems.map((item) => (
-                    <ListItem
-                        key={item.id}
-                        sx={{p: 0}}
-                    >
-                        <StyledListItemButton
-                            ref={(el) => {
-                                itemRefs.current[item.id] = el;
-                            }}
-                            onClick={() => handleItemClick(item.id)}
-                        >
-                            <Typography
-                                level="body-md"
-                                sx={{
-                                    color: activeItem === item.id ? 'black' : '#2f2f2f',
-                                    fontWeight: activeItem === item.id ? boldFont : normalFont,
-                                    fontSize: '1rem'
-                                }}
+                {navItems.map((item) => {
+                    const Icon = item.icon;
+                    return (
+                        <ListItem key={item.id} sx={{p: 0}}>
+                            <StyledListItemButton
+                                collapsed={collapsed}
+                                ref={(el) => { itemRefs.current[item.id] = el; }}
+                                onPointerDown={() => updateHighlight(item.id)}
+                                onClick={() => handleItemClick(item.id)}
+                                aria-label={collapsed ? item.label : undefined}
+                                title={collapsed ? item.label : undefined}
                             >
-                                {item.label}
-                            </Typography>
-                        </StyledListItemButton>
-                    </ListItem>
-                ))}
+                                <Icon style={{ fontSize: 22, color: activeItem === item.id ? '#000' : '#2f2f2f' }} />
+                                {!collapsed && (
+                                    <Typography
+                                        level="body-md"
+                                        sx={{
+                                            color: activeItem === item.id ? 'black' : '#2f2f2f',
+                                            fontWeight: activeItem === item.id ? boldFont : normalFont,
+                                            fontSize: '1rem',
+                                            whiteSpace: 'nowrap'
+                                        }}
+                                    >
+                                        {item.label}
+                                    </Typography>
+                                )}
+                            </StyledListItemButton>
+                        </ListItem>
+                    );
+                })}
             </List>
+            <Box sx={{ p: 1, borderTop: '1px solid rgba(0,0,0,0.06)' }}>
+                <ListItemButton
+                    onClick={toggleCollapsed}
+                    sx={{
+                        borderRadius: '8px',
+                        justifyContent: 'center',
+                        transition: 'background-color 0.2s',
+                        '&:hover': { backgroundColor: 'rgba(255,255,255,0.35)' }
+                    }}
+                    aria-label={collapsed ? 'Expand navigation' : 'Collapse navigation'}
+                    title={collapsed ? 'Expand' : 'Collapse'}
+                >
+                    {collapsed ? <ChevronRightRoundedIcon /> : <ChevronLeftRoundedIcon />}
+                </ListItemButton>
+            </Box>
         </NavContainer>
     );
 }
