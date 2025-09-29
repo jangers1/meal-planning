@@ -306,26 +306,6 @@ function RecipeBank() {
                 >
                     <Box
                         sx={{
-                            display: "flex",
-                            flexDirection: "row",
-                            justifyContent: "space-between",
-                            alignItems: "center",
-                        }}
-                    >
-                        <Typography level={'h1'}>
-                            Recipes
-                        </Typography>
-                        <Button
-                            variant="outlined"
-                            color="neutral"
-                            startDecorator={<TuneIcon/>}
-                            onClick={() => setSidePanelOpen(prev => !prev)}
-                        >
-                            {sidePanelOpen ? 'Hide filters' : 'Change filters'}
-                        </Button>
-                    </Box>
-                    <Box
-                        sx={{
                             display: 'flex',
                             flexDirection: 'row',
                             gap: 2,
@@ -370,6 +350,14 @@ function RecipeBank() {
                             }}
                         >
                             Create Recipe
+                        </Button>
+                        <Button
+                            variant="outlined"
+                            color="neutral"
+                            startDecorator={<TuneIcon/>}
+                            onClick={() => setSidePanelOpen(prev => !prev)}
+                        >
+                            {sidePanelOpen ? 'Hide filters' : 'Change filters'}
                         </Button>
                     </Box>
 
