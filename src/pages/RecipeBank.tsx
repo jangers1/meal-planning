@@ -1,6 +1,6 @@
 import {Box, Button, Divider, IconButton, Input, Select, Sheet, Typography} from "@mui/joy";
 import Stack from "@mui/joy/Stack";
-import {useMemo, useState} from 'react';
+import {useEffect, useMemo, useRef, useState} from 'react';
 import TuneIcon from '@mui/icons-material/TuneRounded';
 import CloseRounded from '@mui/icons-material/CloseRounded';
 import RecipeCard from "../components/recipes/RecipeCard.tsx";
@@ -18,6 +18,10 @@ function RecipeBank() {
     const [sidePanelOpen, setSidePanelOpen] = useState(false);
     const [searchString, setSearchString] = useState('');
     const drawerWidth = '20%'; // Width of the side panel
+    const [showTopShadow, setShowTopShadow] = useState(false);
+    const [showBottomShadow, setShowBottomShadow] = useState(false);
+    const scrollRef = useRef<HTMLDivElement | null>(null);
+    const rafIdRef = useRef<number | null>(null);
 
     // --- Sample recipe data (placeholder until hooked to backend/store) ---
     const sampleRecipes: RecipeSummary[] = useMemo(() => ([
@@ -228,6 +232,54 @@ function RecipeBank() {
         );
     }, [searchString, sampleRecipes]);
 
+    const updateShadows = () => {
+        const el = scrollRef.current;
+        if (!el) return;
+        const {scrollTop, scrollHeight, clientHeight} = el;
+        const top = scrollTop > 0;
+        const bottom = scrollTop + clientHeight < scrollHeight - 1;
+        setShowTopShadow(prev => prev !== top ? top : prev);
+        setShowBottomShadow(prev => prev !== bottom ? bottom : prev);
+    };
+
+    const scheduleShadowUpdate = () => {
+        if (rafIdRef.current != null) return; // already scheduled
+        rafIdRef.current = requestAnimationFrame(() => {
+            rafIdRef.current = null;
+            updateShadows();
+        });
+    };
+
+    // Recalculate shadows on window resize (layout changes)
+    useEffect(() => {
+        const handleResize = () => updateShadows();
+        window.addEventListener('resize', handleResize);
+        // Slight defer to allow layout to settle
+        const id = requestAnimationFrame(updateShadows);
+        return () => {
+            window.removeEventListener('resize', handleResize);
+            cancelAnimationFrame(id);
+        };
+    }, []);
+
+    const handleScroll = () => scheduleShadowUpdate();
+
+    // Compute accessibility status message
+    const scrollStatusMessage = useMemo(() => {
+        if (showTopShadow && showBottomShadow) return 'More content above and below';
+        if (showTopShadow) return 'More content above';
+        if (showBottomShadow) return 'More content below';
+        return 'Start or end of list';
+    }, [showTopShadow, showBottomShadow]);
+
+    useEffect(() => {
+        return () => {
+            if (rafIdRef.current != null) {
+                cancelAnimationFrame(rafIdRef.current);
+            }
+        };
+    }, []);
+
     return (
         <>
             <Box
@@ -307,31 +359,102 @@ function RecipeBank() {
                             Create Recipe
                         </Button>
                     </Box>
+
+                    {/* Scrollable Recipe Grid */}
                     <Box
                         sx={{
                             flex: 1,
                             borderRadius: 5,
                             backgroundColor: 'var(--joy-palette-neutral-softBg)',
-                            p: 2,
                             mt: 1,
+                            position: 'relative',
                             boxShadow: 'inset 0 0 24px rgba(0, 0, 0, 0.1)',
-                            display: 'grid',
-                            gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-                            gridAutoRows: '210px',
-                            gap: 2,
-                            overflowY: 'auto',
+                            overflow: 'hidden'
                         }}
+                        role="region"
+                        aria-label="Recipe results"
                     >
-                        {filteredRecipes.map(r => (
-                            <RecipeCard key={r.id} name={r.name} tags={r.tags} link={r.link}
-                                        description={r.description}/>
-                        ))}
-                        {!filteredRecipes.length && (
-                            <Box>
-                                <Typography level="title-md">No recipes match that search.</Typography>
+                        <Box
+                            ref={scrollRef}
+                            onScroll={handleScroll}
+                            sx={{
+                                position: 'absolute',
+                                inset: 0,
+                                p: 2,
+                                overflowY: 'auto',
+                                display: 'grid',
+                                gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+                                gridAutoRows: '210px',
+                                gap: 2,
+                                borderRadius: 5
+                            }}
+                        >
+                            {/* Live region for screen readers announcing scrollable status */}
+                            <Box
+                                aria-live="polite"
+                                aria-atomic="true"
+                                sx={{
+                                    position: 'absolute',
+                                    width: 1,
+                                    height: 1,
+                                    margin: -1,
+                                    padding: 0,
+                                    border: 0,
+                                    overflow: 'hidden',
+                                    clip: 'rect(0 0 0 0)',
+                                    whiteSpace: 'nowrap'
+                                }}
+                            >
+                                {scrollStatusMessage}
                             </Box>
-                        )}
+                            {filteredRecipes.map(r => (
+                                <RecipeCard key={r.id} name={r.name} tags={r.tags} link={r.link}
+                                            description={r.description}/>
+                            ))}
+                            {!filteredRecipes.length && (
+                                <Box>
+                                    <Typography level="title-md">No recipes match that search.</Typography>
+                                </Box>
+                            )}
+                        </Box>
+                        {/*Top shadow (always rendered, fade via opacity)*/}
+                        <Box
+                            aria-hidden
+                            sx={{
+                                position: 'absolute',
+                                top: 0,
+                                left: 0,
+                                right: 0,
+                                height: 18,
+                                pointerEvents: 'none',
+                                background: 'linear-gradient(to bottom, rgba(0,0,0,0.18), rgba(0,0,0,0))',
+                                borderTopLeftRadius: 5,
+                                borderTopRightRadius: 5,
+                                zIndex: 2,
+                                opacity: showTopShadow ? 1 : 0,
+                                transition: 'opacity 0.3s ease'
+                            }}
+                        />
+                        {/*Bottom shadow*/}
+                        <Box
+                            aria-hidden
+                            sx={{
+                                position: 'absolute',
+                                bottom: 0,
+                                left: 0,
+                                right: 0,
+                                height: 20,
+                                pointerEvents: 'none',
+                                background: 'linear-gradient(to top, rgba(0,0,0,0.22), rgba(0,0,0,0))',
+                                borderBottomLeftRadius: 5,
+                                borderBottomRightRadius: 5,
+                                zIndex: 2,
+                                opacity: showBottomShadow ? 1 : 0,
+                                transition: 'opacity 0.3s ease'
+                            }}
+                        />
                     </Box>
+                    {/* End Scrollable Recipe Grid */}
                 </Stack>
 
                 {/*Side Panel for Filters*/}
