@@ -283,7 +283,7 @@ function RecipeBank() {
 
     return (
         <>
-            <Box
+            <Sheet
                 sx={{
                     display: 'flex',
                     flexDirection: 'row',
@@ -544,7 +544,7 @@ function RecipeBank() {
                         </>
                     )}
                 </Sheet>
-            </Box>
+            </Sheet>
         </>
     )
 }
