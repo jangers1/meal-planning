@@ -1,10 +1,12 @@
 import NavBar from './components/layout_components/NavBar';
 import {Sheet} from "@mui/joy";
-import RecipeBank from "./pages/RecipeBank.tsx";
-import {Routes, Route, Navigate} from 'react-router-dom';
-import Dashboard from './pages/Dashboard.tsx';
-import MealPlan from './pages/MealPlan.tsx';
-import Pantry from './pages/Pantry.tsx';
+import {Navigate, Route, Routes} from 'react-router-dom';
+import {lazy, Suspense} from 'react';
+
+const Dashboard = lazy(() => import('./pages/Dashboard.tsx'));
+const MealPlan = lazy(() => import('./pages/MealPlan.tsx'));
+const Pantry = lazy(() => import('./pages/Pantry.tsx'));
+const RecipeBank = lazy(() => import('./pages/RecipeBank.tsx'));
 
 function App() {
     return (
@@ -32,13 +34,15 @@ function App() {
                     mx: 4,
                     my: 2
                 }}>
-                    <Routes>
-                        <Route path="/" element={<Dashboard/>} />
-                        <Route path="/meal-plan" element={<MealPlan/>} />
-                        <Route path="/recipes" element={<RecipeBank/>} />
-                        <Route path="/pantry" element={<Pantry/>} />
-                        <Route path="*" element={<Navigate to="/" replace />} />
-                    </Routes>
+                    <Suspense fallback={<div style={{margin: 'auto', fontSize: 14, opacity: 0.7}}>Loading…</div>}>
+                        <Routes>
+                            <Route path="/" element={<Dashboard/>}/>
+                            <Route path="/meal-plan" element={<MealPlan/>}/>
+                            <Route path="/recipes" element={<RecipeBank/>}/>
+                            <Route path="/pantry" element={<Pantry/>}/>
+                            <Route path="*" element={<Navigate to="/" replace/>}/>
+                        </Routes>
+                    </Suspense>
                 </Sheet>
             </Sheet>
         </Sheet>
