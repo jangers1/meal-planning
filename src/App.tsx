@@ -1,20 +1,23 @@
-import Header from './components/layout_components/Header';
 import NavBar from './components/layout_components/NavBar';
-import { Box } from "@mui/joy";
-import Recipe from "./components/ui_components/Recipe.tsx";
+import {Sheet} from "@mui/joy";
+import RecipeBank from "./pages/RecipeBank.tsx";
+import {Routes, Route, Navigate} from 'react-router-dom';
+import Dashboard from './pages/Dashboard.tsx';
+import MealPlan from './pages/MealPlan.tsx';
+import Pantry from './pages/Pantry.tsx';
 
 function App() {
     return (
-        <Box sx={{
+        <Sheet sx={{
             height: '100vh',
             display: 'flex',
             flexDirection: 'column',
             overflow: 'hidden'
         }}>
-            <Box sx={{ flexShrink: 0 }}>
-                <Header user_name="Roshan" />
-            </Box>
-            <Box sx={{
+            {/*<Sheet sx={{flexShrink: 0}}>*/}
+            {/*    <Header user_name="Roshan"/>*/}
+            {/*</Sheet>*/}
+            <Sheet sx={{
                 flex: 1,
                 display: 'flex',
                 overflow: 'hidden'
@@ -22,17 +25,25 @@ function App() {
                 <NavBar
                     onItemSelect={(itemId) => console.log(`Selected item: ${itemId}`)}
                 />
-                <Box sx={{
+                <Sheet sx={{
+                    display: 'flex',
                     flex: 1,
                     overflow: 'auto',
                     backgroundColor: 'var(--secondary-color)',
-                    px: 2,
-                    py: 1,
+                    mx: 4,
+                    my: 2,
+                    p: 2
                 }}>
-                    <Recipe />
-                </Box>
-            </Box>
-        </Box>
+                    <Routes>
+                        <Route path="/" element={<Dashboard/>} />
+                        <Route path="/meal-plan" element={<MealPlan/>} />
+                        <Route path="/recipes" element={<RecipeBank/>} />
+                        <Route path="/pantry" element={<Pantry/>} />
+                        <Route path="*" element={<Navigate to="/" replace />} />
+                    </Routes>
+                </Sheet>
+            </Sheet>
+        </Sheet>
     )
 }
 

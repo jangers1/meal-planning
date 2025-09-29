@@ -1,6 +1,7 @@
-import {useLayoutEffect, useRef, useState} from 'react';
+import {useLayoutEffect, useRef, useState, useEffect} from 'react';
 import {Box, List, ListItem, ListItemButton, Typography} from '@mui/joy';
 import {styled} from '@mui/joy/styles';
+import {useLocation, useNavigate} from 'react-router-dom';
 
 const boldFont = 600;
 const normalFont = 400;
@@ -50,10 +51,10 @@ const HighlightBox = styled(Box, {
 
 // Navigation items data
 const navItems = [
-    {id: 'dashboard', label: 'Dashboard'},
-    {id: 'meal-plan', label: 'Meal Plan'},
-    {id: 'recipes', label: 'Recipes'},
-    {id: 'pantry', label: 'Pantry'}
+    {id: 'dashboard', label: 'Dashboard', path: '/'},
+    {id: 'meal-plan', label: 'Meal Plan', path: '/meal-plan'},
+    {id: 'recipes', label: 'Recipes', path: '/recipes'},
+    {id: 'pantry', label: 'Pantry', path: '/pantry'}
 ];
 
 interface NavBarProps {
@@ -61,7 +62,16 @@ interface NavBarProps {
 }
 
 function NavBar({onItemSelect}: NavBarProps) {
-    const [activeItem, setActiveItem] = useState('dashboard');
+    const location = useLocation();
+    const navigate = useNavigate();
+    const pathToId: Record<string, string> = {
+        '/': 'dashboard',
+        '/meal-plan': 'meal-plan',
+        '/recipes': 'recipes',
+        '/pantry': 'pantry'
+    };
+
+    const [activeItem, setActiveItem] = useState<string>(pathToId[location.pathname] || 'dashboard');
     const [highlightPosition, setHighlightPosition] = useState({top: 0, height: 0});
     const [showTransition, setShowTransition] = useState(false);
     const itemRefs = useRef<{ [key: string]: HTMLElement | null }>({});
@@ -93,8 +103,19 @@ function NavBar({onItemSelect}: NavBarProps) {
         }
     }, [activeItem, showTransition]);
 
+    useEffect(() => {
+        const newActive = pathToId[location.pathname];
+        if (newActive && newActive !== activeItem) {
+            setActiveItem(newActive);
+        }
+    }, [location.pathname]);
+
     const handleItemClick = (itemId: string) => {
         setActiveItem(itemId);
+        const target = navItems.find(n => n.id === itemId);
+        if (target) {
+            navigate(target.path);
+        }
         onItemSelect?.(itemId);
     };
 
