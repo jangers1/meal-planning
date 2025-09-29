@@ -1,4 +1,4 @@
-import {useLayoutEffect, useRef, useState, useEffect} from 'react';
+import {useEffect, useLayoutEffect, useRef, useState} from 'react';
 import {Box, List, ListItem, ListItemButton, Typography} from '@mui/joy';
 import {styled} from '@mui/joy/styles';
 import {useLocation, useNavigate} from 'react-router-dom';
@@ -31,13 +31,11 @@ const StyledListItemButton = styled(ListItemButton)(() => ({
 }));
 
 // Animated highlight box
-const HighlightBox = styled(Box, {
-    shouldForwardProp: (prop) => prop !== 'showTransition'
-})<{ top: number; height: number; showTransition: boolean }>(({
-                                                                  top,
-                                                                  height,
-                                                                  showTransition
-                                                              }) => ({
+const HighlightBox = styled(Box)<{ top: number; height: number; showTransition: boolean }>(({
+                                                                                                top,
+                                                                                                height,
+                                                                                                showTransition
+                                                                                            }) => ({
     position: 'absolute',
     left: '12px',
     right: '12px',
@@ -57,6 +55,25 @@ const navItems = [
     {id: 'pantry', label: 'Pantry', path: '/pantry'}
 ];
 
+// Move pathToId map outside component so its identity is stable
+const pathToId: Record<string, string> = {
+    '/': 'dashboard',
+    '/meal-plan': 'meal-plan',
+    '/recipes': 'recipes',
+    '/pantry': 'pantry'
+};
+
+// Helper to compute active item from a pathname (supports nested routes like /recipes/slug)
+function computeActiveItem(pathname: string): string {
+    if (pathToId[pathname]) return pathToId[pathname];
+    // Try the longest matching prefix (excluding root)
+    const match = Object.keys(pathToId)
+        .filter(p => p !== '/')
+        .sort((a, b) => b.length - a.length)
+        .find(p => pathname.startsWith(p));
+    return match ? pathToId[match] : 'dashboard';
+}
+
 interface NavBarProps {
     onItemSelect?: (itemId: string) => void;
 }
@@ -64,14 +81,8 @@ interface NavBarProps {
 function NavBar({onItemSelect}: NavBarProps) {
     const location = useLocation();
     const navigate = useNavigate();
-    const pathToId: Record<string, string> = {
-        '/': 'dashboard',
-        '/meal-plan': 'meal-plan',
-        '/recipes': 'recipes',
-        '/pantry': 'pantry'
-    };
 
-    const [activeItem, setActiveItem] = useState<string>(pathToId[location.pathname] || 'dashboard');
+    const [activeItem, setActiveItem] = useState<string>(() => computeActiveItem(location.pathname));
     const [highlightPosition, setHighlightPosition] = useState({top: 0, height: 0});
     const [showTransition, setShowTransition] = useState(false);
     const itemRefs = useRef<{ [key: string]: HTMLElement | null }>({});
@@ -104,10 +115,11 @@ function NavBar({onItemSelect}: NavBarProps) {
     }, [activeItem, showTransition]);
 
     useEffect(() => {
-        const newActive = pathToId[location.pathname];
-        if (newActive && newActive !== activeItem) {
-            setActiveItem(newActive);
-        }
+        // Functional update to avoid needing activeItem in deps
+        setActiveItem(prev => {
+            const computed = computeActiveItem(location.pathname);
+            return computed === prev ? prev : computed;
+        });
     }, [location.pathname]);
 
     const handleItemClick = (itemId: string) => {
