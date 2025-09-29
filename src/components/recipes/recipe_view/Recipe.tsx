@@ -6,6 +6,7 @@ import type {JoyColours} from "../../../types.ts";
 import RecipeBox from "../recipe_create/RecipeBox.tsx";
 import ActionButton from "../../ui_components/ActionButton.tsx";
 import EditIcon from '@mui/icons-material/Edit';
+import {DeleteRounded} from "@mui/icons-material";
 
 function Recipe() {
     const [recipeOwner] = useState<string>(("Roshan"));
@@ -15,6 +16,7 @@ function Recipe() {
         {tag: 'Dessert', color: 'success'}
     ]);
     const [servings] = useState<number>(2);
+    const [cookingTime] = useState<number>(45); // in minutes
     const [recipeTitle] = useState<string>('Recipe Title');
     const [recipeDescription] = useState<string>('Recipe Description');
 
@@ -70,6 +72,7 @@ function Recipe() {
                     >
                         <NameDisplay name={recipeOwner}/>
                         <ServingSelector initialServings={servings}/>
+                        <Typography level={'body-md'}>Cooking Time: {cookingTime} mins</Typography>
                     </Box>
                 </Box>
 
@@ -87,22 +90,43 @@ function Recipe() {
                     Placeholder
                 </RecipeBox>
             </Stack>
-            <ActionButton
-                color="warning"
-                variant={'solid'}
-                icon={<EditIcon sx={{fontSize: '20px'}}/>}
-                onClick={() => {
-                    console.log('Save Recipe')
-                }}
-                style={{
-                    position: 'fixed',
+            <Box
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    position: "fixed",
                     bottom: 20,
                     right: 20,
-                    height: '50px',
-                    padding: '0 15px',
-                    boxShadow: '0px 10px 18px rgba(0, 0, 0, 0.5)'
+                    gap: 2
                 }}
-            />
+            >
+                <ActionButton
+                    color="warning"
+                    variant={'solid'}
+                    icon={<EditIcon sx={{fontSize: '20px'}}/>}
+                    onClick={() => {
+                        console.log('Save Recipe')
+                    }}
+                    style={{
+                        height: '50px',
+                        padding: '0 15px',
+                        boxShadow: '0px 10px 18px rgba(0, 0, 0, 0.5)'
+                    }}
+                />
+                <ActionButton
+                    color="danger"
+                    variant={'solid'}
+                    icon={<DeleteRounded sx={{fontSize: '20px'}}/>}
+                    onClick={() => {
+                        console.log('Save Recipe')
+                    }}
+                    style={{
+                        height: '50px',
+                        padding: '0 15px',
+                        boxShadow: '0px 10px 18px rgba(0, 0, 0, 0.5)'
+                    }}
+                />
+            </Box>
         </>
     )
 }

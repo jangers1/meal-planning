@@ -4,7 +4,7 @@ import ChipManager from "./ChipManager.tsx";
 import {type ChipData} from "./ChipCreateForm.tsx";
 import Stack from "@mui/joy/Stack";
 import {CloseRounded} from "@mui/icons-material";
-import ServingSelector from "./ServingSelector.tsx";
+import Typography from "@mui/joy/Typography";
 
 function RecipeHeaderInput() {
     const [recipeTags, setRecipeTags] = useState<ChipData[]>([]);
@@ -20,6 +20,20 @@ function RecipeHeaderInput() {
     ]);
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
+    const [servings, setServings] = useState(2);
+    const [cookingTime, setCookingTime] = useState(30); // in minutes
+    const basicInputs = [
+        {
+            label: 'Serves',
+            value: servings,
+            setValue: setServings
+        },
+        {
+            label: 'Cooking Time (mins)',
+            value: cookingTime,
+            setValue: setCookingTime
+        }
+    ]
 
     const handleNewTagCreated = (newTag: ChipData) => {
         // Add the new tag to available tags if it doesn't already exist
@@ -123,7 +137,34 @@ function RecipeHeaderInput() {
                         availableTags={availableTags}
                         onNewTagCreated={handleNewTagCreated}
                     />
-                    <ServingSelector/>
+
+                    <Stack
+                        direction={'row'}
+                        spacing={2}
+                    >
+                        {basicInputs.map((input, index) => (
+                            <Box key={index} sx={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+                                <Typography
+                                    level="body-md"
+                                    sx={{
+                                        mr: 1
+                                    }}
+                                >
+                                    {input.label}
+                                </Typography>
+                                <Input
+                                    type="number"
+                                    size={'sm'}
+                                    value={input.value}
+                                    onChange={(e) => input.setValue(Number(e.target.value))}
+                                    sx={{
+                                        width: 'auto',
+                                        maxWidth: '60px'
+                                    }}
+                                />
+                            </Box>
+                        ))}
+                    </Stack>
                 </Box>
             </Stack>
         </>
