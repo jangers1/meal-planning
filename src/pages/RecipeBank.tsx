@@ -1,4 +1,4 @@
-import {Box, Button, Divider, IconButton, Input, Select, Sheet, Typography} from "@mui/joy";
+import {Box, Button, Divider, IconButton, Input, Select, Sheet, Switch, Typography} from "@mui/joy";
 import Stack from "@mui/joy/Stack";
 import {useEffect, useMemo, useRef, useState} from 'react';
 import TuneIcon from '@mui/icons-material/TuneRounded';
@@ -17,6 +17,7 @@ interface RecipeSummary {
 function RecipeBank() {
     const [sidePanelOpen, setSidePanelOpen] = useState(false);
     const [searchString, setSearchString] = useState('');
+    const [searchMode, setSearchMode] = useState<'title' | 'tags'>('title');
     const drawerWidth = '20%'; // Width of the side panel
     const [showTopShadow, setShowTopShadow] = useState(false);
     const [showBottomShadow, setShowBottomShadow] = useState(false);
@@ -225,12 +226,12 @@ function RecipeBank() {
     const filteredRecipes = useMemo(() => {
         const term = searchString.trim().toLowerCase();
         if (!term) return sampleRecipes;
-        return sampleRecipes.filter(r =>
-            r.name.toLowerCase().includes(term) ||
-            r.tags.some(t => t.tagName.toLowerCase().includes(term)) ||
-            (r.description?.toLowerCase().includes(term) ?? false)
-        );
-    }, [searchString, sampleRecipes]);
+        if (searchMode === 'title') {
+            return sampleRecipes.filter(r => r.name.toLowerCase().includes(term));
+        } else { // tags mode
+            return sampleRecipes.filter(r => r.tags.some(t => t.tagName.toLowerCase().includes(term)));
+        }
+    }, [searchString, sampleRecipes, searchMode]);
 
     const updateShadows = () => {
         const el = scrollRef.current;
@@ -330,8 +331,17 @@ function RecipeBank() {
                             gap: 2,
                         }}
                     >
+                        <Box sx={{display: 'flex', alignItems: 'center', gap: 1}}>
+                            <Switch
+                                variant={'outlined'}
+                                size={'lg'}
+                                checked={searchMode === 'tags'}
+                                onChange={() => setSearchMode(prev => prev === 'title' ? 'tags' : 'title')}
+                                slotProps={{ input: { 'aria-label': 'Toggle search mode: tags or titles' } }}
+                            />
+                        </Box>
                         <Input
-                            placeholder="Search recipes..."
+                            placeholder={searchMode === 'tags' ? "Search tags..." : "Search recipe titles..."}
                             color="primary"
                             variant={searchString ? "soft" : "outlined"}
                             sx={{
@@ -340,13 +350,16 @@ function RecipeBank() {
                             value={searchString}
                             onChange={(e) => setSearchString(e.target.value)}
                             endDecorator={
-                                <IconButton
-                                    variant={'plain'}
-                                    color={'primary'}
-                                    onClick={() => setSearchString('')}
-                                >
-                                    <CloseRounded/>
-                                </IconButton>
+                                searchString && (
+                                    <IconButton
+                                        variant={'plain'}
+                                        color={'primary'}
+                                        onClick={() => setSearchString('')}
+                                        aria-label="Clear search"
+                                    >
+                                        <CloseRounded/>
+                                    </IconButton>
+                                )
                             }
                         />
                         <Button
@@ -413,7 +426,9 @@ function RecipeBank() {
                             ))}
                             {!filteredRecipes.length && (
                                 <Box>
-                                    <Typography level="title-md">No recipes match that search.</Typography>
+                                    <Typography level="title-md">
+                                        {searchMode === 'tags' ? 'No recipes found with that tag' : 'No recipes found with that title'}
+                                    </Typography>
                                 </Box>
                             )}
                         </Box>
