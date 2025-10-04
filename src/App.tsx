@@ -1,7 +1,8 @@
 import NavBar from './shared/components/layout/NavBar';
-import {Sheet} from "@mui/joy";
+import {Box, Sheet} from "@mui/joy";
 import {Navigate, Route, Routes} from 'react-router-dom';
 import {lazy, Suspense} from 'react';
+import Typography from "@mui/joy/Typography";
 
 const Dashboard = lazy(() => import('./features/dashboard/Dashboard.tsx'));
 const MealPlan = lazy(() => import('./features/meal-plan/MealPlan.tsx'));
@@ -45,6 +46,19 @@ function App() {
                     </Suspense>
                 </Sheet>
             </Sheet>
+
+            {/*Footer*/}
+            <Box>
+                <Typography
+                    sx={{
+                        fontSize: 12,
+                        textAlign: 'end',
+                        px: 2,
+                    }}
+                >
+            {/*        Animated icons by Lordicon.com*/}
+                </Typography>
+            </Box>
         </Sheet>
     )
 }
