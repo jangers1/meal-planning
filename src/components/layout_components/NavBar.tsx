@@ -5,12 +5,11 @@ import {useLocation, useNavigate} from 'react-router-dom';
 import ChevronLeftRoundedIcon from '@mui/icons-material/ChevronLeftRounded';
 import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
 import {useAlerts} from "../ui_components/alerts/AlertProvider.tsx";
-import {LordIcon, type LordIconProps, type IconName} from '../LordIcon.tsx';
+import {type IconName, LordIcon, type LordIconProps} from '../LordIcon.tsx';
 
 const DIMENSIONS = {
     COLLAPSED_WIDTH: '80px',
     EXPANDED_WIDTH: '225px',
-    ICON_SIZE: 26,
 } as const;
 
 const COLORS = {
@@ -87,16 +86,28 @@ const StyledListItemButton = styled(ListItemButton)(() => ({
     },
 }));
 
+// Icon container to keep icons properly positioned during collapse/expand
+const IconContainer = styled(Box)(() => ({
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0, // Prevent shrinking
+    width: '25px', // Fixed width for consistent positioning
+    height: '25px', // Fixed height
+    position: 'relative',
+}));
+
 // New styled component for text container to handle smooth text transitions
 const TextContainer = styled(Box, {
     shouldForwardProp: (prop) => !['collapsed', 'show'].includes(String(prop))
 })<{ collapsed: boolean; show: boolean }>(({collapsed, show}) => ({
-    marginLeft: '12px', // Fixed margin
+    marginLeft: '12px', // Fixed margin from icon
     overflow: 'hidden',
     width: collapsed ? 0 : 'auto',
     opacity: show ? 1 : 0,
     transition: `width ${TRANSITIONS.WIDTH}, opacity ${collapsed ? '100ms' : '200ms'} ${collapsed ? '0ms' : '150ms'}`,
     whiteSpace: 'nowrap',
+    flexShrink: 1, // Allow text to shrink
 }));
 
 const HighlightBox = styled(Box, {
@@ -252,7 +263,7 @@ function NavBar({onItemSelect}: NavBarProps) {
                 iconRef.play();
             }
         });
-    }, [activeItem]); // Removed iconRefs from dependency array
+    }, [activeItem, iconRefs]);
 
     // Handlers
     const handleItemClick = useCallback((itemId: string) => {
@@ -284,12 +295,14 @@ function NavBar({onItemSelect}: NavBarProps) {
                             aria-label={collapsed ? item.label : undefined}
                             title={collapsed ? item.label : undefined}
                         >
-                            <LordIcon
-                                icon={item.icon}
-                                ref={(el: LordIconProps | null) => {
-                                    iconRefs.current[item.id] = el;
-                                }}
-                            />
+                            <IconContainer>
+                                <LordIcon
+                                    icon={item.icon}
+                                    ref={(el: LordIconProps | null) => {
+                                        iconRefs.current[item.id] = el;
+                                    }}
+                                />
+                            </IconContainer>
                             <TextContainer collapsed={collapsed} show={!collapsed}>
                                 <Typography
                                     level="body-lg"
