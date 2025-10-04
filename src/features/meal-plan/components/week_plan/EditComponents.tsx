@@ -1,7 +1,12 @@
 import {Button, Stack, Switch} from "@mui/joy";
 import Typography from "@mui/joy/Typography";
 
-function EditComponents() {
+interface EditComponentsProps {
+    includeWeekend: boolean;
+    onToggleWeekend: (value: boolean) => void;
+}
+
+function EditComponents({includeWeekend, onToggleWeekend}: EditComponentsProps) {
     return (
         <>
             <Stack
@@ -14,6 +19,8 @@ function EditComponents() {
                         <Switch
                             size={'lg'}
                             variant={'outlined'}
+                            checked={includeWeekend}
+                            onChange={(event) => onToggleWeekend(event.target.checked)}
                         />
                     }
                 >

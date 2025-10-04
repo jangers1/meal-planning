@@ -1,4 +1,5 @@
 import {Box, Sheet, Tab, TabList, TabPanel, Tabs} from '@mui/joy';
+import {useState} from 'react';
 import WeekPlan from "./components/week_plan/WeekPlan.tsx";
 import SearchComponents from "./components/week_plan/SearchComponents.tsx";
 import EditComponents from "./components/week_plan/EditComponents.tsx";
@@ -7,6 +8,7 @@ import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import SaveIcon from '@mui/icons-material/Save';
 
 function MealPlan() {
+    const [includeWeekend, setIncludeWeekend] = useState(true);
 
     return (
         <Sheet
@@ -25,7 +27,7 @@ function MealPlan() {
                     <Tab color={'neutral'}>Month Overview</Tab>
                 </TabList>
                 <TabPanel value={0} sx={{p: 0}}>
-                    <WeekPlan/>
+                    <WeekPlan includeWeekend={includeWeekend}/>
                     <Box
                         sx={{
                             display: 'flex',
@@ -35,7 +37,10 @@ function MealPlan() {
                         }}
                     >
                         <SearchComponents/>
-                        <EditComponents/>
+                        <EditComponents
+                            includeWeekend={includeWeekend}
+                            onToggleWeekend={setIncludeWeekend}
+                        />
                     </Box><Box
                     sx={{
                         display: 'flex',
