@@ -1,5 +1,5 @@
 import { Box, Tooltip } from '@mui/joy';
-import type { IngredientItemProps } from '../types/ingredient.types';
+import type { IngredientItemProps } from '../../types/ingredient.types';
 
 // Utility function
 const formatMeasure = (quantity: string, measure: string): string => {

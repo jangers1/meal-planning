@@ -1,5 +1,5 @@
 import {Sheet, Tab, TabList, TabPanel, Tabs} from '@mui/joy';
-import WeekPlan from "../components/ui_components/WeekPlan.tsx";
+import WeekPlan from "../../shared/components/ui/WeekPlan.tsx";
 
 function MealPlan() {
 

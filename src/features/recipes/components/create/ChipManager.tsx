@@ -2,7 +2,7 @@ import {useState} from 'react';
 import {Box, Button, Chip, ChipDelete} from '@mui/joy';
 import {AddRounded} from '@mui/icons-material';
 import ChipCreateForm, {type ChipData} from './ChipCreateForm.tsx';
-import {useAlerts} from '../../ui_components/alerts/AlertProvider.tsx';
+import {useAlerts} from '../../../../shared/components/ui/alerts/AlertProvider.tsx';
 
 interface ChipManagerProps {
     chips: ChipData[];

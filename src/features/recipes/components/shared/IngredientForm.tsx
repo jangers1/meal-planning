@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { Autocomplete, Box, Input, Sheet } from '@mui/joy';
 import Stack from '@mui/joy/Stack';
 import { CheckRounded, CloseRounded, DeleteRounded } from '@mui/icons-material';
-import ActionButton from '../../ui_components/ActionButton';
-import type { IngredientFormProps } from '../types/ingredient.types';
+import ActionButton from '../../../../shared/components/ui/ActionButton';
+import type { IngredientFormProps } from '../../types/ingredient.types';
 
 // Utility functions
 const isValidQuantity = (quantity: string): boolean => {

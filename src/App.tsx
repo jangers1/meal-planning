@@ -1,12 +1,12 @@
-import NavBar from './components/layout_components/NavBar';
+import NavBar from './shared/components/layout/NavBar';
 import {Sheet} from "@mui/joy";
 import {Navigate, Route, Routes} from 'react-router-dom';
 import {lazy, Suspense} from 'react';
 
-const Dashboard = lazy(() => import('./pages/Dashboard.tsx'));
-const MealPlan = lazy(() => import('./pages/MealPlan.tsx'));
-const Pantry = lazy(() => import('./pages/Pantry.tsx'));
-const RecipeBank = lazy(() => import('./pages/RecipeBank.tsx'));
+const Dashboard = lazy(() => import('./features/dashboard/Dashboard.tsx'));
+const MealPlan = lazy(() => import('./features/meal-plan/MealPlan.tsx'));
+const Pantry = lazy(() => import('./features/pantry/Pantry.tsx'));
+const RecipeBank = lazy(() => import('./features/recipes/RecipeBank.tsx'));
 
 function App() {
     return (

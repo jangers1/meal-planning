@@ -4,8 +4,8 @@ import {styled} from '@mui/joy/styles';
 import {useLocation, useNavigate} from 'react-router-dom';
 import ChevronLeftRoundedIcon from '@mui/icons-material/ChevronLeftRounded';
 import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
-import {useAlerts} from '../ui_components/alerts/AlertProvider.tsx';
-import {type IconName, LordIcon, type LordIconProps} from '../LordIcon.tsx';
+import {useAlerts} from '../ui/alerts/AlertProvider.tsx';
+import {type IconName, LordIcon, type LordIconProps} from '../ui/LordIcon.tsx';
 
 // Constants
 const DIMENSIONS = {

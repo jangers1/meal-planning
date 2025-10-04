@@ -1,7 +1,6 @@
-import React from 'react';
-import {Box, Chip} from '@mui/joy';
-import type {SxProps} from "@mui/system";
-import type {JoyColours, JoySizes, JoyVariants} from "../../types.ts";
+import {Button, Box} from "@mui/joy";
+import React, {type CSSProperties} from "react";
+import type {JoyColours, JoySizes, JoyVariants} from "../../types/ui.types.ts";
 
 interface ActionButtonProps {
     color: JoyColours;
@@ -10,7 +9,7 @@ interface ActionButtonProps {
     disabled?: boolean;
     size?: JoySizes;
     variant?: JoyVariants;
-    style?: SxProps;
+    style?: CSSProperties;
 }
 
 function ActionButton({
@@ -23,7 +22,7 @@ function ActionButton({
                           style
                       }: ActionButtonProps) {
     return (
-        <Chip
+        <Button
             variant={variant}
             color={color}
             size={size}
@@ -42,7 +41,7 @@ function ActionButton({
             <Box>
                 {icon}
             </Box>
-        </Chip>
+        </Button>
     )
 }
 

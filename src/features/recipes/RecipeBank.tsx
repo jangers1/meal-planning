@@ -3,8 +3,8 @@ import Stack from "@mui/joy/Stack";
 import {useEffect, useMemo, useRef, useState} from 'react';
 import TuneIcon from '@mui/icons-material/TuneRounded';
 import CloseRounded from '@mui/icons-material/CloseRounded';
-import RecipeCard from "../components/recipes/RecipeCard.tsx";
-import type {JoyColours} from '../types.ts';
+import RecipeCard from "./components/RecipeCard.tsx";
+import type {JoyColours} from '../../shared/types/ui.types.ts';
 
 interface RecipeSummary {
     id: string;

@@ -1,7 +1,7 @@
 :root {
     /* Light Theme - Primary Colors */
-    --lavender-web: rgba(232, 225, 239);
-    --mint-green: rgba(215, 224, 253);
+    --lavender-web: rgb(225, 227, 239);
+    --mint-green: rgb(255, 255, 255);
     --tea-green: rgba(216, 253, 227);
     --tea-green-2: rgba(196, 244, 199);
     --cambridge-blue: rgba(155, 178, 145);

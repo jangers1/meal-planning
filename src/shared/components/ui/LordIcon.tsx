@@ -1,9 +1,9 @@
 import {forwardRef, useImperativeHandle, useRef} from 'react';
 import {Player} from '@lordicon/react';
-import book from '../assets/icons/book.json';
-import calender from '../assets/icons/calender.json';
-import chart from '../assets/icons/chart.json';
-import groceryShelf from '../assets/icons/grocery-shelf.json';
+import book from '../../assets/icons/book.json';
+import calender from '../../assets/icons/calender.json';
+import chart from '../../assets/icons/chart.json';
+import groceryShelf from '../../assets/icons/grocery-shelf.json';
 
 // Icon mapping
 const ICON_MAP = {
