@@ -13,7 +13,9 @@ const boldFont = 600;
 const normalFont = 400;
 
 // Styled container for the navigation bar (collapsible)
-const NavContainer = styled(Box, { shouldForwardProp: (prop) => prop !== 'collapsed' })< { collapsed: boolean } >(({ collapsed }) => ({
+const NavContainer = styled(Box, {shouldForwardProp: (prop) => prop !== 'collapsed'})<{
+    collapsed: boolean
+}>(({collapsed}) => ({
     width: collapsed ? '68px' : '200px',
     transition: 'width 300ms cubic-bezier(0.4,0,0.2,1)',
     height: '100%',
@@ -26,7 +28,9 @@ const NavContainer = styled(Box, { shouldForwardProp: (prop) => prop !== 'collap
 }));
 
 // Styled list item button without individual active styling
-const StyledListItemButton = styled(ListItemButton, { shouldForwardProp: (prop) => prop !== 'collapsed' })< { collapsed?: boolean } >(({ collapsed }) => ({
+const StyledListItemButton = styled(ListItemButton, {shouldForwardProp: (prop) => prop !== 'collapsed'})<{
+    collapsed?: boolean
+}>(({collapsed}) => ({
     padding: collapsed ? '12px 16px' : '16px 24px',
     margin: '4px 12px',
     borderRadius: '8px',
@@ -43,7 +47,12 @@ const StyledListItemButton = styled(ListItemButton, { shouldForwardProp: (prop) 
 }));
 
 // Animated highlight box (transform-based for better Chrome perf)
-const HighlightBox = styled(Box, { shouldForwardProp: (prop) => !['y','height','show','collapsed'].includes(String(prop)) })< { y: number; height: number; show: boolean; collapsed: boolean } >(({ y, height, show, collapsed }) => ({
+const HighlightBox = styled(Box, {shouldForwardProp: (prop) => !['y', 'height', 'show', 'collapsed'].includes(String(prop))})<{
+    y: number;
+    height: number;
+    show: boolean;
+    collapsed: boolean
+}>(({y, height, show, collapsed}) => ({
     position: 'absolute',
     left: collapsed ? '8px' : '12px',
     right: collapsed ? '8px' : '12px',
@@ -101,7 +110,10 @@ function NavBar({onItemSelect}: NavBarProps) {
         try {
             const saved = localStorage.getItem('navCollapsed');
             return saved === 'true';
-        } catch { return false; }
+        } catch {
+            // Ignore read errors (private mode / disabled storage)
+            return false;
+        }
     });
     const itemRefs = useRef<{ [key: string]: HTMLElement | null }>({});
     const listRef = useRef<HTMLUListElement>(null);
@@ -115,7 +127,7 @@ function NavBar({onItemSelect}: NavBarProps) {
             const relativeTop = itemRect.top - listRect.top;
             setHighlightPosition(prev => {
                 if (prev.y === relativeTop && prev.height === itemRect.height) return prev;
-                return { y: relativeTop, height: itemRect.height };
+                return {y: relativeTop, height: itemRect.height};
             });
         }
     };
@@ -145,7 +157,10 @@ function NavBar({onItemSelect}: NavBarProps) {
     }, [activeItem]);
 
     useEffect(() => {
-        try { localStorage.setItem('navCollapsed', String(collapsed)); } catch {}
+        try {
+            localStorage.setItem('navCollapsed', String(collapsed));
+        } catch {
+        }
         // Re-run highlight after width transition completes
         const id = setTimeout(() => updateHighlight(activeItem), 190);
         return () => clearTimeout(id);
@@ -184,13 +199,15 @@ function NavBar({onItemSelect}: NavBarProps) {
                         <ListItem key={item.id} sx={{p: 0}}>
                             <StyledListItemButton
                                 collapsed={collapsed}
-                                ref={(el) => { itemRefs.current[item.id] = el; }}
+                                ref={(el) => {
+                                    itemRefs.current[item.id] = el;
+                                }}
                                 onPointerDown={() => updateHighlight(item.id)}
                                 onClick={() => handleItemClick(item.id)}
                                 aria-label={collapsed ? item.label : undefined}
                                 title={collapsed ? item.label : undefined}
                             >
-                                <Icon style={{ fontSize: 22, color: activeItem === item.id ? '#000' : '#2f2f2f' }} />
+                                <Icon style={{fontSize: 22, color: activeItem === item.id ? '#000' : '#2f2f2f'}}/>
                                 {!collapsed && (
                                     <Typography
                                         level="body-md"
@@ -209,19 +226,19 @@ function NavBar({onItemSelect}: NavBarProps) {
                     );
                 })}
             </List>
-            <Box sx={{ p: 1, borderTop: '1px solid rgba(0,0,0,0.06)' }}>
+            <Box sx={{p: 1, borderTop: '1px solid rgba(0,0,0,0.06)'}}>
                 <ListItemButton
                     onClick={toggleCollapsed}
                     sx={{
                         borderRadius: '8px',
                         justifyContent: 'center',
                         transition: 'background-color 0.2s',
-                        '&:hover': { backgroundColor: 'rgba(255,255,255,0.35)' }
+                        '&:hover': {backgroundColor: 'rgba(255,255,255,0.35)'}
                     }}
                     aria-label={collapsed ? 'Expand navigation' : 'Collapse navigation'}
                     title={collapsed ? 'Expand' : 'Collapse'}
                 >
-                    {collapsed ? <ChevronRightRoundedIcon /> : <ChevronLeftRoundedIcon />}
+                    {collapsed ? <ChevronRightRoundedIcon/> : <ChevronLeftRoundedIcon/>}
                 </ListItemButton>
             </Box>
         </NavContainer>
