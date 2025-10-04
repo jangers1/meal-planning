@@ -4,9 +4,10 @@ import {styled} from '@mui/joy/styles';
 import {useLocation, useNavigate} from 'react-router-dom';
 import ChevronLeftRoundedIcon from '@mui/icons-material/ChevronLeftRounded';
 import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
-import {useAlerts} from "../ui_components/alerts/AlertProvider.tsx";
+import {useAlerts} from '../ui_components/alerts/AlertProvider.tsx';
 import {type IconName, LordIcon, type LordIconProps} from '../LordIcon.tsx';
 
+// Constants
 const DIMENSIONS = {
     COLLAPSED_WIDTH: '80px',
     EXPANDED_WIDTH: '225px',
@@ -20,8 +21,9 @@ const COLORS = {
 const TRANSITIONS = {
     WIDTH: '300ms cubic-bezier(0.4,0,0.2,1)',
     HIGHLIGHT: '300ms cubic-bezier(0.33,0.66,0.4,1)',
-    PADDING: '180ms cubic-bezier(0.4,0,0.2,1)',
     BACKGROUND: '0.3s ease',
+    TEXT_OPACITY: '200ms',
+    TEXT_DELAY: '150ms',
     HIGHLIGHT_DELAY: 190,
 } as const;
 
@@ -30,7 +32,7 @@ interface NavItem {
     id: string;
     label: string;
     path: string;
-    icon: IconName; // Use proper IconName type
+    icon: IconName;
 }
 
 interface HighlightPosition {
@@ -43,12 +45,12 @@ interface NavBarProps {
 }
 
 // Navigation configuration
-const NAV_ITEMS: NavItem[] = [
-    {id: 'dashboard', label: 'Dashboard', path: '/', icon: 'chart' as IconName},
-    {id: 'meal-plan', label: 'Meal Plan', path: '/meal-plan', icon: 'calender' as IconName},
-    {id: 'recipes', label: 'Recipes', path: '/recipes', icon: 'book' as IconName},
-    {id: 'pantry', label: 'Pantry', path: '/pantry', icon: 'grocery-shelf' as IconName},
-];
+const NAV_ITEMS: readonly NavItem[] = [
+    {id: 'dashboard', label: 'Dashboard', path: '/', icon: 'chart'},
+    {id: 'meal-plan', label: 'Meal Plan', path: '/meal-plan', icon: 'calender'},
+    {id: 'recipes', label: 'Recipes', path: '/recipes', icon: 'book'},
+    {id: 'pantry', label: 'Pantry', path: '/pantry', icon: 'grocery-shelf'},
+] as const;
 
 const PATH_TO_ID_MAP: Record<string, string> = Object.fromEntries(
     NAV_ITEMS.map(item => [item.path, item.id])
@@ -70,7 +72,6 @@ const NavContainer = styled(Box, {
 }));
 
 const StyledListItemButton = styled(ListItemButton)(() => ({
-    // Keep consistent padding to maintain icon positions
     padding: '12px 16px',
     margin: '4px 12px',
     borderRadius: '8px',
@@ -80,44 +81,36 @@ const StyledListItemButton = styled(ListItemButton)(() => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'flex-start',
-    minHeight: '48px', // Ensure consistent height
+    minHeight: '48px',
     '&:hover': {
         backgroundColor: 'transparent !important',
     },
 }));
 
-// Icon container to keep icons properly positioned during collapse/expand
 const IconContainer = styled(Box)(() => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    flexShrink: 0, // Prevent shrinking
-    width: '25px', // Fixed width for consistent positioning
-    height: '25px', // Fixed height
-    position: 'relative',
+    flexShrink: 0,
+    width: '25px',
+    height: '25px',
 }));
 
-// New styled component for text container to handle smooth text transitions
 const TextContainer = styled(Box, {
     shouldForwardProp: (prop) => !['collapsed', 'show'].includes(String(prop))
 })<{ collapsed: boolean; show: boolean }>(({collapsed, show}) => ({
-    marginLeft: '12px', // Fixed margin from icon
+    marginLeft: '12px',
     overflow: 'hidden',
     width: collapsed ? 0 : 'auto',
     opacity: show ? 1 : 0,
-    transition: `width ${TRANSITIONS.WIDTH}, opacity ${collapsed ? '100ms' : '200ms'} ${collapsed ? '0ms' : '150ms'}`,
+    transition: `width ${TRANSITIONS.WIDTH}, opacity ${collapsed ? '100ms' : TRANSITIONS.TEXT_OPACITY} ${collapsed ? '0ms' : TRANSITIONS.TEXT_DELAY}`,
     whiteSpace: 'nowrap',
-    flexShrink: 1, // Allow text to shrink
+    flexShrink: 1,
 }));
 
 const HighlightBox = styled(Box, {
-    shouldForwardProp: (prop) => !['y', 'height', 'show', 'collapsed'].includes(String(prop))
-})<{
-    y: number;
-    height: number;
-    show: boolean;
-    collapsed: boolean;
-}>(({y, height, show}) => ({
+    shouldForwardProp: (prop) => !['y', 'height', 'show'].includes(String(prop))
+})<{ y: number; height: number; show: boolean }>(({y, height, show}) => ({
     position: 'absolute',
     left: '16px',
     right: '14px',
@@ -134,25 +127,35 @@ const HighlightBox = styled(Box, {
     willChange: 'transform',
 }));
 
+const CollapseButton = styled(ListItemButton)(() => ({
+    borderRadius: '8px',
+    justifyContent: 'center',
+    transition: `background-color ${TRANSITIONS.BACKGROUND}`,
+    minHeight: '40px',
+    '&:hover': {backgroundColor: 'rgba(255,255,255,0.35)'},
+    fontSize: '1.5rem',
+}));
+
 // Utility functions
-const computeActiveItem = (pathname: string): string => {
+const getActiveItemFromPath = (pathname: string): string => {
     if (PATH_TO_ID_MAP[pathname]) {
         return PATH_TO_ID_MAP[pathname];
     }
 
     // Find the longest matching prefix (excluding root)
-    const match = Object.keys(PATH_TO_ID_MAP)
+    const matchingPath = Object.keys(PATH_TO_ID_MAP)
         .filter(path => path !== '/')
         .sort((a, b) => b.length - a.length)
         .find(path => pathname.startsWith(path));
 
-    return match ? PATH_TO_ID_MAP[match] : 'dashboard';
+    return matchingPath ? PATH_TO_ID_MAP[matchingPath] : 'dashboard';
 };
 
 // Custom hooks
-const useLocalStorage = (key: string, defaultValue: boolean) => {
+const useLocalStorageState = (key: string, defaultValue: boolean) => {
     const [value, setValue] = useState<boolean>(() => {
         if (typeof window === 'undefined') return defaultValue;
+
         try {
             const saved = localStorage.getItem(key);
             return saved === 'true';
@@ -166,6 +169,7 @@ const useLocalStorage = (key: string, defaultValue: boolean) => {
     const setStoredValue = useCallback((newValue: boolean | ((prev: boolean) => boolean)) => {
         const valueToStore = typeof newValue === 'function' ? newValue(value) : newValue;
         setValue(valueToStore);
+
         try {
             localStorage.setItem(key, String(valueToStore));
         } catch {
@@ -176,57 +180,74 @@ const useLocalStorage = (key: string, defaultValue: boolean) => {
     return [value, setStoredValue] as const;
 };
 
-const useHighlightPosition = (activeItem: string, collapsed: boolean) => {
+const useHighlightAnimation = (activeItem: string, collapsed: boolean) => {
     const [highlightPosition, setHighlightPosition] = useState<HighlightPosition>({y: 0, height: 0});
     const [showTransition, setShowTransition] = useState(false);
     const itemRefs = useRef<Record<string, HTMLElement | null>>({});
-    const iconRefs = useRef<Record<string, LordIconProps | null>>({});
     const listRef = useRef<HTMLUListElement>(null);
 
-    const updateHighlight = useCallback((itemId: string) => {
+    const updateHighlightPosition = useCallback((itemId: string) => {
         const itemElement = itemRefs.current[itemId];
         const listElement = listRef.current;
 
-        if (itemElement && listElement) {
-            const listRect = listElement.getBoundingClientRect();
-            const itemRect = itemElement.getBoundingClientRect();
-            const relativeTop = itemRect.top - listRect.top;
+        if (!itemElement || !listElement) return;
 
-            setHighlightPosition(prev => {
-                if (prev.y === relativeTop && prev.height === itemRect.height) {
-                    return prev;
-                }
-                return {y: relativeTop, height: itemRect.height};
-            });
-        }
+        const listRect = listElement.getBoundingClientRect();
+        const itemRect = itemElement.getBoundingClientRect();
+        const relativeTop = itemRect.top - listRect.top;
+
+        setHighlightPosition(prev => {
+            if (prev.y === relativeTop && prev.height === itemRect.height) {
+                return prev;
+            }
+            return {y: relativeTop, height: itemRect.height};
+        });
     }, []);
 
+    // Initialize transition animation
     useLayoutEffect(() => {
-        updateHighlight(activeItem);
+        updateHighlightPosition(activeItem);
         if (!showTransition) {
             requestAnimationFrame(() => setShowTransition(true));
         }
-    }, [activeItem, updateHighlight, showTransition]);
+    }, [activeItem, updateHighlightPosition, showTransition]);
 
+    // Handle window resize
     useEffect(() => {
-        const handleResize = () => updateHighlight(activeItem);
+        const handleResize = () => updateHighlightPosition(activeItem);
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
-    }, [activeItem, updateHighlight]);
+    }, [activeItem, updateHighlightPosition]);
 
+    // Update highlight position after collapse/expand animation
     useEffect(() => {
-        const timeoutId = setTimeout(() => updateHighlight(activeItem), TRANSITIONS.HIGHLIGHT_DELAY);
+        const timeoutId = setTimeout(
+            () => updateHighlightPosition(activeItem),
+            TRANSITIONS.HIGHLIGHT_DELAY
+        );
         return () => clearTimeout(timeoutId);
-    }, [collapsed, activeItem, updateHighlight]);
+    }, [collapsed, activeItem, updateHighlightPosition]);
 
     return {
         highlightPosition,
         showTransition,
         itemRefs,
-        iconRefs,
         listRef,
-        updateHighlight,
+        updateHighlightPosition,
     };
+};
+
+const useIconAnimations = (activeItem: string) => {
+    const iconRefs = useRef<Record<string, LordIconProps | null>>({});
+
+    useEffect(() => {
+        const activeIconRef = iconRefs.current[activeItem];
+        if (activeIconRef) {
+            activeIconRef.play();
+        }
+    }, [activeItem]);
+
+    return {iconRefs};
 };
 
 // Main component
@@ -234,52 +255,38 @@ function NavBar({onItemSelect}: NavBarProps) {
     const location = useLocation();
     const navigate = useNavigate();
 
-    const [activeItem, setActiveItem] = useState<string>(() => computeActiveItem(location.pathname));
-    const [collapsed, setCollapsed] = useLocalStorage('navCollapsed', false);
+    const [activeItem, setActiveItem] = useState<string>(() =>
+        getActiveItemFromPath(location.pathname)
+    );
+    const [collapsed, setCollapsed] = useLocalStorageState('navCollapsed', false);
 
-    const {
-        highlightPosition,
-        showTransition,
-        itemRefs,
-        iconRefs,
-        listRef,
-        updateHighlight,
-    } = useHighlightPosition(activeItem, collapsed);
+    const {highlightPosition, showTransition, itemRefs, listRef, updateHighlightPosition} =
+        useHighlightAnimation(activeItem, collapsed);
+    const {iconRefs} = useIconAnimations(activeItem);
 
-    // Update active item based on location
+    // Update active item when route changes
     useEffect(() => {
-        setActiveItem(prev => {
-            const computed = computeActiveItem(location.pathname);
-            return computed === prev ? prev : computed;
-        });
-    }, [location.pathname]);
-
-    // Control icon animations based on active item changes
-    useEffect(() => {
-        NAV_ITEMS.forEach(item => {
-            const iconRef = iconRefs.current[item.id];
-            if (iconRef && item.id === activeItem) {
-                // Only play animation for the active item
-                iconRef.play();
-            }
-        });
-    }, [activeItem, iconRefs]);
-
-    // Handlers
-    const handleItemClick = useCallback((itemId: string) => {
-        setActiveItem(itemId);
-        const targetItem = NAV_ITEMS.find(item => item.id === itemId);
-        if (targetItem) {
-            navigate(targetItem.path);
+        const newActiveItem = getActiveItemFromPath(location.pathname);
+        if (newActiveItem !== activeItem) {
+            setActiveItem(newActiveItem);
         }
+    }, [location.pathname, activeItem]);
+
+    // Event handlers
+    const handleItemClick = useCallback((itemId: string) => {
+        const targetItem = NAV_ITEMS.find(item => item.id === itemId);
+        if (!targetItem) return;
+
+        setActiveItem(itemId);
+        navigate(targetItem.path);
         onItemSelect?.(itemId);
     }, [navigate, onItemSelect]);
 
     const toggleCollapsed = useCallback(() => {
-        setCollapsed((prev: boolean) => !prev);
+        setCollapsed(prev => !prev);
     }, [setCollapsed]);
 
-    // Memoized nav items to prevent unnecessary re-renders
+    // Render nav items
     const navItemElements = useMemo(() =>
             NAV_ITEMS.map((item) => {
                 const isActive = activeItem === item.id;
@@ -287,10 +294,10 @@ function NavBar({onItemSelect}: NavBarProps) {
                 return (
                     <ListItem key={item.id} sx={{p: 0}}>
                         <StyledListItemButton
-                            ref={(el) => {
+                            ref={el => {
                                 itemRefs.current[item.id] = el;
                             }}
-                            onPointerDown={() => updateHighlight(item.id)}
+                            onPointerDown={() => updateHighlightPosition(item.id)}
                             onClick={() => handleItemClick(item.id)}
                             aria-label={collapsed ? item.label : undefined}
                             title={collapsed ? item.label : undefined}
@@ -298,7 +305,7 @@ function NavBar({onItemSelect}: NavBarProps) {
                             <IconContainer>
                                 <LordIcon
                                     icon={item.icon}
-                                    ref={(el: LordIconProps | null) => {
+                                    ref={el => {
                                         iconRefs.current[item.id] = el;
                                     }}
                                 />
@@ -317,44 +324,29 @@ function NavBar({onItemSelect}: NavBarProps) {
                         </StyledListItemButton>
                     </ListItem>
                 );
-            })
-        , [activeItem, collapsed, handleItemClick, updateHighlight, itemRefs, iconRefs]);
+            }),
+        [activeItem, collapsed, handleItemClick, updateHighlightPosition, iconRefs, itemRefs]
+    );
 
     return (
         <NavContainer collapsed={collapsed}>
-            <List
-                ref={listRef}
-                sx={{
-                    flexGrow: 1,
-                    py: 2,
-                    position: 'relative'
-                }}
-            >
+            <List ref={listRef} sx={{flexGrow: 1, py: 2, position: 'relative'}}>
                 <HighlightBox
                     y={highlightPosition.y}
                     height={highlightPosition.height}
                     show={showTransition}
-                    collapsed={collapsed}
                 />
                 {navItemElements}
             </List>
 
             <Box sx={{p: 1, borderTop: '1px solid rgba(0,0,0,0.06)'}}>
-                <ListItemButton
+                <CollapseButton
                     onClick={toggleCollapsed}
-                    sx={{
-                        borderRadius: '8px',
-                        justifyContent: 'center',
-                        transition: 'background-color 0.2s',
-                        minHeight: '40px', // Consistent height for collapse button
-                        '&:hover': {backgroundColor: 'rgba(255,255,255,0.35)'},
-                        fontSize: '1.5rem',
-                    }}
                     aria-label={collapsed ? 'Expand navigation' : 'Collapse navigation'}
                     title={collapsed ? 'Expand' : 'Collapse'}
                 >
                     {collapsed ? <ChevronRightRoundedIcon/> : <ChevronLeftRoundedIcon/>}
-                </ListItemButton>
+                </CollapseButton>
             </Box>
         </NavContainer>
     );
