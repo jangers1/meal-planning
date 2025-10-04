@@ -1,6 +1,10 @@
 import {Autocomplete, Button, Input, Stack} from "@mui/joy";
 
-function SearchComponents() {
+interface SearchComponentsProps {
+    onCreateGeneric: () => void;
+}
+
+function SearchComponents({ onCreateGeneric }: SearchComponentsProps) {
     return (
         <>
             <Stack
@@ -13,6 +17,7 @@ function SearchComponents() {
                 <Button
                     variant={'outlined'}
                     color={'primary'}
+                    onClick={onCreateGeneric}
                 >
                     Create Generic
                 </Button>
