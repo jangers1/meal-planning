@@ -1,14 +1,11 @@
-import React, {useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState} from 'react';
+import {useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState} from 'react';
 import {Box, List, ListItem, ListItemButton, Typography} from '@mui/joy';
 import {styled} from '@mui/joy/styles';
 import {useLocation, useNavigate} from 'react-router-dom';
-import DashboardRoundedIcon from '@mui/icons-material/DashboardRounded';
-import CalendarMonthRoundedIcon from '@mui/icons-material/CalendarMonthRounded';
-import MenuBookRoundedIcon from '@mui/icons-material/MenuBookRounded';
-import KitchenIcon from '@mui/icons-material/Kitchen';
 import ChevronLeftRoundedIcon from '@mui/icons-material/ChevronLeftRounded';
 import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
 import {useAlerts} from "../ui_components/alerts/AlertProvider.tsx";
+import {LordIcon, type LordIconProps, type IconName} from '../LordIcon.tsx';
 
 const DIMENSIONS = {
     COLLAPSED_WIDTH: '80px',
@@ -34,7 +31,7 @@ interface NavItem {
     id: string;
     label: string;
     path: string;
-    icon: React.ComponentType;
+    icon: IconName; // Use proper IconName type
 }
 
 interface HighlightPosition {
@@ -48,10 +45,10 @@ interface NavBarProps {
 
 // Navigation configuration
 const NAV_ITEMS: NavItem[] = [
-    {id: 'dashboard', label: 'Dashboard', path: '/', icon: DashboardRoundedIcon},
-    {id: 'meal-plan', label: 'Meal Plan', path: '/meal-plan', icon: CalendarMonthRoundedIcon},
-    {id: 'recipes', label: 'Recipes', path: '/recipes', icon: MenuBookRoundedIcon},
-    {id: 'pantry', label: 'Pantry', path: '/pantry', icon: KitchenIcon},
+    {id: 'dashboard', label: 'Dashboard', path: '/', icon: 'chart' as IconName},
+    {id: 'meal-plan', label: 'Meal Plan', path: '/meal-plan', icon: 'calender' as IconName},
+    {id: 'recipes', label: 'Recipes', path: '/recipes', icon: 'book' as IconName},
+    {id: 'pantry', label: 'Pantry', path: '/pantry', icon: 'grocery-shelf' as IconName},
 ];
 
 const PATH_TO_ID_MAP: Record<string, string> = Object.fromEntries(
@@ -88,14 +85,6 @@ const StyledListItemButton = styled(ListItemButton)(() => ({
     '&:hover': {
         backgroundColor: 'transparent !important',
     },
-}));
-
-// New styled component for icon container to handle positioning
-const IconContainer = styled(Box)(() => ({
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'flex-start', // Always keep icons left-aligned
-    flexShrink: 0, // Prevent shrinking
 }));
 
 // New styled component for text container to handle smooth text transitions
@@ -180,6 +169,7 @@ const useHighlightPosition = (activeItem: string, collapsed: boolean) => {
     const [highlightPosition, setHighlightPosition] = useState<HighlightPosition>({y: 0, height: 0});
     const [showTransition, setShowTransition] = useState(false);
     const itemRefs = useRef<Record<string, HTMLElement | null>>({});
+    const iconRefs = useRef<Record<string, LordIconProps | null>>({});
     const listRef = useRef<HTMLUListElement>(null);
 
     const updateHighlight = useCallback((itemId: string) => {
@@ -222,6 +212,7 @@ const useHighlightPosition = (activeItem: string, collapsed: boolean) => {
         highlightPosition,
         showTransition,
         itemRefs,
+        iconRefs,
         listRef,
         updateHighlight,
     };
@@ -239,6 +230,7 @@ function NavBar({onItemSelect}: NavBarProps) {
         highlightPosition,
         showTransition,
         itemRefs,
+        iconRefs,
         listRef,
         updateHighlight,
     } = useHighlightPosition(activeItem, collapsed);
@@ -250,6 +242,17 @@ function NavBar({onItemSelect}: NavBarProps) {
             return computed === prev ? prev : computed;
         });
     }, [location.pathname]);
+
+    // Control icon animations based on active item changes
+    useEffect(() => {
+        NAV_ITEMS.forEach(item => {
+            const iconRef = iconRefs.current[item.id];
+            if (iconRef && item.id === activeItem) {
+                // Only play animation for the active item
+                iconRef.play();
+            }
+        });
+    }, [activeItem]); // Removed iconRefs from dependency array
 
     // Handlers
     const handleItemClick = useCallback((itemId: string) => {
@@ -268,7 +271,6 @@ function NavBar({onItemSelect}: NavBarProps) {
     // Memoized nav items to prevent unnecessary re-renders
     const navItemElements = useMemo(() =>
             NAV_ITEMS.map((item) => {
-                const Icon = item.icon;
                 const isActive = activeItem === item.id;
 
                 return (
@@ -282,16 +284,12 @@ function NavBar({onItemSelect}: NavBarProps) {
                             aria-label={collapsed ? item.label : undefined}
                             title={collapsed ? item.label : undefined}
                         >
-                            <IconContainer>
-                                <Box
-                                    component={Icon}
-                                    sx={{
-                                        fontSize: DIMENSIONS.ICON_SIZE,
-                                        color: isActive ? COLORS.ACTIVE : COLORS.INACTIVE,
-                                        flexShrink: 0, // Prevent icon from shrinking
-                                    }}
-                                />
-                            </IconContainer>
+                            <LordIcon
+                                icon={item.icon}
+                                ref={(el: LordIconProps | null) => {
+                                    iconRefs.current[item.id] = el;
+                                }}
+                            />
                             <TextContainer collapsed={collapsed} show={!collapsed}>
                                 <Typography
                                     level="body-lg"
@@ -307,7 +305,7 @@ function NavBar({onItemSelect}: NavBarProps) {
                     </ListItem>
                 );
             })
-        , [activeItem, collapsed, handleItemClick, updateHighlight, itemRefs]);
+        , [activeItem, collapsed, handleItemClick, updateHighlight, itemRefs, iconRefs]);
 
     return (
         <NavContainer collapsed={collapsed}>
