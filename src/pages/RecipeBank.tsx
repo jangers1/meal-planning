@@ -345,9 +345,6 @@ function RecipeBank() {
                         <Button
                             variant={'outlined'}
                             color={'primary'}
-                            sx={{
-                                borderStyle: 'dashed',
-                            }}
                         >
                             Create Recipe
                         </Button>
