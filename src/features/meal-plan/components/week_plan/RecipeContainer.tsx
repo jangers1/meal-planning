@@ -5,41 +5,30 @@ import EditIcon from '@mui/icons-material/Edit';
 import DoneIcon from '@mui/icons-material/Done';
 import {DeletableItem, DeleteModeProvider} from "../../../../shared/components/ui/DeleteModeProvider.tsx";
 import {useDeleteMode} from "../../../../shared/hooks/useDeleteMode.ts";
-
-const exampleRecipes = [
-    {id: 1, title: 'Spaghetti Bolognese'},
-    {id: 2, title: 'Chicken Curry'},
-    {id: 3, title: 'Beef Stroganoff'},
-    {id: 4, title: 'Vegetable Stir Fry'},
-    {id: 5, title: 'Fish Tacos'},
-    {id: 6, title: 'Lentil Soup'},
-    {id: 7, title: 'Caesar Salad'},
-    {id: 8, title: 'Pancakes'},
-]
-
-interface GenericRecipe {
-    id: number;
-    title: string;
-}
+import { GenericRecipe, Recipe } from "../../types/recipe.types";
 
 interface RecipeContainerProps {
     genericRecipes: GenericRecipe[];
+    recipes: Recipe[];
     onDeleteGeneric?: (id: number) => void;
+    onDeleteRecipe?: (id: number) => void;
 }
 
-function RecipeContainer({genericRecipes, onDeleteGeneric}: RecipeContainerProps) {
+function RecipeContainer({ genericRecipes, recipes, onDeleteGeneric, onDeleteRecipe }: RecipeContainerProps) {
     return (
         <DeleteModeProvider>
             <RecipeContainerInner
                 genericRecipes={genericRecipes}
+                recipes={recipes}
                 onDeleteGeneric={onDeleteGeneric}
+                onDeleteRecipe={onDeleteRecipe}
             />
         </DeleteModeProvider>
     );
 }
 
 // Inner component that uses the delete mode hook
-function RecipeContainerInner({genericRecipes, onDeleteGeneric}: RecipeContainerProps) {
+function RecipeContainerInner({ genericRecipes, recipes, onDeleteGeneric, onDeleteRecipe }: RecipeContainerProps) {
     const {isDeleteMode, setDeleteMode} = useDeleteMode();
 
     const handleEditClick = () => {
@@ -82,15 +71,9 @@ function RecipeContainerInner({genericRecipes, onDeleteGeneric}: RecipeContainer
                             }}
                         >
                             {isDeleteMode ? (
-                                <DoneIcon
-                                    sx={{
-                                        fontSize: '15px'
-                                    }}/>
+                                <DoneIcon sx={{ fontSize: '15px' }} />
                             ) : (
-                                <EditIcon
-                                    sx={{
-                                        fontSize: '15px'
-                                    }}/>
+                                <EditIcon sx={{ fontSize: '15px' }} />
                             )}
                         </IconButton>
                     </Stack>
@@ -114,9 +97,7 @@ function RecipeContainerInner({genericRecipes, onDeleteGeneric}: RecipeContainer
                                     itemId={recipe.id}
                                     onDelete={() => onDeleteGeneric?.(recipe.id)}
                                 >
-                                    <RecipeCardPlan
-                                        title={recipe.title}
-                                    />
+                                    <RecipeCardPlan title={recipe.title} />
                                 </DeletableItem>
                             ))
                         ) : isDeleteMode ? (
@@ -151,7 +132,7 @@ function RecipeContainerInner({genericRecipes, onDeleteGeneric}: RecipeContainer
                     gap: 2
                 }}
             >
-                {exampleRecipes.map(recipe => (
+                {recipes.map(recipe => (
                     <RecipeCardPlan
                         key={recipe.id}
                         title={recipe.title}
@@ -159,8 +140,7 @@ function RecipeContainerInner({genericRecipes, onDeleteGeneric}: RecipeContainer
                 ))}
             </Box>
         </Box>
-    )
-        ;
+    );
 }
 
 export default RecipeContainer;

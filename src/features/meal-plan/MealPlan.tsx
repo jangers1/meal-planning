@@ -21,17 +21,20 @@ import ActionButton from "../../shared/components/ui/ActionButton.tsx";
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import SaveIcon from '@mui/icons-material/Save';
 import RecipeContainer from "./components/week_plan/RecipeContainer.tsx";
-
-interface GenericRecipe {
-    id: number;
-    title: string;
-}
+import { useRecipeManager } from './hooks/useRecipeManager';
 
 function MealPlan() {
     const [includeWeekend, setIncludeWeekend] = useState(true);
-    const [genericRecipes, setGenericRecipes] = useState<GenericRecipe[]>([]);
     const [showCreateDialog, setShowCreateDialog] = useState(false);
     const [newRecipeName, setNewRecipeName] = useState('');
+
+    // Use the centralized recipe management hook
+    const {
+        genericRecipes,
+        recipes,
+        createGenericRecipe,
+        deleteGenericRecipe
+    } = useRecipeManager();
 
     const handleCreateGenericClick = () => {
         setNewRecipeName(`Generic Recipe ${genericRecipes.length + 1}`);
@@ -40,11 +43,7 @@ function MealPlan() {
 
     const handleCreateGeneric = () => {
         if (newRecipeName.trim()) {
-            const newGeneric: GenericRecipe = {
-                id: Date.now(),
-                title: newRecipeName.trim()
-            };
-            setGenericRecipes(prev => [...prev, newGeneric]);
+            createGenericRecipe(newRecipeName);
         }
         setShowCreateDialog(false);
         setNewRecipeName('');
@@ -53,10 +52,6 @@ function MealPlan() {
     const handleCancelCreate = () => {
         setShowCreateDialog(false);
         setNewRecipeName('');
-    };
-
-    const handleDeleteGeneric = (id: number) => {
-        setGenericRecipes(prev => prev.filter(recipe => recipe.id !== id));
     };
 
     return (
@@ -96,7 +91,8 @@ function MealPlan() {
                     </Box>
                     <RecipeContainer
                         genericRecipes={genericRecipes}
-                        onDeleteGeneric={handleDeleteGeneric}
+                        recipes={recipes}
+                        onDeleteGeneric={deleteGenericRecipe}
                     />
                     <Box
                         sx={{
