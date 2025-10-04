@@ -8,6 +8,7 @@ import MenuBookRoundedIcon from '@mui/icons-material/MenuBookRounded';
 import KitchenIcon from '@mui/icons-material/Kitchen';
 import ChevronLeftRoundedIcon from '@mui/icons-material/ChevronLeftRounded';
 import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
+import {useAlerts} from "../ui_components/alerts/AlertProvider.tsx";
 
 const boldFont = 600;
 const normalFont = 400;
@@ -99,6 +100,8 @@ interface NavBarProps {
 }
 
 function NavBar({onItemSelect}: NavBarProps) {
+    const alerts = useAlerts()
+
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -111,7 +114,6 @@ function NavBar({onItemSelect}: NavBarProps) {
             const saved = localStorage.getItem('navCollapsed');
             return saved === 'true';
         } catch {
-            // Ignore read errors (private mode / disabled storage)
             return false;
         }
     });
@@ -160,11 +162,12 @@ function NavBar({onItemSelect}: NavBarProps) {
         try {
             localStorage.setItem('navCollapsed', String(collapsed));
         } catch {
+            alerts.pushError('Failed to save navigation state');
         }
         // Re-run highlight after width transition completes
         const id = setTimeout(() => updateHighlight(activeItem), 190);
         return () => clearTimeout(id);
-    }, [collapsed, activeItem]);
+    }, [collapsed, activeItem, alerts]);
 
     const handleItemClick = (itemId: string) => {
         setActiveItem(itemId);
