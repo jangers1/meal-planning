@@ -1,5 +1,5 @@
 import React from 'react';
-import type { RenderLeafProps } from '../../types/richtext.types';
+import type { RenderLeafProps } from '../../../types/richtext.types.ts';
 
 export function Leaf({ attributes, children, leaf }: RenderLeafProps) {
     let result: React.ReactNode = children;

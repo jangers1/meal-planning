@@ -1,9 +1,9 @@
 import { Box, Button } from '@mui/joy';
 import Stack from '@mui/joy/Stack';
-import RecipeBox from './RecipeBox.tsx';
-import { IngredientForm } from '../shared/IngredientForm.tsx';
-import { IngredientItem } from '../shared/IngredientItem.tsx';
-import { EqualAmountForm } from '../shared/EqualAmountForm.tsx';
+import RecipeBox from '../shared/RecipeBox.tsx';
+import { IngredientForm } from './IngredientForm.tsx';
+import { IngredientItem } from './IngredientItem.tsx';
+import { EqualAmountForm } from './EqualAmountForm.tsx';
 import { useIngredientManager } from '../../hooks/useIngredientManager.ts';
 
 function RecipeIngredientCreate() {

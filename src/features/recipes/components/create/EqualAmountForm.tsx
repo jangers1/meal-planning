@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { Button, Input, Sheet } from '@mui/joy';
 import Stack from '@mui/joy/Stack';
 import { CheckRounded, CloseRounded, DeleteRounded } from '@mui/icons-material';
-import ActionButton from '../../../../shared/components/ui/ActionButton';
-import type { EqualAmountFormProps } from '../../types/ingredient.types';
+import ActionButton from '../../../../shared/components/ui/ActionButton.tsx';
+import type { EqualAmountFormProps } from '../../types/ingredient.types.ts';
 
 export function EqualAmountForm({
     onConfirm,

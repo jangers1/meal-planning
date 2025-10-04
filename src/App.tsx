@@ -7,7 +7,7 @@ import Typography from "@mui/joy/Typography";
 const Dashboard = lazy(() => import('./features/dashboard/Dashboard.tsx'));
 const MealPlan = lazy(() => import('./features/meal-plan/MealPlan.tsx'));
 const Pantry = lazy(() => import('./features/pantry/Pantry.tsx'));
-const RecipeBank = lazy(() => import('./features/recipes/RecipeBank.tsx'));
+const RecipeBank = lazy(() => import('./features/recipe_page/RecipeBank.tsx'));
 
 function App() {
     return (

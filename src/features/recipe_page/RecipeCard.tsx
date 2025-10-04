@@ -2,7 +2,7 @@ import {Avatar, Card, Divider} from "@mui/joy";
 import Typography from "@mui/joy/Typography";
 import Box from "@mui/joy/Box";
 import Chip from '@mui/joy/Chip';
-import type {JoyColours} from '../../../shared/types/ui.types.ts';
+import type {JoyColours} from '../../shared/types/ui.types.ts';
 
 interface RecipeTag {
     tagName: string;

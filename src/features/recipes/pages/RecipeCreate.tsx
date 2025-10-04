@@ -1,9 +1,9 @@
 import {Stack} from "@mui/joy";
-import RecipeHeaderInput from "./RecipeHeaderInput.tsx";
-import RecipeIngredientCreate from "./RecipeIngredientCreate.tsx";
-import RichTextField from "./RichTextField.tsx";
-import RecipeBox from "./RecipeBox.tsx";
-import ActionButton from "../../../../shared/components/ui/ActionButton.tsx";
+import RecipeHeaderInput from "../components/create/RecipeHeaderInput.tsx";
+import RecipeIngredientCreate from "../components/create/RecipeIngredientCreate.tsx";
+import RichTextField from "../components/create/RichTextField.tsx";
+import RecipeBox from "../components/shared/RecipeBox.tsx";
+import ActionButton from "../../../shared/components/ui/ActionButton.tsx";
 import Box from "@mui/joy/Box";
 import {CheckRounded, CloseRounded} from "@mui/icons-material";
 

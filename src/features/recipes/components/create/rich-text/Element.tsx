@@ -1,5 +1,5 @@
 import { Box, Typography } from '@mui/joy';
-import type { RenderElementProps } from '../../types/richtext.types';
+import type { RenderElementProps } from '../../../types/richtext.types.ts';
 
 export function Element({ attributes, children, element }: RenderElementProps) {
     const listStyles = { paddingLeft: 3, marginLeft: 0, listStylePosition: 'outside' as const };

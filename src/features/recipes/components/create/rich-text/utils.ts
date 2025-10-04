@@ -1,5 +1,5 @@
 import { Editor, Element as SlateElement, Transforms } from 'slate';
-import type { CustomText, CustomElement } from '../../types/richtext.types';
+import type { CustomText, CustomElement } from '../../../types/richtext.types.ts';
 
 // Configuration
 export const LIST_TYPES = ['numbered-list', 'bulleted-list'];

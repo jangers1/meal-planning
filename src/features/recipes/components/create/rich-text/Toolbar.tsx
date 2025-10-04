@@ -1,9 +1,9 @@
 import { Box, ButtonGroup, Divider, Option, Select } from '@mui/joy';
 import { useSlate } from 'slate-react';
 import { FormatBold, FormatItalic, FormatListBulleted, FormatListNumbered, FormatUnderlined } from '@mui/icons-material';
-import { MarkButton } from './MarkButton';
-import { BlockButton } from './BlockButton';
-import { isBlockActive, toggleBlock } from './utils';
+import { MarkButton } from './MarkButton.tsx';
+import { BlockButton } from './BlockButton.tsx';
+import { isBlockActive, toggleBlock } from './utils.ts';
 
 export function Toolbar() {
     const editor = useSlate();

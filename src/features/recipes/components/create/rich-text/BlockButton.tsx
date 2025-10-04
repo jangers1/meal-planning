@@ -1,24 +1,23 @@
 import React from 'react';
 import { Button } from '@mui/joy';
 import { useSlate } from 'slate-react';
-import { isMarkActive, toggleMark } from './utils';
-import type { CustomText } from '../../types/richtext.types';
+import { isBlockActive, toggleBlock } from './utils.ts';
 
-interface MarkButtonProps {
-    format: keyof CustomText;
+interface BlockButtonProps {
+    format: string;
     icon: React.ReactNode;
 }
 
-export function MarkButton({ format, icon }: MarkButtonProps) {
+export function BlockButton({ format, icon }: BlockButtonProps) {
     const editor = useSlate();
 
     return (
         <Button
-            variant={isMarkActive(editor, format) ? 'solid' : 'outlined'}
+            variant={isBlockActive(editor, format) ? 'solid' : 'outlined'}
             size="sm"
             onMouseDown={(e) => {
                 e.preventDefault();
-                toggleMark(editor, format);
+                toggleBlock(editor, format);
             }}
         >
             {icon}

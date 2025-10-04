@@ -8,20 +8,15 @@ const MEAL_TYPES = ['Breakfast', 'Lunch', 'Dinner'];
 export default function WeekPlan() {
     return (
         <Box sx={{
-            width: 'min-content',
+            mt: 2,
             overflowX: 'auto',
             padding: 2,
             backgroundColor: 'var(--primary-color)',
-            borderRadius: 'var(--border-radius)'
+            borderRadius: 'var(--border-radius)',
+            display: 'grid',
+            gridTemplateColumns: 'repeat(7, 1fr)',
+            gap: 2
         }}>
-            <Stack
-                direction="row"
-                spacing={2}
-                sx={{
-                    minWidth: 'fit-content',
-                    justifyContent: 'center'
-                }}
-            >
                 {DAYS_OF_WEEK.map((day) => (
                     <Box
                         key={day}
@@ -30,7 +25,7 @@ export default function WeekPlan() {
                             borderRadius: 'var(--border-radius)',
                             backgroundColor: 'var(--secondary-color)',
                             border: '1px solid var(--surface-dark)',
-                            minWidth: '200px',
+                            minWidth: '150px',
                             display: 'flex',
                             flexDirection: 'column',
                             gap: 1,
@@ -74,7 +69,6 @@ export default function WeekPlan() {
                         </Stack>
                     </Box>
                 ))}
-            </Stack>
         </Box>
     );
 }
