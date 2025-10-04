@@ -1,6 +1,6 @@
-import {Button, Box} from "@mui/joy";
+import {Box, Button, Tooltip} from "@mui/joy";
 import React, {type CSSProperties} from "react";
-import type {JoyColours, JoySizes, JoyVariants} from "../../types/ui.types.ts";
+import type {JoyColours, JoySizes, JoyTooltipPositions, JoyVariants} from "../../types/ui.types.ts";
 
 interface ActionButtonProps {
     color: JoyColours;
@@ -10,6 +10,8 @@ interface ActionButtonProps {
     size?: JoySizes;
     variant?: JoyVariants;
     style?: CSSProperties;
+    tooltip?: string;
+    tooltipPosition?: JoyTooltipPositions;
 }
 
 function ActionButton({
@@ -19,9 +21,38 @@ function ActionButton({
                           disabled = false,
                           size = 'lg',
                           variant = 'outlined',
-                          style
+                          style,
+                          tooltip,
+                          tooltipPosition = 'top-end'
                       }: ActionButtonProps) {
-    return (
+    return tooltip ? (
+        <Tooltip
+            title={tooltip}
+            placement={tooltipPosition}
+            variant={'soft'}
+        >
+            <Button
+                variant={variant}
+                color={color}
+                size={size}
+                onClick={onClick}
+                disabled={disabled}
+                sx={{
+                    cursor: 'pointer',
+                    minWidth: 'auto',
+                    px: 0.5,
+                    '& .MuiBox-root': {
+                        display: 'flex'
+                    },
+                    ...style
+                }}
+            >
+                <Box>
+                    {icon}
+                </Box>
+            </Button>
+        </Tooltip>
+    ) : (
         <Button
             variant={variant}
             color={color}
@@ -42,7 +73,7 @@ function ActionButton({
                 {icon}
             </Box>
         </Button>
-    )
+    );
 }
 
 export default ActionButton;
