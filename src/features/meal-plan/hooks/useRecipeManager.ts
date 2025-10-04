@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { GenericRecipe, Recipe, RecipeItem } from '../types/recipe.types';
+import type { GenericRecipe, Recipe, RecipeItem } from '../types/recipe.types';
 
 // Mock data for regular recipes - this could later be replaced with API calls
 const INITIAL_RECIPES: Recipe[] = [

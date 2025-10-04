@@ -5,7 +5,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DoneIcon from '@mui/icons-material/Done';
 import {DeletableItem, DeleteModeProvider} from "../../../../shared/components/ui/DeleteModeProvider.tsx";
 import {useDeleteMode} from "../../../../shared/hooks/useDeleteMode.ts";
-import { GenericRecipe, Recipe } from "../../types/recipe.types";
+import type { GenericRecipe, Recipe } from "../../types/recipe.types";
 
 interface RecipeContainerProps {
     genericRecipes: GenericRecipe[];
