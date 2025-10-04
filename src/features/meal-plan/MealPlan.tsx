@@ -1,7 +1,7 @@
 import {Box, Sheet, Tab, TabList, TabPanel, Tabs} from '@mui/joy';
-import WeekPlan from "./WeekPlan.tsx";
-import SearchComponents from "./SearchComponents.tsx";
-import EditComponents from "./EditComponents.tsx";
+import WeekPlan from "./components/week_plan/WeekPlan.tsx";
+import SearchComponents from "./components/week_plan/SearchComponents.tsx";
+import EditComponents from "./components/week_plan/EditComponents.tsx";
 import ActionButton from "../../shared/components/ui/ActionButton.tsx";
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import SaveIcon from '@mui/icons-material/Save';
