@@ -21,7 +21,7 @@ import ActionButton from "../../shared/components/ui/ActionButton.tsx";
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import SaveIcon from '@mui/icons-material/Save';
 import RecipeContainer from "./components/week_plan/RecipeContainer.tsx";
-import { useRecipeManager } from './hooks/useRecipeManager';
+import useRecipeManager from './hooks/useRecipeManager';
 
 function MealPlan() {
     const [includeWeekend, setIncludeWeekend] = useState(true);
@@ -29,12 +29,13 @@ function MealPlan() {
     const [newRecipeName, setNewRecipeName] = useState('');
 
     // Use the centralized recipe management hook
+    const recipeManager = useRecipeManager();
     const {
         genericRecipes,
         recipes,
         createGenericRecipe,
         deleteGenericRecipe
-    } = useRecipeManager();
+    } = recipeManager;
 
     const handleCreateGenericClick = () => {
         setNewRecipeName(`Generic Recipe ${genericRecipes.length + 1}`);

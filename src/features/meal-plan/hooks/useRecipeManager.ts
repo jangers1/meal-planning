@@ -13,7 +13,26 @@ const INITIAL_RECIPES: Recipe[] = [
     { id: 8, title: 'Pancakes', type: 'recipe' },
 ];
 
-export const useRecipeManager = () => {
+interface UseRecipeManagerReturn {
+    // State
+    genericRecipes: GenericRecipe[];
+    recipes: Recipe[];
+
+    // Generic recipe operations
+    createGenericRecipe: (title: string) => void;
+    deleteGenericRecipe: (id: number) => void;
+    updateGenericRecipe: (id: number, updates: Partial<GenericRecipe>) => void;
+
+    // Regular recipe operations
+    deleteRecipe: (id: number) => void;
+    updateRecipe: (id: number, updates: Partial<Recipe>) => void;
+
+    // Combined operations
+    getAllRecipes: () => RecipeItem[];
+    getRecipeById: (id: number) => RecipeItem | undefined;
+}
+
+const useRecipeManager = (): UseRecipeManagerReturn => {
     const [genericRecipes, setGenericRecipes] = useState<GenericRecipe[]>([]);
     const [recipes, setRecipes] = useState<Recipe[]>(INITIAL_RECIPES);
 
@@ -80,3 +99,5 @@ export const useRecipeManager = () => {
         getRecipeById,
     };
 };
+
+export default useRecipeManager;

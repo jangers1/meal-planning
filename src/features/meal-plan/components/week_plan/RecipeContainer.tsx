@@ -11,24 +11,22 @@ interface RecipeContainerProps {
     genericRecipes: GenericRecipe[];
     recipes: Recipe[];
     onDeleteGeneric?: (id: number) => void;
-    onDeleteRecipe?: (id: number) => void;
 }
 
-function RecipeContainer({ genericRecipes, recipes, onDeleteGeneric, onDeleteRecipe }: RecipeContainerProps) {
+function RecipeContainer({ genericRecipes, recipes, onDeleteGeneric }: RecipeContainerProps) {
     return (
         <DeleteModeProvider>
             <RecipeContainerInner
                 genericRecipes={genericRecipes}
                 recipes={recipes}
                 onDeleteGeneric={onDeleteGeneric}
-                onDeleteRecipe={onDeleteRecipe}
             />
         </DeleteModeProvider>
     );
 }
 
 // Inner component that uses the delete mode hook
-function RecipeContainerInner({ genericRecipes, recipes, onDeleteGeneric, onDeleteRecipe }: RecipeContainerProps) {
+function RecipeContainerInner({ genericRecipes, recipes, onDeleteGeneric }: RecipeContainerProps) {
     const {isDeleteMode, setDeleteMode} = useDeleteMode();
 
     const handleEditClick = () => {
