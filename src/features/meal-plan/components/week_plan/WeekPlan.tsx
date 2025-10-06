@@ -1,10 +1,7 @@
 import Stack from '@mui/joy/Stack';
 import Box from '@mui/joy/Box';
 import Typography from '@mui/joy/Typography';
-
-const ALL_DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-const WEEKDAYS_ONLY = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
-const MEAL_TYPES = ['Breakfast', 'Lunch', 'Dinner'];
+import {ALL_DAYS, WEEKDAYS_ONLY, MEAL_TYPES} from '../../constants';
 
 interface WeekPlanProps {
     includeWeekend: boolean;

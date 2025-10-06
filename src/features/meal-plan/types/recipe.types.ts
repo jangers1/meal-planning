@@ -19,8 +19,3 @@ export interface Recipe extends BaseRecipe {
 export type RecipeItem = GenericRecipe | Recipe;
 
 // Props for recipe-related operations
-export interface RecipeOperations {
-  onDelete: (id: number) => void;
-  onCreate: (title: string) => void;
-  onUpdate?: (id: number, updates: Partial<BaseRecipe>) => void;
-}
