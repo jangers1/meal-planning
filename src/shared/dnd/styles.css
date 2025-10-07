@@ -28,6 +28,8 @@
     transform: scale(var(--scale, 1));
     box-shadow: var(--box-shadow, 0 2px 4px rgba(0, 0, 0, 0.1));
     transition: box-shadow 300ms ease;
+    /* Hint the compositor for smoother animations */
+    will-change: transform, box-shadow;
 }
 
 .dnd-draggable-wrapper > *:active {
@@ -71,6 +73,9 @@
     animation: dnd-pop 600ms cubic-bezier(0.18, 0.67, 0.6, 1.22);
     transform: scale(var(--scale));
     box-shadow: var(--box-shadow);
+    /* Optimize overlay animation */
+    will-change: transform, box-shadow;
+    backface-visibility: hidden;
 }
 
 .dnd-overlay-element * {
