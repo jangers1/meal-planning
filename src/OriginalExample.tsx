@@ -1,6 +1,15 @@
-import {useState, useCallback} from 'react';
+import {useCallback, useState} from 'react';
 import type {DragEndEvent, DragPendingEvent, DropAnimation} from '@dnd-kit/core';
-import {DndContext, DragOverlay, useDndMonitor, useDraggable, useDroppable, PointerSensor, useSensor, useSensors} from '@dnd-kit/core';
+import {
+    DndContext,
+    DragOverlay,
+    PointerSensor,
+    useDndMonitor,
+    useDraggable,
+    useDroppable,
+    useSensor,
+    useSensors
+} from '@dnd-kit/core';
 import {CSS} from '@dnd-kit/utilities';
 import './OriginalExample.css';
 
@@ -54,7 +63,7 @@ const dropAnimationConfig: DropAnimation = {
 };
 
 // Draggable Item Component
-function Draggable({id}: {id: string}) {
+function Draggable({id}: { id: string }) {
     const {attributes, listeners, setNodeRef, isDragging} = useDraggable({id});
 
     const [isPending, setIsPending] = useState(false);
@@ -99,7 +108,7 @@ function Draggable({id}: {id: string}) {
 }
 
 // Droppable Container Component
-function Droppable({id, children}: {id: string; children: React.ReactNode}) {
+function Droppable({id, children}: { id: string; children: React.ReactNode }) {
     const {setNodeRef, isOver} = useDroppable({id});
 
     return (
@@ -110,7 +119,7 @@ function Droppable({id, children}: {id: string; children: React.ReactNode}) {
 }
 
 // Drag Overlay Component
-function DraggableOverlay({activeId}: {activeId: string | null}) {
+function DraggableOverlay({activeId}: { activeId: string | null }) {
     return (
         <DragOverlay dropAnimation={dropAnimationConfig}>
             {activeId ? (
@@ -129,7 +138,7 @@ export default function OriginalExample() {
 
     const containers = ['A', 'B', 'C'];
 
-    const handleDragStart = useCallback(({active}: {active: {id: string | number}}) => {
+    const handleDragStart = useCallback(({active}: { active: { id: string | number } }) => {
         setActiveId(active.id as string);
     }, []);
 
@@ -169,19 +178,19 @@ export default function OriginalExample() {
                 onDragCancel={handleDragCancel}
             >
                 <div style={{marginBottom: '20px'}}>
-                    {parent === null && <Draggable id="draggable" />}
+                    {parent === null && <Draggable id="draggable"/>}
                 </div>
 
                 <div>
                     {containers.map((id) => (
                         <Droppable key={id} id={id}>
                             <h3 style={{margin: '0 0 10px 0'}}>Container {id}</h3>
-                            {parent === id && <Draggable id="draggable" />}
+                            {parent === id && <Draggable id="draggable"/>}
                         </Droppable>
                     ))}
                 </div>
 
-                <DraggableOverlay activeId={activeId} />
+                <DraggableOverlay activeId={activeId}/>
             </DndContext>
         </div>
     );
