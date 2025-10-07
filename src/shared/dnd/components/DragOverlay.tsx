@@ -1,6 +1,7 @@
 import {DragOverlay as DndKitDragOverlay} from '@dnd-kit/core';
 import {dropAnimationConfig} from '../config';
 import '../styles.css';
+import React from "react";
 
 export interface DragOverlayProps {
     children: React.ReactNode;

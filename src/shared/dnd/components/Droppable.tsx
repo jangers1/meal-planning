@@ -1,5 +1,6 @@
 import {useDroppable} from '@dnd-kit/core';
 import '../styles.css';
+import React from "react";
 
 export interface DroppableProps {
     id: string;

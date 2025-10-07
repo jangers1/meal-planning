@@ -1,4 +1,4 @@
-import {useCallback, useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import type {DragPendingEvent} from '@dnd-kit/core';
 import {useDndMonitor, useDraggable} from '@dnd-kit/core';
 import '../styles.css';
@@ -22,6 +22,7 @@ export function Draggable({id, children, className = '', disabled = false, isInS
     const [pendingDelayMs, setPendingDelay] = useState(0);
 
     const handlePending = useCallback((event: DragPendingEvent) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
         const eventId = (event as any)?.active?.id || (event as any).id;
 
         if (eventId === id) {
