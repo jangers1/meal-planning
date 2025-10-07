@@ -1,12 +1,6 @@
 import type {DropAnimation} from '@dnd-kit/core';
 import {CSS} from '@dnd-kit/utilities';
-import {
-    DROP_ANIMATION_DURATION_MS,
-    // DROP_SCALE, // no longer used: we keep parent transform's scale unchanged
-    DRAG_SHADOW,
-    DEFAULT_SHADOW,
-    DRAG_SCALE,
-} from './constants';
+import {DEFAULT_SHADOW, DRAG_SCALE, DRAG_SHADOW, DROP_ANIMATION_DURATION_MS,} from './constants';
 
 /**
  * Drop animation configuration for smooth scale-down and shadow fade
@@ -34,7 +28,7 @@ export const dropAnimationConfig: DropAnimation = {
         const target = (
             dragOverlay.node.querySelector('.dnd-overlay-element > *') ||
             dragOverlay.node.querySelector('button, [data-draggable-element]')
-        ) as HTMLElement | null;
+        );
 
         if (target) {
             // Animate both scale and shadow so the overlay ends at scale 1,
