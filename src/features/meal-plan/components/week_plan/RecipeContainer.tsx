@@ -1,37 +1,43 @@
 import {Box, Divider, IconButton, Stack} from "@mui/joy";
 import Typography from "@mui/joy/Typography";
-import RecipeCardPlan from "./RecipeCard.tsx";
 import EditIcon from '@mui/icons-material/Edit';
 import DoneIcon from '@mui/icons-material/Done';
 import {DeletableItem, DeleteModeProvider} from "../../../../shared/components/ui/DeleteModeProvider.tsx";
 import {useDeleteMode} from "../../../../shared/hooks/useDeleteMode.ts";
-import type { GenericRecipe, Recipe } from "../../types/recipe.types";
+import type {GenericRecipe, Recipe} from "../../types/recipe.types";
+import DraggableRecipeCard from "./DraggableRecipeCard";
 
 interface RecipeContainerProps {
     genericRecipes: GenericRecipe[];
     recipes: Recipe[];
     onDeleteGeneric?: (id: number) => void;
+    getSlotForRecipe: (recipeId: number) => string | undefined;
 }
 
-function RecipeContainer({ genericRecipes, recipes, onDeleteGeneric }: RecipeContainerProps) {
+function RecipeContainer({genericRecipes, recipes, onDeleteGeneric, getSlotForRecipe}: RecipeContainerProps) {
     return (
         <DeleteModeProvider>
             <RecipeContainerInner
                 genericRecipes={genericRecipes}
                 recipes={recipes}
                 onDeleteGeneric={onDeleteGeneric}
+                getSlotForRecipe={getSlotForRecipe}
             />
         </DeleteModeProvider>
     );
 }
 
 // Inner component that uses the delete mode hook
-function RecipeContainerInner({ genericRecipes, recipes, onDeleteGeneric }: RecipeContainerProps) {
+function RecipeContainerInner({genericRecipes, recipes, onDeleteGeneric, getSlotForRecipe}: RecipeContainerProps) {
     const {isDeleteMode, setDeleteMode} = useDeleteMode();
 
     const handleEditClick = () => {
         setDeleteMode(!isDeleteMode);
     };
+
+    // Filter out recipes that are currently in slots
+    const availableGenericRecipes = genericRecipes.filter(recipe => !getSlotForRecipe(recipe.id));
+    const availableRecipes = recipes.filter(recipe => !getSlotForRecipe(recipe.id));
 
     return (
         <Box
@@ -69,9 +75,9 @@ function RecipeContainerInner({ genericRecipes, recipes, onDeleteGeneric }: Reci
                             }}
                         >
                             {isDeleteMode ? (
-                                <DoneIcon sx={{ fontSize: '15px' }} />
+                                <DoneIcon sx={{fontSize: '15px'}}/>
                             ) : (
-                                <EditIcon sx={{ fontSize: '15px' }} />
+                                <EditIcon sx={{fontSize: '15px'}}/>
                             )}
                         </IconButton>
                     </Stack>
@@ -88,14 +94,14 @@ function RecipeContainerInner({ genericRecipes, recipes, onDeleteGeneric }: Reci
                             minHeight: genericRecipes.length === 0 && isDeleteMode ? '60px' : 'auto'
                         }}
                     >
-                        {genericRecipes.length > 0 ? (
-                            genericRecipes.map(recipe => (
+                        {availableGenericRecipes.length > 0 ? (
+                            availableGenericRecipes.map(recipe => (
                                 <DeletableItem
                                     key={recipe.id}
                                     itemId={recipe.id}
                                     onDelete={() => onDeleteGeneric?.(recipe.id)}
                                 >
-                                    <RecipeCardPlan title={recipe.title} />
+                                    <DraggableRecipeCard recipe={recipe}/>
                                 </DeletableItem>
                             ))
                         ) : isDeleteMode ? (
@@ -112,7 +118,21 @@ function RecipeContainerInner({ genericRecipes, recipes, onDeleteGeneric }: Reci
                             >
                                 All generic recipes deleted. Click the checkmark to exit edit mode.
                             </Box>
-                        ) : null}
+                        ) : (
+                            <Box
+                                sx={{
+                                    gridColumn: '1 / -1',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    color: 'text.tertiary',
+                                    fontStyle: 'italic',
+                                    minHeight: '60px'
+                                }}
+                            >
+                                All generic recipes are in use.
+                            </Box>
+                        )}
                     </Box>
                 </>
             )}
@@ -130,12 +150,28 @@ function RecipeContainerInner({ genericRecipes, recipes, onDeleteGeneric }: Reci
                     gap: 2
                 }}
             >
-                {recipes.map(recipe => (
-                    <RecipeCardPlan
-                        key={recipe.id}
-                        title={recipe.title}
-                    />
-                ))}
+                {availableRecipes.length > 0 ? (
+                    availableRecipes.map(recipe => (
+                        <DraggableRecipeCard
+                            key={recipe.id}
+                            recipe={recipe}
+                        />
+                    ))
+                ) : (
+                    <Box
+                        sx={{
+                            gridColumn: '1 / -1',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            color: 'text.tertiary',
+                            fontStyle: 'italic',
+                            minHeight: '60px'
+                        }}
+                    >
+                        All recipes are in use.
+                    </Box>
+                )}
             </Box>
         </Box>
     );

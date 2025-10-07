@@ -4,9 +4,10 @@ import Typography from '@mui/joy/Typography';
 interface EditComponentsProps {
     includeWeekend: boolean;
     onToggleWeekend: (value: boolean) => void;
+    onClearAll: () => void;
 }
 
-export default function EditComponents({includeWeekend, onToggleWeekend}: EditComponentsProps) {
+export default function EditComponents({includeWeekend, onToggleWeekend, onClearAll}: EditComponentsProps) {
     return (
         <Stack direction="row" spacing={2}>
             <Typography
@@ -25,6 +26,7 @@ export default function EditComponents({includeWeekend, onToggleWeekend}: EditCo
             <Button
                 variant="outlined"
                 color="primary"
+                onClick={onClearAll}
                 sx={{
                     borderStyle: 'dashed',
                 }}

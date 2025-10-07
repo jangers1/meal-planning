@@ -4,6 +4,7 @@ import {CssVarsProvider} from '@mui/joy'
 import CssBaseline from '@mui/joy/CssBaseline'
 import App from './App.tsx'
 import './main.css'
+import './shared/dnd/styles.css'
 import {AlertProvider} from './shared/components/ui/alerts/AlertProvider'
 import { BrowserRouter } from 'react-router-dom'
 

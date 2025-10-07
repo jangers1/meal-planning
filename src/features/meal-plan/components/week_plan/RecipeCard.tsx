@@ -21,6 +21,7 @@ export default function RecipeCardPlan({title}: RecipeCardPlanProps) {
                 wordBreak: 'break-word',
                 overflowWrap: 'break-word',
                 whiteSpace: 'normal',
+                position: 'relative',
             }}
         >
             <Typography
@@ -30,6 +31,8 @@ export default function RecipeCardPlan({title}: RecipeCardPlanProps) {
                     wordWrap: 'break-word',
                     wordBreak: 'break-word',
                     overflowWrap: 'break-word',
+                    position: 'relative',
+                    zIndex: 2,
                 }}
             >
                 {title}

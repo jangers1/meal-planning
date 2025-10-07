@@ -6,13 +6,15 @@ interface WeekPlanToolbarProps {
     includeWeekend: boolean;
     onToggleWeekend: (value: boolean) => void;
     onCreateGeneric: () => void;
+    onClearAll: () => void;
 }
 
 export default function WeekPlanToolbar({
-    includeWeekend,
-    onToggleWeekend,
-    onCreateGeneric,
-}: WeekPlanToolbarProps) {
+                                            includeWeekend,
+                                            onToggleWeekend,
+                                            onCreateGeneric,
+                                            onClearAll,
+                                        }: WeekPlanToolbarProps) {
     return (
         <Box
             sx={{
@@ -22,9 +24,12 @@ export default function WeekPlanToolbar({
                 mt: 4,
             }}
         >
-            <SearchComponents onCreateGeneric={onCreateGeneric} />
-            <EditComponents includeWeekend={includeWeekend} onToggleWeekend={onToggleWeekend} />
+            <SearchComponents onCreateGeneric={onCreateGeneric}/>
+            <EditComponents
+                includeWeekend={includeWeekend}
+                onToggleWeekend={onToggleWeekend}
+                onClearAll={onClearAll}
+            />
         </Box>
     );
 }
-

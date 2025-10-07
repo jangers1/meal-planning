@@ -1,13 +1,16 @@
 import Stack from '@mui/joy/Stack';
 import Box from '@mui/joy/Box';
 import Typography from '@mui/joy/Typography';
-import {ALL_DAYS, WEEKDAYS_ONLY, MEAL_TYPES} from '../../constants';
+import {ALL_DAYS, WEEKDAYS_ONLY, MEAL_TYPES, createSlotId} from '../../constants';
+import MealSlot from './MealSlot';
+import type {RecipeItem} from '../../types/recipe.types';
 
 interface WeekPlanProps {
     includeWeekend: boolean;
+    getRecipeInSlot: (slotId: string) => RecipeItem | undefined;
 }
 
-export default function WeekPlan({includeWeekend}: WeekPlanProps) {
+export default function WeekPlan({includeWeekend, getRecipeInSlot}: WeekPlanProps) {
     const daysToShow = includeWeekend ? ALL_DAYS : WEEKDAYS_ONLY;
 
     return (
@@ -46,30 +49,19 @@ export default function WeekPlan({includeWeekend}: WeekPlanProps) {
                         {day}
                     </Typography>
                     <Stack spacing={1}>
-                        {MEAL_TYPES.map((mealType) => (
-                            <Box
-                                key={`${day}-${mealType}`}
-                                sx={{
-                                    textAlign: 'center',
-                                    color: 'rgba(0, 0, 0, 0.2)',
-                                    padding: 1,
-                                    borderRadius: 'var(--border-radius)',
-                                    minHeight: '60px',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    backgroundColor: 'var(--secondary-color)',
-                                    fontSize: '14px',
-                                    fontWeight: 900,
-                                    boxShadow: `
-                                            inset -1px -1px 4px #ffffffb2,
-                                            inset 1px 1px 4px rgba(94, 104, 121, 0.945); 
-                                        `
-                                }}
-                            >
-                                {mealType}
-                            </Box>
-                        ))}
+                        {MEAL_TYPES.map((mealType) => {
+                            const slotId = createSlotId(day, mealType);
+                            const recipe = getRecipeInSlot(slotId);
+
+                            return (
+                                <MealSlot
+                                    key={slotId}
+                                    day={day}
+                                    mealType={mealType}
+                                    recipe={recipe}
+                                />
+                            );
+                        })}
                     </Stack>
                 </Box>
             ))}

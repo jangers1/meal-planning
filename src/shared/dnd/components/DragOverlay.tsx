@@ -1,8 +1,6 @@
 import {DragOverlay as DndKitDragOverlay} from '@dnd-kit/core';
 import {dropAnimationConfig} from '../config';
-import clsx from 'clsx';
 import '../styles.css';
-import React from "react";
 
 export interface DragOverlayProps {
     children: React.ReactNode;
@@ -14,14 +12,14 @@ export interface DragOverlayProps {
  * Shows a visual representation of the dragged item that follows the cursor
  * Handles drop animations automatically
  */
-export function DragOverlay({children, className}: DragOverlayProps) {
-    const overlayClassName = clsx('dnd-overlay-wrapper', className);
+export function DragOverlay({children, className = ''}: DragOverlayProps) {
+    const overlayClasses = ['dnd-overlay-wrapper', className].filter(Boolean).join(' ');
 
     return (
         <DndKitDragOverlay dropAnimation={dropAnimationConfig}>
             {children ? (
-                <div className={overlayClassName}>
-                    <div className="dnd-overlay-element" data-draggable-element>
+                <div className={overlayClasses}>
+                    <div className="dnd-overlay-element">
                         {children}
                     </div>
                 </div>
@@ -29,4 +27,3 @@ export function DragOverlay({children, className}: DragOverlayProps) {
         </DndKitDragOverlay>
     );
 }
-

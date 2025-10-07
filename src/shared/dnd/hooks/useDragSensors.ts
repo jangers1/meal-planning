@@ -1,50 +1,39 @@
-import {useMemo} from 'react';
 import {PointerSensor, useSensor, useSensors} from '@dnd-kit/core';
-import type {DistanceMeasurement} from '@dnd-kit/core';
 import {DRAG_DELAY_MS, DRAG_TOLERANCE_PX} from '../constants';
 
-type DelayConstraint = {
-    delay: number;
-    tolerance: DistanceMeasurement;
-};
+class SmartPointerSensor extends PointerSensor {
+    static activators = PointerSensor.activators;
 
-type DistanceConstraint = {
-    distance: DistanceMeasurement;
-    tolerance?: DistanceMeasurement;
-};
+    constructor(props: any) {
+        const draggableData = props.activeNode?.data?.current;
 
-type PointerActivationConstraint = DelayConstraint | DistanceConstraint | (DelayConstraint & DistanceConstraint);
+        if (draggableData?.isInSlot === true) {
+            props.options = {
+                ...props.options,
+                activationConstraint: {
+                    delay: DRAG_DELAY_MS,
+                    tolerance: DRAG_TOLERANCE_PX,
+                }
+            };
+        }
+
+        super(props);
+    }
+}
 
 export interface UseDragSensorsOptions {
     /**
-     * Whether to enable activation delay (useful when dragging from containers)
+     * Whether to use smart sensor (checks each item's isInSlot data)
      */
-    enableDelay?: boolean;
-    /**
-     * Custom activation constraint (overrides enableDelay)
-     */
-    activationConstraint?: PointerActivationConstraint;
+    useSmart?: boolean;
 }
 
 /**
  * Hook to create configured drag sensors
- * Handles activation constraints for drag delays
+ * Uses SmartPointerSensor by default which checks each draggable's data
  */
-export function useDragSensors({
-    enableDelay = false,
-    activationConstraint,
-}: UseDragSensorsOptions = {}) {
-    const constraint = useMemo<PointerActivationConstraint | undefined>(() => {
-        if (activationConstraint) return activationConstraint;
-        if (enableDelay) {
-            return {delay: DRAG_DELAY_MS, tolerance: DRAG_TOLERANCE_PX};
-        }
-        return undefined;
-    }, [enableDelay, activationConstraint]);
-
+export function useDragSensors({useSmart = true}: UseDragSensorsOptions = {}) {
     return useSensors(
-        useSensor(PointerSensor, {
-            activationConstraint: constraint,
-        })
+        useSensor(useSmart ? SmartPointerSensor : PointerSensor)
     );
 }
