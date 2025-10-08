@@ -34,7 +34,7 @@ export const dropAnimationConfig: DropAnimation = {
         const target = (
             dragOverlay.node.querySelector('.dnd-overlay-element > *') ||
             dragOverlay.node.querySelector('button, [data-draggable-element]')
-        ) as HTMLElement | null;
+        );
 
         if (target) {
             // Animate both scale and shadow so the overlay ends at scale 1,

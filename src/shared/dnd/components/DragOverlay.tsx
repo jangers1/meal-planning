@@ -23,7 +23,6 @@ export function DragOverlay({children, className = '', width, height}: DragOverl
     const effectiveHeight = typeof height === 'number' ? height : (activeNodeRect?.height ?? undefined);
 
     if (typeof window !== 'undefined') {
-        // eslint-disable-next-line no-console
         console.log('[DND] overlay size', {width: effectiveWidth, height: effectiveHeight});
     }
 

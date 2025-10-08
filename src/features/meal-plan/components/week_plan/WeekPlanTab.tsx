@@ -75,26 +75,19 @@ export default function WeekPlanTab({
     );
 
     const handleExportShoppingList = useCallback(() => {
-        console.log('Shopping List Exported');
         // TODO: Implement export logic
     }, []);
 
     const handleSave = useCallback(() => {
-        console.log('Meal Plan Saved');
         // TODO: Implement save logic
     }, []);
 
     const handleDragStart = useCallback((event: DragStartEvent) => {
         const idStr = String(event.active.id);
-        // Debug log start
-        if (typeof window !== 'undefined') {
-            // eslint-disable-next-line no-console
-            console.log('[DND] drag start for', idStr);
-        }
         setActiveId(event.active.id as string);
 
         // Measure size of the active element to lock overlay dimensions
-        const node = document.querySelector(`[data-dnd-id="${idStr}"]`) as HTMLElement | null;
+        const node = document.querySelector(`[data-dnd-id="${idStr}"]`);
         if (node) {
             const rect = node.getBoundingClientRect();
             const size = {
@@ -103,15 +96,7 @@ export default function WeekPlanTab({
             };
             setOverlaySize(size);
             setInitialOverlayWidth(size.width);
-            if (typeof window !== 'undefined') {
-                // eslint-disable-next-line no-console
-                console.log('[DND] measured node rect', size);
-            }
             return;
-        }
-        if (typeof window !== 'undefined') {
-            // eslint-disable-next-line no-console
-            console.warn('[DND] node not found for id', idStr);
         }
 
         // Fallback: try limited info from event
@@ -129,10 +114,6 @@ export default function WeekPlanTab({
         };
         setOverlaySize(size);
         setInitialOverlayWidth(size.width);
-        if (typeof window !== 'undefined') {
-            // eslint-disable-next-line no-console
-            console.log('[DND] measured fallback size', size);
-        }
     }, []);
 
     const handleDragOver = useCallback((event: DragOverEvent) => {
@@ -141,16 +122,12 @@ export default function WeekPlanTab({
         // Detect slot droppables: IDs contain '-' and not recipe-
         const isSlot = overId.includes('-') && !overId.startsWith('recipe-');
         if (isSlot) {
-            const slotNode = document.querySelector(`[data-droppable-id="${overId}"]`) as HTMLElement | null;
+            const slotNode = document.querySelector(`[data-droppable-id="${overId}"]`);
             if (slotNode) {
                 const rect = slotNode.getBoundingClientRect();
                 const newWidth = rect.width > 0 ? rect.width : undefined;
                 if (newWidth && newWidth !== overlaySize.width) {
                     setOverlaySize(prev => ({...prev, width: newWidth}));
-                    if (typeof window !== 'undefined') {
-                        // eslint-disable-next-line no-console
-                        console.log('[DND] adjusted overlay width to slot', newWidth);
-                    }
                 }
                 return;
             }
@@ -158,10 +135,6 @@ export default function WeekPlanTab({
         // Not over slot: revert to initial overlay width if it exists
         if (initialOverlayWidth && initialOverlayWidth !== overlaySize.width) {
             setOverlaySize(prev => ({...prev, width: initialOverlayWidth}));
-            if (typeof window !== 'undefined') {
-                // eslint-disable-next-line no-console
-                console.log('[DND] reverted overlay width', initialOverlayWidth);
-            }
         }
     }, [initialOverlayWidth, overlaySize.width]);
 
