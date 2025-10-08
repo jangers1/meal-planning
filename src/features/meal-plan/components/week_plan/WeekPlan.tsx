@@ -4,14 +4,17 @@ import Typography from '@mui/joy/Typography';
 import {ALL_DAYS, WEEKDAYS_ONLY, MEAL_TYPES, createSlotId} from '../../constants';
 import MealSlot from './MealSlot';
 import type {RecipeItem} from '../../types/recipe.types';
+import {useDeleteMode} from '../../../../shared/hooks/useDeleteMode';
 
 interface WeekPlanProps {
     includeWeekend: boolean;
     getRecipeInSlot: (slotId: string) => RecipeItem | undefined;
+    onRemoveFromSlot: (slotId: string) => void;
 }
 
-export default function WeekPlan({includeWeekend, getRecipeInSlot}: WeekPlanProps) {
+export default function WeekPlan({includeWeekend, getRecipeInSlot, onRemoveFromSlot}: WeekPlanProps) {
     const daysToShow = includeWeekend ? ALL_DAYS : WEEKDAYS_ONLY;
+    const {isDeleteMode} = useDeleteMode();
 
     return (
         <Box sx={{
@@ -59,6 +62,8 @@ export default function WeekPlan({includeWeekend, getRecipeInSlot}: WeekPlanProp
                                     day={day}
                                     mealType={mealType}
                                     recipe={recipe}
+                                    isDeleteMode={isDeleteMode}
+                                    onRemoveFromSlot={() => onRemoveFromSlot(slotId)}
                                 />
                             );
                         })}

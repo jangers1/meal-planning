@@ -10,6 +10,7 @@ import {useCallback, useMemo, useState} from 'react';
 import type {GenericRecipe, Recipe, RecipeItem} from '../../types/recipe.types';
 import {useMealPlanState} from '../../hooks/useMealPlanState';
 import RecipeCardPlan from './RecipeCard';
+import {DeleteModeProvider} from '../../../../shared/components/ui/DeleteModeProvider';
 import '../../../../shared/dnd/styles.css';
 
 interface WeekPlanTabProps {
@@ -36,7 +37,14 @@ export default function WeekPlanTab({
         getSlotForRecipe,
         clearAllSlots,
         removeRecipeFromSlot,
+        slotAssignments,
+        clearWeekendSlots,
     } = useMealPlanState();
+
+    // Check if any slots have recipes
+    const hasRecipesInSlots = useMemo(() => {
+        return slotAssignments.size > 0;
+    }, [slotAssignments]);
 
     // Get all recipes for lookup
     const allRecipes = useMemo<RecipeItem[]>(() => {
@@ -120,6 +128,14 @@ export default function WeekPlanTab({
         setActiveId(null);
     }, []);
 
+    const handleToggleWeekend = useCallback((value: boolean) => {
+        setIncludeWeekend(value);
+        // Clear weekend slots when toggling weekend off
+        if (!value) {
+            clearWeekendSlots();
+        }
+    }, [clearWeekendSlots]);
+
     const defaultRecipeName = `Generic Recipe ${genericRecipes.length + 1}`;
 
     return (
@@ -129,17 +145,21 @@ export default function WeekPlanTab({
             onDragEnd={handleDragEnd}
             onDragCancel={handleDragCancel}
         >
-            <WeekPlan
-                includeWeekend={includeWeekend}
-                getRecipeInSlot={getRecipeInSlot}
-            />
+            <DeleteModeProvider>
+                <WeekPlan
+                    includeWeekend={includeWeekend}
+                    getRecipeInSlot={getRecipeInSlot}
+                    onRemoveFromSlot={removeRecipeFromSlot}
+                />
 
-            <WeekPlanToolbar
-                includeWeekend={includeWeekend}
-                onToggleWeekend={setIncludeWeekend}
-                onCreateGeneric={handleCreateGenericClick}
-                onClearAll={clearAllSlots}
-            />
+                <WeekPlanToolbar
+                    includeWeekend={includeWeekend}
+                    onToggleWeekend={handleToggleWeekend}
+                    onCreateGeneric={handleCreateGenericClick}
+                    onClearAll={clearAllSlots}
+                    hasRecipesInSlots={hasRecipesInSlots}
+                />
+            </DeleteModeProvider>
 
             <RecipeContainer
                 genericRecipes={genericRecipes}

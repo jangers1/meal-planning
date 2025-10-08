@@ -17,6 +17,7 @@ interface UseMealPlanStateReturn {
     isSlotOccupied: (slotId: string) => boolean;
     getSlotForRecipe: (recipeId: number) => string | undefined;
     clearAllSlots: () => void;
+    clearWeekendSlots: () => void;
 }
 
 /**
@@ -70,6 +71,19 @@ export function useMealPlanState(): UseMealPlanStateReturn {
         setSlotAssignments(new Map());
     }, []);
 
+    const clearWeekendSlots = useCallback(() => {
+        setSlotAssignments(prev => {
+            const next = new Map(prev);
+            // Remove all Saturday and Sunday slots
+            for (const slotId of prev.keys()) {
+                if (slotId.startsWith('Saturday-') || slotId.startsWith('Sunday-')) {
+                    next.delete(slotId);
+                }
+            }
+            return next;
+        });
+    }, []);
+
     return {
         slotAssignments,
         assignRecipeToSlot,
@@ -78,5 +92,6 @@ export function useMealPlanState(): UseMealPlanStateReturn {
         isSlotOccupied,
         getSlotForRecipe,
         clearAllSlots,
+        clearWeekendSlots,
     };
 }

@@ -3,14 +3,17 @@ import {Draggable, Droppable} from '../../../../shared/dnd';
 import {createSlotId} from '../../constants';
 import type {RecipeItem} from '../../types/recipe.types';
 import RecipeCardPlan from './RecipeCard';
+import {DeletableItem} from '../../../../shared/components/ui/DeleteModeProvider';
 
 interface MealSlotProps {
     day: string;
     mealType: string;
     recipe?: RecipeItem;
+    isDeleteMode: boolean;
+    onRemoveFromSlot: () => void;
 }
 
-export default function MealSlot({day, mealType, recipe}: MealSlotProps) {
+export default function MealSlot({day, mealType, recipe, isDeleteMode, onRemoveFromSlot}: MealSlotProps) {
     const slotId = createSlotId(day, mealType);
 
     return (
@@ -40,12 +43,36 @@ export default function MealSlot({day, mealType, recipe}: MealSlotProps) {
                         width: '100%',
                         // Add dotted border when hovering
                         transition: 'background-color 120ms ease-out',
+                        '&:hover': {
+                            // Bring the corners in on hover
+                            '--_s': '0px',
+                        },
+                        '@media (prefers-reduced-motion: reduce)': {
+                            transition: 'none',
+                            '&::before': {
+                                transition: 'none',
+                            },
+                        },
                     }}
                 >
                     {recipe ? (
-                        <Draggable id={`recipe-${recipe.id}`} isInSlot={true}>
-                            <RecipeCardPlan title={recipe.title}/>
-                        </Draggable>
+                        isDeleteMode ? (
+                            <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                <DeletableItem
+                                    itemId={recipe.id}
+                                    onDelete={onRemoveFromSlot}
+                                    requireConfirmation={false}
+                                >
+                                    <Draggable id={`recipe-${recipe.id}`} isInSlot={true}>
+                                        <RecipeCardPlan title={recipe.title}/>
+                                    </Draggable>
+                                </DeletableItem>
+                            </Box>
+                        ) : (
+                            <Draggable id={`recipe-${recipe.id}`} isInSlot={true}>
+                                <RecipeCardPlan title={recipe.title}/>
+                            </Draggable>
+                        )
                     ) : (
                         mealType
                     )}

@@ -7,6 +7,7 @@ interface WeekPlanToolbarProps {
     onToggleWeekend: (value: boolean) => void;
     onCreateGeneric: () => void;
     onClearAll: () => void;
+    hasRecipesInSlots: boolean;
 }
 
 export default function WeekPlanToolbar({
@@ -14,6 +15,7 @@ export default function WeekPlanToolbar({
                                             onToggleWeekend,
                                             onCreateGeneric,
                                             onClearAll,
+                                            hasRecipesInSlots,
                                         }: WeekPlanToolbarProps) {
     return (
         <Box
@@ -29,6 +31,7 @@ export default function WeekPlanToolbar({
                 includeWeekend={includeWeekend}
                 onToggleWeekend={onToggleWeekend}
                 onClearAll={onClearAll}
+                hasRecipesInSlots={hasRecipesInSlots}
             />
         </Box>
     );
