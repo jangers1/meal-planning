@@ -88,7 +88,8 @@ function RecipeContainerInner({genericRecipes, recipes, onDeleteGeneric, getSlot
                             mb: 3,
                             display: 'grid',
                             gridAutoRows: 'minmax(60px, auto)',
-                            gridTemplateColumns: 'repeat(auto-fill, minmax(175px, 1fr))',
+                            // Match the slot width (day column minWidth is 150px)
+                            gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
                             gap: 2,
                             alignContent: 'start',
                             minHeight: genericRecipes.length === 0 && isDeleteMode ? '60px' : 'auto'
@@ -146,7 +147,8 @@ function RecipeContainerInner({genericRecipes, recipes, onDeleteGeneric, getSlot
                     mt: 1,
                     display: 'grid',
                     gridAutoRows: 'minmax(60px, auto)',
-                    gridTemplateColumns: 'repeat(auto-fill, minmax(175px, 1fr))',
+                    // Match the slot width (day column minWidth is 150px)
+                    gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
                     gap: 2
                 }}
             >

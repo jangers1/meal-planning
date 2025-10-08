@@ -6,31 +6,21 @@ import React from "react";
 export interface DragOverlayProps {
     children: React.ReactNode;
     className?: string;
-    width?: number;
-    height?: number;
 }
 
 /**
  * Reusable drag overlay component
  * Shows a visual representation of the dragged item that follows the cursor
  * Handles drop animations automatically
+ * Size is automatically measured from the active node
  */
-export function DragOverlay({children, className = '', width, height}: DragOverlayProps) {
+export function DragOverlay({children, className = ''}: DragOverlayProps) {
     const overlayClasses = ['dnd-overlay-wrapper', className].filter(Boolean).join(' ');
     const {activeNodeRect} = useDndContext();
 
-    const effectiveWidth = typeof width === 'number' ? width : (activeNodeRect?.width ?? undefined);
-    const effectiveHeight = typeof height === 'number' ? height : (activeNodeRect?.height ?? undefined);
-
-    if (typeof window !== 'undefined') {
-        console.log('[DND] overlay size', {width: effectiveWidth, height: effectiveHeight});
-    }
-
     const sizeStyle: React.CSSProperties = {
-        width: typeof effectiveWidth === 'number' ? `${effectiveWidth}px` : undefined,
-        height: typeof effectiveHeight === 'number' ? `${effectiveHeight}px` : undefined,
-        minWidth: typeof effectiveWidth === 'number' ? `${effectiveWidth}px` : undefined,
-        minHeight: typeof effectiveHeight === 'number' ? `${effectiveHeight}px` : undefined,
+        width: activeNodeRect?.width ? `${activeNodeRect.width}px` : undefined,
+        height: activeNodeRect?.height ? `${activeNodeRect.height}px` : undefined,
     };
 
     return (

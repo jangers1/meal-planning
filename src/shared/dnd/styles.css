@@ -53,9 +53,9 @@
     animation: dnd-pending-progress linear;
     animation-duration: var(--animation-duration, 500ms);
     background-image: linear-gradient(
-        90deg,
-        #f00d calc(var(--progress) * 1%),
-        transparent calc(var(--progress) * 1% + 1%)
+            90deg,
+            #f00d calc(var(--progress) * 1%),
+            transparent calc(var(--progress) * 1% + 1%)
     );
 }
 
@@ -71,8 +71,6 @@
     /* Respect measured width/height and avoid collapsing */
     display: block;
     box-sizing: border-box;
-    /* Smoothly animate width changes when adjusting to slot size */
-    transition: width 120ms ease-out;
 }
 
 /* Apply animation and styles to overlay children */

@@ -19,7 +19,8 @@ export default function MealSlot({day, mealType, recipe}: MealSlotProps) {
                 sx={{
                     textAlign: 'center',
                     color: recipe ? 'inherit' : 'rgba(0, 0, 0, 0.2)',
-                    padding: 1,
+                    // Add padding to create visual space between slot edge and content
+                    padding: recipe ? '6px' : 1,
                     borderRadius: 'var(--border-radius)',
                     minHeight: '60px',
                     display: 'flex',
@@ -32,6 +33,10 @@ export default function MealSlot({day, mealType, recipe}: MealSlotProps) {
                         inset -1px -1px 4px #ffffffb2,
                         inset 1px 1px 4px rgba(94, 104, 121, 0.945); 
                     `,
+                    // Ensure box sizing includes padding
+                    boxSizing: 'border-box',
+                    // Fill the droppable zone completely
+                    width: '100%',
                 }}
             >
                 {recipe ? (

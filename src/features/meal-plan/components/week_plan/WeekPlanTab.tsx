@@ -3,7 +3,7 @@ import WeekPlanToolbar from './WeekPlanToolbar';
 import RecipeContainer from './RecipeContainer';
 import FloatingActionButtons from './FloatingActionButtons';
 import CreateGenericRecipeDialog from './CreateGenericRecipeDialog';
-import type {DragEndEvent, DragStartEvent, DragOverEvent} from '@dnd-kit/core';
+import type {DragEndEvent, DragStartEvent} from '@dnd-kit/core';
 import {DndContext} from '@dnd-kit/core';
 import {DragOverlay, useDragSensors} from '../../../../shared/dnd';
 import {useCallback, useMemo, useState} from 'react';
@@ -28,8 +28,6 @@ export default function WeekPlanTab({
     const [includeWeekend, setIncludeWeekend] = useState(true);
     const [showCreateDialog, setShowCreateDialog] = useState(false);
     const [activeId, setActiveId] = useState<string | null>(null);
-    const [overlaySize, setOverlaySize] = useState<{width: number | undefined; height: number | undefined}>({width: undefined, height: undefined});
-    const [initialOverlayWidth, setInitialOverlayWidth] = useState<number | undefined>(undefined);
 
     // Meal plan state management
     const {
@@ -83,60 +81,8 @@ export default function WeekPlanTab({
     }, []);
 
     const handleDragStart = useCallback((event: DragStartEvent) => {
-        const idStr = String(event.active.id);
         setActiveId(event.active.id as string);
-
-        // Measure size of the active element to lock overlay dimensions
-        const node = document.querySelector(`[data-dnd-id="${idStr}"]`);
-        if (node) {
-            const rect = node.getBoundingClientRect();
-            const size = {
-                width: rect.width > 0 ? rect.width : undefined,
-                height: rect.height > 0 ? rect.height : undefined,
-            };
-            setOverlaySize(size);
-            setInitialOverlayWidth(size.width);
-            return;
-        }
-
-        // Fallback: try limited info from event
-        const anyActive = event.active as unknown as {
-            node?: HTMLElement;
-            rect?: { current?: { translated?: DOMRect | {width?: number; height?: number}; initial?: DOMRect | {width?: number; height?: number} } };
-        };
-        const fromRect = anyActive?.rect?.current?.translated || anyActive?.rect?.current?.initial;
-        const measuredWidth = (fromRect as DOMRect)?.width ?? anyActive?.node?.offsetWidth;
-        const measuredHeight = (fromRect as DOMRect)?.height ?? anyActive?.node?.offsetHeight;
-
-        const size = {
-            width: typeof measuredWidth === 'number' && measuredWidth > 0 ? measuredWidth : undefined,
-            height: typeof measuredHeight === 'number' && measuredHeight > 0 ? measuredHeight : undefined,
-        };
-        setOverlaySize(size);
-        setInitialOverlayWidth(size.width);
     }, []);
-
-    const handleDragOver = useCallback((event: DragOverEvent) => {
-        const overId = event.over?.id as string | undefined;
-        if (!overId) return;
-        // Detect slot droppables: IDs contain '-' and not recipe-
-        const isSlot = overId.includes('-') && !overId.startsWith('recipe-');
-        if (isSlot) {
-            const slotNode = document.querySelector(`[data-droppable-id="${overId}"]`);
-            if (slotNode) {
-                const rect = slotNode.getBoundingClientRect();
-                const newWidth = rect.width > 0 ? rect.width : undefined;
-                if (newWidth && newWidth !== overlaySize.width) {
-                    setOverlaySize(prev => ({...prev, width: newWidth}));
-                }
-                return;
-            }
-        }
-        // Not over slot: revert to initial overlay width if it exists
-        if (initialOverlayWidth && initialOverlayWidth !== overlaySize.width) {
-            setOverlaySize(prev => ({...prev, width: initialOverlayWidth}));
-        }
-    }, [initialOverlayWidth, overlaySize.width]);
 
     const handleDragEnd = useCallback((event: DragEndEvent) => {
         const {active, over} = event;
@@ -146,7 +92,6 @@ export default function WeekPlanTab({
 
         if (!recipe) {
             setActiveId(null);
-            setOverlaySize({width: undefined, height: undefined});
             return;
         }
 
@@ -169,12 +114,10 @@ export default function WeekPlanTab({
         }
 
         setActiveId(null);
-        setOverlaySize({width: undefined, height: undefined});
     }, [allRecipes, assignRecipeToSlot, getSlotForRecipe, removeRecipeFromSlot]);
 
     const handleDragCancel = useCallback(() => {
         setActiveId(null);
-        setOverlaySize({width: undefined, height: undefined});
     }, []);
 
     const defaultRecipeName = `Generic Recipe ${genericRecipes.length + 1}`;
@@ -183,7 +126,6 @@ export default function WeekPlanTab({
         <DndContext
             sensors={sensors}
             onDragStart={handleDragStart}
-            onDragOver={handleDragOver}
             onDragEnd={handleDragEnd}
             onDragCancel={handleDragCancel}
         >
@@ -218,7 +160,7 @@ export default function WeekPlanTab({
                 defaultName={defaultRecipeName}
             />
 
-            <DragOverlay width={overlaySize.width} height={overlaySize.height}>
+            <DragOverlay>
                 {activeRecipe ? <RecipeCardPlan title={activeRecipe.title}/> : null}
             </DragOverlay>
         </DndContext>
