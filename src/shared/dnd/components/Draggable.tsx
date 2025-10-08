@@ -57,6 +57,8 @@ export function Draggable({id, children, className = '', disabled = false, isInS
             ref={setNodeRef}
             className={wrapperClassName}
             style={wrapperStyle}
+            data-draggable-element
+            data-dnd-id={id}
             {...listeners}
             {...attributes}
         >

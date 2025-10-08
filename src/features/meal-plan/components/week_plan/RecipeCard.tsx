@@ -22,6 +22,7 @@ export default function RecipeCardPlan({title}: RecipeCardPlanProps) {
                 overflowWrap: 'break-word',
                 whiteSpace: 'normal',
                 position: 'relative',
+                width: '100%',
             }}
         >
             <Typography

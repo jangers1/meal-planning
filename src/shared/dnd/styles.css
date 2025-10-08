@@ -13,7 +13,8 @@
    DRAGGABLE BASE WRAPPER
    =========================== */
 .dnd-draggable-wrapper {
-    display: inline-block;
+    display: block; /* Fill grid/flex cell width */
+    width: 100%;
 }
 
 .dnd-draggable-wrapper.dragging {
@@ -27,7 +28,10 @@
     user-select: none;
     transform: scale(var(--scale, 1));
     box-shadow: var(--box-shadow, 0 2px 4px rgba(0, 0, 0, 0.1));
-    transition: box-shadow 300ms ease;
+    transition: box-shadow 120ms ease-out; /* snappier shadow */
+    /* Ensure child fills wrapper */
+    width: 100%;
+    max-width: none;
     /* Hint the compositor for smoother animations */
     will-change: transform, box-shadow;
 }
@@ -59,20 +63,28 @@
    DRAG OVERLAY
    =========================== */
 .dnd-overlay-wrapper {
-    display: inline-block;
+    display: block;
 }
 
 .dnd-overlay-element {
     cursor: grabbing !important;
+    /* Respect measured width/height and avoid collapsing */
+    display: block;
+    box-sizing: border-box;
+    /* Smoothly animate width changes when adjusting to slot size */
+    transition: width 120ms ease-out;
 }
 
 /* Apply animation and styles to overlay children */
 .dnd-overlay-element > * {
     --scale: 1.06;
     --box-shadow: -1px 0 15px 0 rgba(34, 33, 81, 0.01), 0px 15px 15px 0 rgba(34, 33, 81, 0.25);
-    animation: dnd-pop 600ms cubic-bezier(0.18, 0.67, 0.6, 1.22);
+    animation: dnd-pop 150ms ease-out; /* snappy pickup */
     transform: scale(var(--scale));
     box-shadow: var(--box-shadow);
+    /* Ensure child fills the overlay's measured box */
+    width: 100%;
+    max-width: none;
     /* Optimize overlay animation */
     will-change: transform, box-shadow;
     backface-visibility: hidden;
@@ -86,7 +98,7 @@
    DROPPABLE ZONES
    =========================== */
 .dnd-droppable-zone {
-    transition: background-color 200ms ease;
+    transition: background-color 120ms ease-out;
 }
 
 .dnd-droppable-zone.over {

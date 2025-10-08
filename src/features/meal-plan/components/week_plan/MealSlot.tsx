@@ -14,7 +14,7 @@ export default function MealSlot({day, mealType, recipe}: MealSlotProps) {
     const slotId = createSlotId(day, mealType);
 
     return (
-        <Droppable id={slotId}>
+        <Droppable id={slotId} className="meal-slot-droppable">
             <Box
                 sx={{
                     textAlign: 'center',

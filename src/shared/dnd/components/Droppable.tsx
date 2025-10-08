@@ -27,7 +27,7 @@ export function Droppable({id, children, className = '', disabled = false}: Drop
     ].filter(Boolean).join(' ');
 
     return (
-        <div ref={setNodeRef} className={droppableClasses}>
+        <div ref={setNodeRef} className={droppableClasses} data-droppable-id={id}>
             {children}
         </div>
     );
