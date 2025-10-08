@@ -1,4 +1,4 @@
-import NavBar from './shared/components/layout/NavBar';
+import NavBar from "./shared/components/layout/NavBar.tsx";
 import {Box, Sheet} from "@mui/joy";
 import {Navigate, Route, Routes} from 'react-router-dom';
 import {lazy, Suspense} from 'react';
