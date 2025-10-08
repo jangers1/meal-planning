@@ -4,7 +4,7 @@ import React from "react";
 
 export interface DroppableProps {
     id: string;
-    children: React.ReactNode;
+    children: React.ReactNode | ((isOver: boolean) => React.ReactNode);
     className?: string;
     disabled?: boolean;
 }
@@ -13,6 +13,7 @@ export interface DroppableProps {
  * Reusable droppable zone component
  * Creates a drop zone that accepts draggable items
  * Provides visual feedback when items are hovering over it
+ * Children can be a render function that receives isOver state
  */
 export function Droppable({id, children, className = '', disabled = false}: DroppableProps) {
     const {setNodeRef, isOver} = useDroppable({
@@ -22,13 +23,12 @@ export function Droppable({id, children, className = '', disabled = false}: Drop
 
     const droppableClasses = [
         'dnd-droppable-zone',
-        isOver && !disabled && 'over',
         className
     ].filter(Boolean).join(' ');
 
     return (
         <div ref={setNodeRef} className={droppableClasses} data-droppable-id={id}>
-            {children}
+            {typeof children === 'function' ? children(isOver && !disabled) : children}
         </div>
     );
 }

@@ -93,20 +93,24 @@
 }
 
 /* ===========================
-   DROPPABLE ZONES
-   =========================== */
-.dnd-droppable-zone {
-    transition: background-color 120ms ease-out;
-}
-
-.dnd-droppable-zone.over {
-    background-color: rgba(76, 175, 80, 0.15);
-    box-shadow: inset 0 0 0 2px rgba(76, 175, 80, 0.5);
-}
-
-/* ===========================
    ANIMATIONS
    =========================== */
+
+/* Animated corner border effect */
+@keyframes slot-border-animate {
+    from {
+        background-position: calc(100% + 20px) calc(100% + 20px),
+        calc(0% - 20px) calc(100% + 20px),
+        calc(100% + 20px) calc(0% - 20px),
+        calc(0% - 20px) calc(0% - 20px);
+    }
+    to {
+        background-position: 100% 100%,
+        0% 100%,
+        100% 0%,
+        0% 0%;
+    }
+}
 
 /* Pop animation for pickup - scales element up */
 @keyframes dnd-pop {

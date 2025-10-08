@@ -15,38 +15,42 @@ export default function MealSlot({day, mealType, recipe}: MealSlotProps) {
 
     return (
         <Droppable id={slotId} className="meal-slot-droppable">
-            <Box
-                sx={{
-                    textAlign: 'center',
-                    color: recipe ? 'inherit' : 'rgba(0, 0, 0, 0.2)',
-                    // Add padding to create visual space between slot edge and content
-                    padding: recipe ? '6px' : 1,
-                    borderRadius: 'var(--border-radius)',
-                    minHeight: '60px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    backgroundColor: 'var(--secondary-color)',
-                    fontSize: '14px',
-                    fontWeight: recipe ? 400 : 900,
-                    boxShadow: `
-                        inset -1px -1px 4px #ffffffb2,
-                        inset 1px 1px 4px rgba(94, 104, 121, 0.945); 
-                    `,
-                    // Ensure box sizing includes padding
-                    boxSizing: 'border-box',
-                    // Fill the droppable zone completely
-                    width: '100%',
-                }}
-            >
-                {recipe ? (
-                    <Draggable id={`recipe-${recipe.id}`} isInSlot={true}>
-                        <RecipeCardPlan title={recipe.title}/>
-                    </Draggable>
-                ) : (
-                    mealType
-                )}
-            </Box>
+            {(isOver) => (
+                <Box
+                    sx={{
+                        textAlign: 'center',
+                        color: recipe ? 'inherit' : 'rgba(0, 0, 0, 0.2)',
+                        // Add padding to create visual space between slot edge and content
+                        padding: recipe ? '6px' : 1,
+                        borderRadius: 'var(--border-radius)',
+                        minHeight: '60px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        backgroundColor: isOver ? 'rgba(76, 175, 80, 0.2)' : 'var(--secondary-color)',
+                        fontSize: '14px',
+                        fontWeight: recipe ? 400 : 900,
+                        boxShadow: `
+                            inset -1px -1px 4px #ffffffb2,
+                            inset 1px 1px 4px rgba(94, 104, 121, 0.945); 
+                        `,
+                        // Ensure box sizing includes padding
+                        boxSizing: 'border-box',
+                        // Fill the droppable zone completely
+                        width: '100%',
+                        // Add dotted border when hovering
+                        transition: 'background-color 120ms ease-out',
+                    }}
+                >
+                    {recipe ? (
+                        <Draggable id={`recipe-${recipe.id}`} isInSlot={true}>
+                            <RecipeCardPlan title={recipe.title}/>
+                        </Draggable>
+                    ) : (
+                        mealType
+                    )}
+                </Box>
+            )}
         </Droppable>
     );
 }
