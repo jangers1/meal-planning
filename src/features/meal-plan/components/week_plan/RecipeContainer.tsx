@@ -47,6 +47,7 @@ function RecipeContainerInner({genericRecipes, recipes, onDeleteGeneric, getSlot
                 flex: 1,
                 backgroundColor: 'var(--primary-color)',
                 borderRadius: 'var(--border-radius)',
+                boxShadow: 'inset 0 0 24px rgba(0, 0, 0, 0.1)',
                 mt: 2,
                 p: 2,
             }}

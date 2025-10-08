@@ -23,7 +23,7 @@ const TRANSITIONS = {
     HIGHLIGHT: '300ms cubic-bezier(0.33,0.66,0.4,1)',
     BACKGROUND: '0.3s ease',
     TEXT_OPACITY: '200ms',
-    TEXT_DELAY: '150ms',
+    TEXT_DELAY: '100ms',
     HIGHLIGHT_DELAY: 190,
 } as const;
 
@@ -123,7 +123,7 @@ const HighlightBox = styled(Box, {
         : 'none',
     opacity: height ? 1 : 0,
     zIndex: 1,
-    boxShadow: 'inset 2px 2px 12px #c8d0e7, -2px -2px 12px #ffffff',
+    boxShadow: "inset 3px 3px 7px rgba(136, 165, 191, 0.48), inset -3px -3px 7px #FFFFFF",
     willChange: 'transform',
 }));
 

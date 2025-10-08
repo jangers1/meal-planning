@@ -1,7 +1,7 @@
 import Stack from '@mui/joy/Stack';
 import Box from '@mui/joy/Box';
 import Typography from '@mui/joy/Typography';
-import {ALL_DAYS, WEEKDAYS_ONLY, MEAL_TYPES, createSlotId} from '../../constants';
+import {ALL_DAYS, createSlotId, MEAL_TYPES, WEEKDAYS_ONLY} from '../../constants';
 import MealSlot from './MealSlot';
 import type {RecipeItem} from '../../types/recipe.types';
 import {useDeleteMode} from '../../../../shared/hooks/useDeleteMode';
@@ -19,9 +19,11 @@ export default function WeekPlan({includeWeekend, getRecipeInSlot, onRemoveFromS
     return (
         <Box sx={{
             mt: 2,
+            mx: 3,
             overflowX: 'auto',
             padding: 2,
-            backgroundColor: 'var(--primary-color)',
+            backgroundColor: 'var(--joy-palette-neutral-softBg)',
+            boxShadow: "9px 9px 16px rgba(163, 177, 198, 0.6), -9px -9px 16px rgba(255, 255, 255, 0.5)",
             borderRadius: 'var(--border-radius)',
             display: 'grid',
             gridTemplateColumns: `repeat(${daysToShow.length}, 1fr)`,
@@ -33,7 +35,8 @@ export default function WeekPlan({includeWeekend, getRecipeInSlot, onRemoveFromS
                     sx={{
                         padding: 2,
                         borderRadius: 'var(--border-radius)',
-                        backgroundColor: 'var(--secondary-color)',
+                        backgroundColor: 'white',
+                        boxShadow: "3px 3px 8px rgba(163, 177, 198, 0.6), -3px -3px 8px rgba(255, 255, 255, 0.5)",
                         border: '1px solid var(--surface-dark)',
                         minWidth: '150px',
                         display: 'flex',

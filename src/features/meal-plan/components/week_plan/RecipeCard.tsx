@@ -1,5 +1,6 @@
 import {Box} from "@mui/joy";
 import Typography from "@mui/joy/Typography";
+import { gradientGlowBorderStyle } from '../../../../shared/utils/cardStyles.ts';
 
 interface RecipeCardPlanProps {
     title: string;
@@ -9,20 +10,17 @@ export default function RecipeCardPlan({title}: RecipeCardPlanProps) {
     return (
         <Box
             sx={{
-                backgroundColor: 'rgba(104,194,246,0.6)',
+                ...gradientGlowBorderStyle,
                 p: 1,
                 borderRadius: 'var(--border-radius)',
-                border: '1px solid rgb(0,0,0)',
                 height: 'fit-content',
-                minHeight: '48px', // Reduced from 60px since slot padding handles spacing
+                minHeight: '48px',
                 display: 'flex',
                 alignItems: 'center',
                 wordWrap: 'break-word',
                 wordBreak: 'break-word',
                 overflowWrap: 'break-word',
                 whiteSpace: 'normal',
-                position: 'relative',
-                // Fill container width completely
                 width: '100%',
                 boxSizing: 'border-box',
             }}

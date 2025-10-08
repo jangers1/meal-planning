@@ -343,7 +343,7 @@ function RecipeBank() {
                             }
                         />
                         <Button
-                            variant={'outlined'}
+                            variant={'solid'}
                             color={'primary'}
                         >
                             Create Recipe

@@ -27,7 +27,7 @@ export default function EditComponents({includeWeekend, onToggleWeekend, onClear
                 endDecorator={
                     <Switch
                         size="lg"
-                        variant="outlined"
+                        variant="solid"
                         checked={includeWeekend}
                         onChange={(event) => onToggleWeekend(event.target.checked)}
                     />
@@ -36,23 +36,25 @@ export default function EditComponents({includeWeekend, onToggleWeekend, onClear
                 Include Weekend?
             </Typography>
             <Button
-                variant="outlined"
+                variant="soft"
                 color={isDeleteMode ? 'success' : 'primary'}
                 onClick={() => setDeleteMode(!isDeleteMode)}
                 disabled={!hasRecipesInSlots}
                 sx={{
                     borderStyle: 'dashed',
+                    borderColor: hasRecipesInSlots ? 'var(--joy-palette-primary-500)' : 'rgba(0,0,0,0.2)'
                 }}
             >
                 {isDeleteMode ? 'Done Deleting' : 'Toggle Delete'}
             </Button>
             <Button
-                variant="outlined"
+                variant="soft"
                 color="primary"
                 onClick={onClearAll}
                 disabled={!hasRecipesInSlots}
                 sx={{
                     borderStyle: 'dashed',
+                    borderColor: hasRecipesInSlots ? 'var(--joy-palette-primary-500)' : 'rgba(0,0,0,0.2)'
                 }}
             >
                 Clear All

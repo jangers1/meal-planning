@@ -13,7 +13,7 @@ export default function SearchComponents({onCreateGeneric}: SearchComponentsProp
                 width: '65%',
             }}
         >
-            <Button variant="outlined" color="primary" onClick={onCreateGeneric}>
+            <Button variant="solid" color="primary" onClick={onCreateGeneric}>
                 Create Generic
             </Button>
             <Input

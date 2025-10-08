@@ -16,8 +16,8 @@ function MealPlan() {
         >
             <Tabs size="lg" sx={{flex: 1}}>
                 <TabList>
-                    <Tab color="neutral">Week Plan</Tab>
-                    <Tab color="neutral">Month Overview</Tab>
+                    <Tab color="primary">Week Plan</Tab>
+                    <Tab color="primary">Month Overview</Tab>
                 </TabList>
 
                 <TabPanel value={0} sx={{p: 0, display: 'flex', flexDirection: 'column'}}>
