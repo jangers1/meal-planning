@@ -12,12 +12,11 @@ interface BottomBarProps {
 
 const SettingButton = styled(Button)({
     boxShadow: "inset 3px 3px 7px rgba(136, 165, 191, 0.48), inset -3px -3px 7px #FFFFFF",
-    transition: "all {transitionWidth}",
     width: '50px',
     height: '50px',
     '& div': {
         minWidth: '50px',
-        transition: 'transform {transitionWidth}',
+        transition: 'transform 0.2s ease-in-out',
     },
     '&:hover': {
         backgroundColor: 'transparent !important',
