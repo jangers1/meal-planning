@@ -1,10 +1,11 @@
-import {Box, Button, Divider, IconButton, Input, Select, Sheet, Switch, Typography} from "@mui/joy";
+import {Box, Button, Divider, IconButton, Input, Modal, ModalClose, Select, Sheet, Switch, Typography} from "@mui/joy";
 import Stack from "@mui/joy/Stack";
 import {useEffect, useMemo, useRef, useState} from 'react';
 import TuneIcon from '@mui/icons-material/TuneRounded';
 import CloseRounded from '@mui/icons-material/CloseRounded';
 import RecipeCard from "./RecipeCard.tsx";
 import type {JoyColours} from '../../shared/types/ui.types.ts';
+import RecipeCreate from "./RecipeCreate.tsx";
 
 interface RecipeSummary {
     id: string;
@@ -16,6 +17,8 @@ interface RecipeSummary {
 
 function RecipeBank() {
     const [sidePanelOpen, setSidePanelOpen] = useState(false);
+    const [createRecipeOpen, setCreateRecipeOpen] = useState(false);
+    const [isClosing, setIsClosing] = useState(false);
     const [searchString, setSearchString] = useState('');
     const [searchMode, setSearchMode] = useState<'title' | 'tags'>('title');
     const drawerWidth = '20%'; // Width of the side panel
@@ -281,6 +284,14 @@ function RecipeBank() {
         };
     }, []);
 
+    const handleCloseModal = () => {
+        setIsClosing(true);
+        setTimeout(() => {
+            setCreateRecipeOpen(false);
+            setIsClosing(false);
+        }, 400); // Match the animation duration
+    };
+
     return (
         <>
             <Sheet
@@ -317,7 +328,7 @@ function RecipeBank() {
                                 size={'lg'}
                                 checked={searchMode === 'tags'}
                                 onChange={() => setSearchMode(prev => prev === 'title' ? 'tags' : 'title')}
-                                slotProps={{ input: { 'aria-label': 'Toggle search mode: tags or titles' } }}
+                                slotProps={{input: {'aria-label': 'Toggle search mode: tags or titles'}}}
                             />
                         </Box>
                         <Input
@@ -345,6 +356,7 @@ function RecipeBank() {
                         <Button
                             variant={'solid'}
                             color={'primary'}
+                            onClick={() => setCreateRecipeOpen(true)}
                         >
                             Create Recipe
                         </Button>
@@ -530,6 +542,47 @@ function RecipeBank() {
                     )}
                 </Sheet>
             </Sheet>
+
+            {/* Recipe Create Modal */}
+            <Modal
+                open={createRecipeOpen}
+                onClose={handleCloseModal}
+                aria-labelledby="create-recipe-modal"
+                aria-describedby="modal-to-create-a-new-recipe"
+                sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                }}
+                slotProps={{
+                    backdrop: {
+                        sx: {
+                            backdropFilter: 'blur(4px)',
+                            transition: 'backdrop-filter 400ms, opacity 400ms',
+                            opacity: !isClosing ? 1 : 0,
+                        }
+                    }
+                }}
+            >
+                <>
+                    <ModalClose
+                        sx={{
+                            transition: 'all 200ms',
+                            '&:hover': {
+                                transform: 'rotate(90deg)',
+                            }
+                        }}
+                    />
+                    <RecipeCreate
+                        isClosing={isClosing}
+                        onSave={() => {
+                            // TODO: Add save logic here
+                            handleCloseModal();
+                        }}
+                        onCancel={handleCloseModal}
+                    />
+                </>
+            </Modal>
         </>
     )
 }
