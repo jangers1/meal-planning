@@ -50,7 +50,7 @@ function NavBar({onItemSelect}: NavBarProps) {
 
     return (
         <Box sx={{
-            width: collapsed ? '80px' : '225px',
+            width: collapsed ? '80px' : '250px',
             transition: `width ${TRANSITION_WIDTH}`,
             height: '100%',
             backgroundColor: 'var(--primary-color)',

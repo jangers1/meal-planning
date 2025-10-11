@@ -5,6 +5,7 @@ export const NAV_ITEMS: readonly NavItem[] = [
     {id: 'meal-plan', label: 'Meal Plan', path: '/meal-plan', icon: 'calender'},
     {id: 'recipes', label: 'Recipes', path: '/recipes', icon: 'book'},
     {id: 'pantry', label: 'Pantry', path: '/pantry', icon: 'grocery-shelf'},
+    {id: 'shopping-lists', label: 'Shopping Lists', path: '/shopping-lists', icon: 'basket'},
 ] as const;
 
 const PATH_TO_ID_MAP: Record<string, string> = Object.fromEntries(

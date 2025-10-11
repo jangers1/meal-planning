@@ -8,6 +8,7 @@ const Dashboard = lazy(() => import('./features/dashboard/Dashboard.tsx'));
 const MealPlan = lazy(() => import('./features/meal-plan/MealPlan.tsx'));
 const Pantry = lazy(() => import('./features/pantry/Pantry.tsx'));
 const RecipeBank = lazy(() => import('./features/recipe_page/RecipeBank.tsx'));
+const ShoppingList = lazy(() => import('./features/shopping-lists/ShoppingList.tsx'));
 
 function App() {
     return (
@@ -41,6 +42,7 @@ function App() {
                             <Route path="/meal-plan" element={<MealPlan/>}/>
                             <Route path="/recipes" element={<RecipeBank/>}/>
                             <Route path="/pantry" element={<Pantry/>}/>
+                            <Route path="/shopping-lists" element={<ShoppingList/>}/>
                             <Route path="*" element={<Navigate to="/" replace/>}/>
                         </Routes>
                     </Suspense>

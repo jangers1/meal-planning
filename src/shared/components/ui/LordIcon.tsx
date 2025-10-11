@@ -4,6 +4,7 @@ import book from '../../assets/icons/book.json';
 import calender from '../../assets/icons/calender.json';
 import chart from '../../assets/icons/chart.json';
 import groceryShelf from '../../assets/icons/grocery-shelf.json';
+import basket from '../../assets/icons/basket.json';
 
 // Icon mapping
 const ICON_MAP = {
@@ -11,6 +12,7 @@ const ICON_MAP = {
     'calender': calender,
     'chart': chart,
     'grocery-shelf': groceryShelf,
+    'basket': basket
 } as const;
 
 export type IconName = keyof typeof ICON_MAP;
