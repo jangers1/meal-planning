@@ -29,6 +29,7 @@ function RecipeCard({name, tags, link, description}: RecipeCardProps) {
                     ...gradientGlowCardStyle,
                     gap: 0,
                     p: 2,
+                    flex: 1
                 }}
             >
                 <Avatar

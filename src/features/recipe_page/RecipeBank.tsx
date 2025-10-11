@@ -6,6 +6,8 @@ import CloseRounded from '@mui/icons-material/CloseRounded';
 import RecipeCard from "./RecipeCard.tsx";
 import type {JoyColours} from '../../shared/types/ui.types.ts';
 import RecipeCreate from "./RecipeCreate.tsx";
+import {DeleteModeProvider, DeletableItem} from "../../shared/components/ui/DeleteModeProvider.tsx";
+import {useDeleteMode} from "../../shared/hooks/useDeleteMode.ts";
 
 interface RecipeSummary {
     id: string;
@@ -15,17 +17,19 @@ interface RecipeSummary {
     tags: { tagName: string; color: JoyColours }[];
 }
 
-function RecipeBank() {
+function RecipeBankContent() {
     const [sidePanelOpen, setSidePanelOpen] = useState(false);
     const [createRecipeOpen, setCreateRecipeOpen] = useState(false);
     const [isClosing, setIsClosing] = useState(false);
     const [searchString, setSearchString] = useState('');
     const [searchMode, setSearchMode] = useState<'title' | 'tags'>('title');
+    const [recipes, setRecipes] = useState<RecipeSummary[]>([]);
     const drawerWidth = '20%'; // Width of the side panel
     const [showTopShadow, setShowTopShadow] = useState(false);
     const [showBottomShadow, setShowBottomShadow] = useState(false);
     const scrollRef = useRef<HTMLDivElement | null>(null);
     const rafIdRef = useRef<number | null>(null);
+    const {isDeleteMode, setDeleteMode} = useDeleteMode();
 
     // --- Sample recipe data (placeholder until hooked to backend/store) ---
     const sampleRecipes: RecipeSummary[] = useMemo(() => ([
@@ -226,15 +230,24 @@ function RecipeBank() {
         }
     ]), []);
 
+    // Initialize recipes state
+    useEffect(() => {
+        setRecipes(sampleRecipes);
+    }, [sampleRecipes]);
+
     const filteredRecipes = useMemo(() => {
         const term = searchString.trim().toLowerCase();
-        if (!term) return sampleRecipes;
+        if (!term) return recipes;
         if (searchMode === 'title') {
-            return sampleRecipes.filter(r => r.name.toLowerCase().includes(term));
+            return recipes.filter(r => r.name.toLowerCase().includes(term));
         } else { // tags mode
-            return sampleRecipes.filter(r => r.tags.some(t => t.tagName.toLowerCase().includes(term)));
+            return recipes.filter(r => r.tags.some(t => t.tagName.toLowerCase().includes(term)));
         }
-    }, [searchString, sampleRecipes, searchMode]);
+    }, [searchString, recipes, searchMode]);
+
+    const handleDeleteRecipe = (recipeId: string) => {
+        setRecipes(prev => prev.filter(r => r.id !== recipeId));
+    };
 
     const updateShadows = () => {
         const el = scrollRef.current;
@@ -290,6 +303,10 @@ function RecipeBank() {
             setCreateRecipeOpen(false);
             setIsClosing(false);
         }, 400); // Match the animation duration
+    };
+
+    const handleEditClick = () => {
+        setDeleteMode(!isDeleteMode);
     };
 
     return (
@@ -361,6 +378,13 @@ function RecipeBank() {
                             Create Recipe
                         </Button>
                         <Button
+                            variant={'solid'}
+                            color={isDeleteMode ? 'success' : 'danger'}
+                            onClick={handleEditClick}
+                        >
+                            {isDeleteMode ? 'Confirm' : 'Delete Recipes'}
+                        </Button>
+                        <Button
                             variant="outlined"
                             color="neutral"
                             startDecorator={<TuneIcon/>}
@@ -418,8 +442,19 @@ function RecipeBank() {
                                 {scrollStatusMessage}
                             </Box>
                             {filteredRecipes.map(r => (
-                                <RecipeCard key={r.id} name={r.name} tags={r.tags} link={r.link}
-                                            description={r.description}/>
+                                <DeletableItem
+                                    key={r.id}
+                                    itemId={r.id}
+                                    onDelete={() => handleDeleteRecipe(r.id)}
+                                    confirmMessage={`Are you sure you want to delete "${r.name}"?`}
+                                >
+                                    <RecipeCard
+                                        name={r.name}
+                                        tags={r.tags}
+                                        link={r.link}
+                                        description={r.description}
+                                    />
+                                </DeletableItem>
                             ))}
                             {!filteredRecipes.length && (
                                 <Box>
@@ -519,7 +554,8 @@ function RecipeBank() {
                                         }}
                                     >
                                         <Typography level={'body-sm'} sx={{opacity: 0.5}} textAlign={'center'}>
-                                            Click on Tags below to select them. Recipes will begin to group themselves
+                                            Click on Tags below to select them. Recipes will begin to group
+                                            themselves
                                             by
                                             selected tags
                                         </Typography>
@@ -533,6 +569,7 @@ function RecipeBank() {
                                             backgroundColor: 'var(--joy-palette-neutral-softBg)',
                                             p: 2
                                         }}
+
                                     >
 
                                     </Box>
@@ -584,7 +621,15 @@ function RecipeBank() {
                 </>
             </Modal>
         </>
-    )
+    );
+}
+
+function RecipeBank() {
+    return (
+        <DeleteModeProvider>
+            <RecipeBankContent/>
+        </DeleteModeProvider>
+    );
 }
 
 export default RecipeBank;
