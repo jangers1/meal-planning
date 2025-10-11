@@ -16,6 +16,7 @@ import '../../../../shared/dnd/styles.css';
 interface WeekPlanTabProps {
     genericRecipes: GenericRecipe[];
     recipes: Recipe[];
+    isLoading: boolean;
     onCreateGeneric: (name: string) => void;
     onDeleteGeneric: (id: number) => void;
 }
@@ -23,6 +24,7 @@ interface WeekPlanTabProps {
 export default function WeekPlanTab({
                                         genericRecipes,
                                         recipes,
+                                        isLoading,
                                         onCreateGeneric,
                                         onDeleteGeneric,
                                     }: WeekPlanTabProps) {
@@ -164,6 +166,7 @@ export default function WeekPlanTab({
             <RecipeContainer
                 genericRecipes={genericRecipes}
                 recipes={recipes}
+                isLoading={isLoading}
                 onDeleteGeneric={onDeleteGeneric}
                 getSlotForRecipe={getSlotForRecipe}
             />

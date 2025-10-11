@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import type { GenericRecipe, Recipe, RecipeItem } from '../types/recipe.types';
 
 // Mock data for regular recipes - this could later be replaced with API calls
@@ -17,6 +17,7 @@ interface UseRecipeManagerReturn {
     // State
     genericRecipes: GenericRecipe[];
     recipes: Recipe[];
+    isLoading: boolean;
 
     // Generic recipe operations
     createGenericRecipe: (title: string) => void;
@@ -34,7 +35,18 @@ interface UseRecipeManagerReturn {
 
 const useRecipeManager = (): UseRecipeManagerReturn => {
     const [genericRecipes, setGenericRecipes] = useState<GenericRecipe[]>([]);
-    const [recipes, setRecipes] = useState<Recipe[]>(INITIAL_RECIPES);
+    const [recipes, setRecipes] = useState<Recipe[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    // Simulate loading recipes (replace with actual API call)
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setRecipes(INITIAL_RECIPES);
+            setIsLoading(false);
+        }, 800);
+
+        return () => clearTimeout(timer);
+    }, []);
 
     // Generic recipe operations
     const createGenericRecipe = useCallback((title: string) => {
@@ -84,6 +96,7 @@ const useRecipeManager = (): UseRecipeManagerReturn => {
         // State
         genericRecipes,
         recipes,
+        isLoading,
 
         // Generic recipe operations
         createGenericRecipe,

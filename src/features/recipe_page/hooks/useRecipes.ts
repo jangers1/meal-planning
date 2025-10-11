@@ -11,6 +11,7 @@ export interface RecipeSummary {
 
 export function useRecipes() {
     const [recipes, setRecipes] = useState<RecipeSummary[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
 
     const sampleRecipes: RecipeSummary[] = useMemo(() => ([
         {
@@ -210,7 +211,13 @@ export function useRecipes() {
     ]), []);
 
     useEffect(() => {
-        setRecipes(sampleRecipes);
+        // Simulate loading delay to show skeleton
+        const timer = setTimeout(() => {
+            setRecipes(sampleRecipes);
+            setIsLoading(false);
+        }, 800);
+
+        return () => clearTimeout(timer);
     }, [sampleRecipes]);
 
     const deleteRecipe = (recipeId: string) => {
@@ -219,7 +226,7 @@ export function useRecipes() {
 
     return {
         recipes,
+        isLoading,
         deleteRecipe
     };
 }
-

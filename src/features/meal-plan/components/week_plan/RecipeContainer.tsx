@@ -6,15 +6,21 @@ import {DeletableItem, DeleteModeProvider} from "../../../../shared/components/u
 import {useDeleteMode} from "../../../../shared/hooks/useDeleteMode.ts";
 import type {GenericRecipe, Recipe} from "../../types/recipe.types";
 import DraggableRecipeCard from "./DraggableRecipeCard";
+import {RecipeContainerSkeleton} from "./RecipeContainerSkeleton";
 
 interface RecipeContainerProps {
     genericRecipes: GenericRecipe[];
     recipes: Recipe[];
+    isLoading: boolean;
     onDeleteGeneric?: (id: number) => void;
     getSlotForRecipe: (recipeId: number) => string | undefined;
 }
 
-function RecipeContainer({genericRecipes, recipes, onDeleteGeneric, getSlotForRecipe}: RecipeContainerProps) {
+function RecipeContainer({genericRecipes, recipes, isLoading, onDeleteGeneric, getSlotForRecipe}: RecipeContainerProps) {
+    if (isLoading) {
+        return <RecipeContainerSkeleton count={8} />;
+    }
+
     return (
         <DeleteModeProvider>
             <RecipeContainerInner
@@ -28,7 +34,7 @@ function RecipeContainer({genericRecipes, recipes, onDeleteGeneric, getSlotForRe
 }
 
 // Inner component that uses the delete mode hook
-function RecipeContainerInner({genericRecipes, recipes, onDeleteGeneric, getSlotForRecipe}: RecipeContainerProps) {
+function RecipeContainerInner({genericRecipes, recipes, onDeleteGeneric, getSlotForRecipe}: Omit<RecipeContainerProps, 'isLoading'>) {
     const {isDeleteMode, setDeleteMode} = useDeleteMode();
 
     const handleEditClick = () => {

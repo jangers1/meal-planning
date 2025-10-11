@@ -3,7 +3,7 @@ import WeekPlanTab from './components/week_plan/WeekPlanTab';
 import useRecipeManager from './hooks/useRecipeManager';
 
 function MealPlan() {
-    const {genericRecipes, recipes, createGenericRecipe, deleteGenericRecipe} = useRecipeManager();
+    const {genericRecipes, recipes, isLoading, createGenericRecipe, deleteGenericRecipe} = useRecipeManager();
 
     return (
         <Sheet
@@ -24,6 +24,7 @@ function MealPlan() {
                     <WeekPlanTab
                         genericRecipes={genericRecipes}
                         recipes={recipes}
+                        isLoading={isLoading}
                         onCreateGeneric={createGenericRecipe}
                         onDeleteGeneric={deleteGenericRecipe}
                     />

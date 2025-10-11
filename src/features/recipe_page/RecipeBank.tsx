@@ -7,6 +7,7 @@ import {useRecipes} from "./hooks/useRecipes.ts";
 import {useScrollShadows} from "./hooks/useScrollShadows.ts";
 import {RecipeBankToolbar} from "./components/RecipeBankToolbar.tsx";
 import {RecipeGrid} from "./components/RecipeGrid.tsx";
+import {RecipeGridSkeleton} from "./components/RecipeGridSkeleton.tsx";
 import {FilterPanel} from "./components/FilterPanel.tsx";
 import {RecipeCreateModal} from "./components/RecipeCreateModal.tsx";
 
@@ -18,7 +19,7 @@ function RecipeBankContent() {
     const drawerWidth = '20%';
 
     const {isDeleteMode, setDeleteMode} = useDeleteMode();
-    const {recipes, deleteRecipe} = useRecipes();
+    const {recipes, isLoading, deleteRecipe} = useRecipes();
     const {scrollRef, showTopShadow, showBottomShadow, scrollStatusMessage, handleScroll} = useScrollShadows();
 
     const filteredRecipes = useMemo(() => {
@@ -68,16 +69,20 @@ function RecipeBankContent() {
                         onToggleSidePanel={() => setSidePanelOpen(prev => !prev)}
                     />
 
-                    <RecipeGrid
-                        recipes={filteredRecipes}
-                        scrollRef={scrollRef}
-                        showTopShadow={showTopShadow}
-                        showBottomShadow={showBottomShadow}
-                        scrollStatusMessage={scrollStatusMessage}
-                        onScroll={handleScroll}
-                        onDeleteRecipe={deleteRecipe}
-                        emptyMessage={emptyMessage}
-                    />
+                    {isLoading ? (
+                        <RecipeGridSkeleton count={16}/>
+                    ) : (
+                        <RecipeGrid
+                            recipes={filteredRecipes}
+                            scrollRef={scrollRef}
+                            showTopShadow={showTopShadow}
+                            showBottomShadow={showBottomShadow}
+                            scrollStatusMessage={scrollStatusMessage}
+                            onScroll={handleScroll}
+                            onDeleteRecipe={deleteRecipe}
+                            emptyMessage={emptyMessage}
+                        />
+                    )}
                 </Stack>
 
                 <FilterPanel isOpen={sidePanelOpen} drawerWidth={drawerWidth}/>
