@@ -5,6 +5,8 @@ import calender from '../../assets/icons/calender.json';
 import chart from '../../assets/icons/chart.json';
 import groceryShelf from '../../assets/icons/grocery-shelf.json';
 import basket from '../../assets/icons/basket.json';
+import settings from '../../assets/icons/settings.json';
+import arrows from '../../assets/icons/arrows.json';
 
 // Icon mapping
 const ICON_MAP = {
@@ -12,7 +14,9 @@ const ICON_MAP = {
     'calender': calender,
     'chart': chart,
     'grocery-shelf': groceryShelf,
-    'basket': basket
+    'basket': basket,
+    'settings': settings,
+    'arrows': arrows
 } as const;
 
 export type IconName = keyof typeof ICON_MAP;
@@ -23,9 +27,10 @@ export type LordIconProps = {
 
 interface LordIconComponentProps {
     icon: IconName;
+    size?: number;
 }
 
-const LordIcon = forwardRef<LordIconProps, LordIconComponentProps>(({ icon }, ref) => {
+const LordIcon = forwardRef<LordIconProps, LordIconComponentProps>(({icon, size = 25}, ref) => {
     const playerRef = useRef<Player>(null);
 
     useImperativeHandle(ref, () => ({
@@ -42,10 +47,10 @@ const LordIcon = forwardRef<LordIconProps, LordIconComponentProps>(({ icon }, re
         <Player
             icon={iconData}
             ref={playerRef}
-            size={25}
+            size={size}
             state={'morph-open'}
         />
     );
 });
 
-export { LordIcon };
+export {LordIcon};
