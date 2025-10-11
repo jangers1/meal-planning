@@ -3,14 +3,8 @@ import {useAlerts} from '../../ui/alerts/AlertProvider.tsx';
 
 export const useLocalStorageState = (key: string, defaultValue: boolean): readonly [boolean, (newValue: boolean | ((prev: boolean) => boolean)) => void] => {
     const [value, setValue] = useState<boolean>(() => {
-        if (typeof window === 'undefined') return defaultValue;
-
-        try {
-            const saved = localStorage.getItem(key);
-            return saved === 'true';
-        } catch {
-            return defaultValue;
-        }
+        // Always return the default value on initial load (ignore localStorage)
+        return defaultValue;
     });
 
     const alerts = useAlerts();
