@@ -1,14 +1,13 @@
 import {useCallback, useEffect, useState} from 'react';
-import {Box, List, ListItemButton} from '@mui/joy';
+import {Box, List} from '@mui/joy';
 import {useLocation, useNavigate} from 'react-router-dom';
-import ChevronLeftRoundedIcon from '@mui/icons-material/ChevronLeftRounded';
-import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
 import {getActiveItemFromPath, NAV_ITEMS} from './NavBar/config.ts';
 import {NavItem} from './NavBar/NavItem.tsx';
 import {useHighlightAnimation} from './NavBar/useHighlightAnimation.ts';
 import {useIconAnimations} from './NavBar/useIconAnimations.ts';
 import {useLocalStorageState} from './NavBar/useLocalStorageState.ts';
 import type {NavBarProps} from './NavBar/types.ts';
+import BottomBar from "./NavBar/BottomBar.tsx";
 
 const TRANSITION_WIDTH = '300ms cubic-bezier(0.4,0,0.2,1)';
 const TRANSITION_HIGHLIGHT = '300ms cubic-bezier(0.33,0.66,0.4,1)';
@@ -97,23 +96,11 @@ function NavBar({onItemSelect}: NavBarProps) {
                 ))}
             </List>
 
-            <Box sx={{p: 1, borderTop: '1px solid rgba(0,0,0,0.06)'}}>
-                <ListItemButton
-                    onClick={toggleCollapsed}
-                    aria-label={collapsed ? 'Expand navigation' : 'Collapse navigation'}
-                    title={collapsed ? 'Expand' : 'Collapse'}
-                    sx={{
-                        borderRadius: '8px',
-                        justifyContent: 'center',
-                        transition: 'background-color 0.3s ease',
-                        minHeight: '40px',
-                        '&:hover': {backgroundColor: 'rgba(255,255,255,0.35)'},
-                        fontSize: '1.5rem',
-                    }}
-                >
-                    {collapsed ? <ChevronRightRoundedIcon/> : <ChevronLeftRoundedIcon/>}
-                </ListItemButton>
-            </Box>
+            <BottomBar
+                collapseHandler={toggleCollapsed}
+                isCollapsed={collapsed}
+                transitionWidth={TRANSITION_WIDTH}
+            />
         </Box>
     );
 }
