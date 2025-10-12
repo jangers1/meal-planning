@@ -1,0 +1,201 @@
+.clock-container * {
+    font-size: 5px !important;
+}
+
+.clock {
+    --hue: 225;
+    --bg: var(--primary-color);
+    --fg: hsl(var(--hue), 10%, 10%);
+    --primary: hsl(var(--hue), 90%, 50%);
+    --shadow1: rgb(199, 202, 209);
+    --shadow2: rgb(255, 255, 255);
+    --trans-dur: 0.3s;
+}
+
+.clock,
+.clock:before,
+.clock__tick:before {
+    animation-duration: 0.6s;
+    animation-timing-function: ease-in-out;
+    animation-fill-mode: forwards;
+}
+
+.clock {
+    animation-name: clockOuter;
+    background-color: var(--bg);
+    border-radius: 50%;
+    box-shadow: 0 0 0 var(--shadow1),
+    0 0 0 var(--shadow2);
+    margin: auto;
+    position: relative;
+    width: 16em;
+    height: 16em;
+}
+
+.clock:before,
+.clock__hand,
+.clock__hand:before,
+.clock__tick,
+.clock__tick:before {
+    position: absolute;
+}
+
+.clock:before,
+.clock__hand:before,
+.clock__tick:before {
+    content: "";
+    display: block;
+}
+
+.clock:before {
+    animation-name: clockInner;
+    border-radius: inherit;
+    box-shadow: 0 0 0 var(--shadow1),
+    0 0 0 var(--shadow2);
+    top: calc(50% - 4em);
+    left: calc(50% - 4em);
+    width: 8em;
+    height: 8em;
+    z-index: 1;
+}
+
+.clock__hand,
+.clock__hand:before {
+    transform-origin: 50% calc(100% - 1em);
+}
+
+.clock__hand {
+    bottom: calc(50% - 1em);
+    left: calc(50% - 0.125em);
+    width: 0.25em;
+    transform: scaleY(0);
+    z-index: 2;
+}
+
+.clock__hand:before {
+    width: 100%;
+    height: 100%;
+}
+
+.clock__hand--hr {
+    height: 4em;
+}
+
+.clock__hand--hr:before {
+    background-color: hsl(var(--hue), 10%, 50%);
+}
+
+.clock__hand--min {
+    height: 6em;
+}
+
+.clock__hand--min:before {
+    background-color: var(--fg);
+}
+
+.clock__hand--sec {
+    height: 7em;
+}
+
+.clock__hand--sec:before {
+    background-color: var(--primary);
+}
+
+.clock--moving .clock__hand--sec:before {
+    animation: clockSecondHand 0.5s ease-in-out;
+}
+
+.clock__tick {
+    bottom: 50%;
+    left: calc(50% - 0.125em);
+    width: 0.25em;
+    height: 1.25em;
+    transform-origin: 50% 100%;
+}
+
+.clock__tick:before {
+    background-color: hsla(var(--hue), 10%, 50%, 0.5);
+    animation-name: clockTick;
+    width: 100%;
+    height: 100%;
+    transform-origin: 50% 0%;
+}
+
+.clock__tick--0 {
+    transform: translateY(-6.5em);
+}
+
+.clock__tick--3 {
+    transform: rotate(90deg) translateY(-6.5em);
+}
+
+.clock__tick--6 {
+    transform: rotate(180deg) translateY(-6.5em);
+}
+
+.clock__tick--9 {
+    transform: rotate(270deg) translateY(-6.5em);
+}
+
+/* Dark theme */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg: hsl(var(--hue), 10%, 20%);
+        --fg: hsl(var(--hue), 10%, 90%);
+        --shadow1: hsl(var(--hue), 10%, 10%);
+        --shadow2: hsl(var(--hue), 10%, 30%);
+    }
+}
+
+/* Animation */
+@keyframes clockInner {
+    from,
+    50% {
+        box-shadow: 0 0 0 var(--shadow1),
+        0 0 0 var(--shadow2);
+    }
+    75%,
+    to {
+        box-shadow: 0.375em 0.375em 0.75em var(--shadow1),
+        -0.375em -0.375em 0.75em var(--shadow2);
+    }
+}
+
+@keyframes clockOuter {
+    from,
+    25% {
+        box-shadow: 0 0 0 var(--shadow1),
+        0 0 0 var(--shadow2);
+    }
+    50%,
+    to {
+        box-shadow: 0.75em 0.75em 1.5em var(--shadow1),
+        -0.75em -0.75em 1.5em var(--shadow2);
+    }
+}
+
+@keyframes clockSecondHand {
+    from,
+    25% {
+        transform: rotate(-6deg);
+    }
+    50% {
+        transform: rotate(2deg);
+    }
+    75% {
+        transform: rotate(-1deg);
+    }
+    to {
+        transform: rotate(0deg);
+    }
+}
+
+@keyframes clockTick {
+    from,
+    75% {
+        transform: scaleY(0);
+    }
+    to {
+        transform: scaleY(1);
+    }
+}

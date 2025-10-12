@@ -1,5 +1,5 @@
 import {useCallback, useEffect, useState} from 'react';
-import {Box, List} from '@mui/joy';
+import {Box, List, Typography} from '@mui/joy';
 import {useLocation, useNavigate} from 'react-router-dom';
 import {getActiveItemFromPath, NAV_ITEMS} from './NavBar/config.ts';
 import {NavItem} from './NavBar/NavItem.tsx';
@@ -8,6 +8,7 @@ import {useIconAnimations} from './NavBar/useIconAnimations.ts';
 import {useLocalStorageState} from './NavBar/useLocalStorageState.ts';
 import type {NavBarProps} from './NavBar/types.ts';
 import BottomBar from "./NavBar/BottomBar.tsx";
+import Clock from "./NavBar/Clock.tsx";
 
 const TRANSITION_WIDTH = '300ms cubic-bezier(0.4,0,0.2,1)';
 const TRANSITION_HIGHLIGHT = '300ms cubic-bezier(0.33,0.66,0.4,1)';
@@ -59,7 +60,32 @@ function NavBar({onItemSelect}: NavBarProps) {
             position: 'relative',
             overflow: 'hidden'
         }}>
-            <List ref={listRef} sx={{flexGrow: 1, py: 2, position: 'relative'}}>
+            <Box
+                sx={{
+                    my: 2,
+                    mx: 3,
+                    display: 'flex',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                }}
+            >
+                <Clock/>
+                <Box
+                    sx={{
+                        flexGrow: 1,
+                        textAlign: 'right',
+                    }}
+                >
+                    <Typography level={'h4'}>
+                        Wednesday
+                    </Typography>
+                    <Typography level={'body-lg'}>
+                        29 Oct
+                    </Typography>
+                </Box>
+            </Box>
+
+            <List ref={listRef} sx={{flexGrow: 1, p: 0, position: 'relative'}}>
                 <Box
                     sx={{
                         position: 'absolute',
