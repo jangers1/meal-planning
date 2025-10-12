@@ -9,6 +9,7 @@ import ActionButton from "../../shared/components/ui/ActionButton.tsx";
 import {useState} from "react";
 import EditIcon from '@mui/icons-material/Edit';
 import {DeleteRounded} from "@mui/icons-material";
+import VersionControl from "../recipes/components/view/VersionControl.tsx";
 
 function Recipe() {
     const [recipeOwner] = useState<string>(("Roshan"));
@@ -72,7 +73,10 @@ function Recipe() {
                             justifyContent: 'space-between'
                         }}
                     >
-                        <NameDisplay name={recipeOwner}/>
+                        <Box>
+                            <NameDisplay name={recipeOwner}/>
+                            <VersionControl/>
+                        </Box>
                         <ServingSelector initialServings={servings}/>
                         <Typography level={'body-md'}>Cooking Time: {cookingTime} mins</Typography>
                     </Box>
