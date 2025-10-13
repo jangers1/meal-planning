@@ -41,6 +41,7 @@ export default function WeekPlanTab({
         removeRecipeFromSlot,
         slotAssignments,
         clearWeekendSlots,
+        getRecipeUsageCount,
     } = useMealPlanState();
 
     // Check if any slots have recipes
@@ -58,7 +59,18 @@ export default function WeekPlanTab({
 
     // Get recipe from draggable ID
     const getRecipeFromId = useCallback((id: string): RecipeItem | undefined => {
-        const recipeId = parseInt(id.replace('recipe-', ''));
+        let recipeId: number;
+
+        // Check if ID is from a slot (slot-{slotId}-recipe-{recipeId})
+        if (id.startsWith('slot-')) {
+            const match = id.match(/^slot-.+-recipe-(\d+)$/);
+            if (!match) return undefined;
+            recipeId = parseInt(match[1]);
+        } else {
+            // ID is from container (recipe-{recipeId})
+            recipeId = parseInt(id.replace('recipe-', ''));
+        }
+
         return allRecipes.find(r => r.id === recipeId);
     }, [allRecipes]);
 
@@ -97,7 +109,27 @@ export default function WeekPlanTab({
     const handleDragEnd = useCallback((event: DragEndEvent) => {
         const {active, over} = event;
 
-        const recipeId = parseInt((active.id as string).replace('recipe-', ''));
+        const activeIdStr = active.id as string;
+
+        // Check if we're dragging from a slot (ID format: slot-{slotId}-recipe-{recipeId})
+        const isFromSlot = activeIdStr.startsWith('slot-');
+        let recipeId: number;
+        let sourceSlotId: string | undefined;
+
+        if (isFromSlot) {
+            // Parse slot-based draggable ID: slot-{slotId}-recipe-{recipeId}
+            const match = activeIdStr.match(/^slot-(.+)-recipe-(\d+)$/);
+            if (!match) {
+                setActiveId(null);
+                return;
+            }
+            sourceSlotId = match[1];
+            recipeId = parseInt(match[2]);
+        } else {
+            // Parse container-based draggable ID: recipe-{recipeId}
+            recipeId = parseInt(activeIdStr.replace('recipe-', ''));
+        }
+
         const recipe = allRecipes.find(r => r.id === recipeId);
 
         if (!recipe) {
@@ -105,26 +137,40 @@ export default function WeekPlanTab({
             return;
         }
 
-        // Get the current slot this recipe is in (if any)
-        const currentSlot = getSlotForRecipe(recipe.id);
-
         if (over) {
-            // Check if dropping on a slot (slot IDs contain a dash like "Monday-Breakfast")
             const overId = over.id as string;
-            if (overId.includes('-') && !overId.startsWith('recipe-')) {
-                // Dropping on a meal slot
-                assignRecipeToSlot(overId, recipe);
+
+            // Check if dropping on a meal slot
+            if (overId.includes('-') && !overId.startsWith('recipe-') && !overId.startsWith('slot-')) {
+                if (isFromSlot && sourceSlotId) {
+                    // Moving from one slot to another
+                    if (sourceSlotId !== overId) {
+                        // Remove from source slot and add to target slot
+                        removeRecipeFromSlot(sourceSlotId);
+                        assignRecipeToSlot(overId, recipe);
+                    }
+                    // If same slot, do nothing (dropped on itself)
+                } else {
+                    // Cloning from container to slot
+                    assignRecipeToSlot(overId, recipe);
+                }
             }
-            // If dropping on anything else (like recipe container), do nothing
-            // The recipe will automatically return to library because it's removed from slot
-        } else if (currentSlot) {
-            // Dropped outside any droppable zone while it was in a slot
-            // Remove it from the slot (returns it to library)
-            removeRecipeFromSlot(currentSlot);
+            // If dropping back on container or non-slot area, handle appropriately
+            else if (isFromSlot && sourceSlotId) {
+                // Dragging from slot to non-slot area - remove from slot
+                removeRecipeFromSlot(sourceSlotId);
+            }
+            // If from container to container, do nothing (it stays in container)
+        } else {
+            // Dropped outside any droppable zone
+            if (isFromSlot && sourceSlotId) {
+                // Remove from slot if dragged outside
+                removeRecipeFromSlot(sourceSlotId);
+            }
         }
 
         setActiveId(null);
-    }, [allRecipes, assignRecipeToSlot, getSlotForRecipe, removeRecipeFromSlot]);
+    }, [allRecipes, assignRecipeToSlot, removeRecipeFromSlot]);
 
     const handleDragCancel = useCallback(() => {
         setActiveId(null);
@@ -168,7 +214,7 @@ export default function WeekPlanTab({
                 recipes={recipes}
                 isLoading={isLoading}
                 onDeleteGeneric={onDeleteGeneric}
-                getSlotForRecipe={getSlotForRecipe}
+                getRecipeUsageCount={getRecipeUsageCount}
             />
 
             <FloatingActionButtons

@@ -7,16 +7,17 @@ import {useDeleteMode} from "../../../../shared/hooks/useDeleteMode.ts";
 import type {GenericRecipe, Recipe} from "../../types/recipe.types";
 import DraggableRecipeCard from "./DraggableRecipeCard";
 import {RecipeContainerSkeleton} from "./RecipeContainerSkeleton";
+import {useMemo} from "react";
 
 interface RecipeContainerProps {
     genericRecipes: GenericRecipe[];
     recipes: Recipe[];
     isLoading: boolean;
     onDeleteGeneric?: (id: number) => void;
-    getSlotForRecipe: (recipeId: number) => string | undefined;
+    getRecipeUsageCount: (recipeId: number) => number;
 }
 
-function RecipeContainer({genericRecipes, recipes, isLoading, onDeleteGeneric, getSlotForRecipe}: RecipeContainerProps) {
+function RecipeContainer({genericRecipes, recipes, isLoading, onDeleteGeneric, getRecipeUsageCount}: RecipeContainerProps) {
     if (isLoading) {
         return <RecipeContainerSkeleton count={8} />;
     }
@@ -27,23 +28,32 @@ function RecipeContainer({genericRecipes, recipes, isLoading, onDeleteGeneric, g
                 genericRecipes={genericRecipes}
                 recipes={recipes}
                 onDeleteGeneric={onDeleteGeneric}
-                getSlotForRecipe={getSlotForRecipe}
+                getRecipeUsageCount={getRecipeUsageCount}
             />
         </DeleteModeProvider>
     );
 }
 
 // Inner component that uses the delete mode hook
-function RecipeContainerInner({genericRecipes, recipes, onDeleteGeneric, getSlotForRecipe}: Omit<RecipeContainerProps, 'isLoading'>) {
+function RecipeContainerInner({genericRecipes, recipes, onDeleteGeneric, getRecipeUsageCount}: Omit<RecipeContainerProps, 'isLoading'>) {
     const {isDeleteMode, setDeleteMode} = useDeleteMode();
 
     const handleEditClick = () => {
         setDeleteMode(!isDeleteMode);
     };
 
-    // Filter out recipes that are currently in slots
-    const availableGenericRecipes = genericRecipes.filter(recipe => !getSlotForRecipe(recipe.id));
-    const availableRecipes = recipes.filter(recipe => !getSlotForRecipe(recipe.id));
+    // Sort recipes by usage count (most used first)
+    const sortedGenericRecipes = useMemo(() => {
+        return [...genericRecipes].sort((a, b) => {
+            return getRecipeUsageCount(b.id) - getRecipeUsageCount(a.id);
+        });
+    }, [genericRecipes, getRecipeUsageCount]);
+
+    const sortedRecipes = useMemo(() => {
+        return [...recipes].sort((a, b) => {
+            return getRecipeUsageCount(b.id) - getRecipeUsageCount(a.id);
+        });
+    }, [recipes, getRecipeUsageCount]);
 
     return (
         <Box
@@ -102,14 +112,17 @@ function RecipeContainerInner({genericRecipes, recipes, onDeleteGeneric, getSlot
                             minHeight: genericRecipes.length === 0 && isDeleteMode ? '60px' : 'auto'
                         }}
                     >
-                        {availableGenericRecipes.length > 0 ? (
-                            availableGenericRecipes.map(recipe => (
+                        {sortedGenericRecipes.length > 0 ? (
+                            sortedGenericRecipes.map(recipe => (
                                 <DeletableItem
                                     key={recipe.id}
                                     itemId={recipe.id}
                                     onDelete={() => onDeleteGeneric?.(recipe.id)}
                                 >
-                                    <DraggableRecipeCard recipe={recipe}/>
+                                    <DraggableRecipeCard
+                                        recipe={recipe}
+                                        usageCount={getRecipeUsageCount(recipe.id)}
+                                    />
                                 </DeletableItem>
                             ))
                         ) : isDeleteMode ? (
@@ -126,21 +139,7 @@ function RecipeContainerInner({genericRecipes, recipes, onDeleteGeneric, getSlot
                             >
                                 All generic recipes deleted. Click the checkmark to exit edit mode.
                             </Box>
-                        ) : (
-                            <Box
-                                sx={{
-                                    gridColumn: '1 / -1',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    color: 'text.tertiary',
-                                    fontStyle: 'italic',
-                                    minHeight: '60px'
-                                }}
-                            >
-                                All generic recipes are in use.
-                            </Box>
-                        )}
+                        ) : null}
                     </Box>
                 </>
             )}
@@ -159,11 +158,12 @@ function RecipeContainerInner({genericRecipes, recipes, onDeleteGeneric, getSlot
                     gap: 2
                 }}
             >
-                {availableRecipes.length > 0 ? (
-                    availableRecipes.map(recipe => (
+                {sortedRecipes.length > 0 ? (
+                    sortedRecipes.map(recipe => (
                         <DraggableRecipeCard
                             key={recipe.id}
                             recipe={recipe}
+                            usageCount={getRecipeUsageCount(recipe.id)}
                         />
                     ))
                 ) : (
@@ -178,7 +178,7 @@ function RecipeContainerInner({genericRecipes, recipes, onDeleteGeneric, getSlot
                             minHeight: '60px'
                         }}
                     >
-                        All recipes are in use.
+                        No recipes available.
                     </Box>
                 )}
             </Box>

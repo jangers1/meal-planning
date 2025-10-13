@@ -15,6 +15,8 @@ interface MealSlotProps {
 
 export default function MealSlot({day, mealType, recipe, isDeleteMode, onRemoveFromSlot}: MealSlotProps) {
     const slotId = createSlotId(day, mealType);
+    // Create a unique draggable ID for the recipe in this specific slot
+    const draggableId = recipe ? `slot-${slotId}-recipe-${recipe.id}` : '';
 
     return (
         <Droppable id={slotId} className="meal-slot-droppable">
@@ -57,19 +59,19 @@ export default function MealSlot({day, mealType, recipe, isDeleteMode, onRemoveF
                 >
                     {recipe ? (
                         isDeleteMode ? (
-                            <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <Box sx={{width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
                                 <DeletableItem
                                     itemId={recipe.id}
                                     onDelete={onRemoveFromSlot}
                                     requireConfirmation={false}
                                 >
-                                    <Draggable id={`recipe-${recipe.id}`} isInSlot={true}>
+                                    <Draggable id={draggableId} isInSlot={true}>
                                         <RecipeCardPlan title={recipe.title}/>
                                     </Draggable>
                                 </DeletableItem>
                             </Box>
                         ) : (
-                            <Draggable id={`recipe-${recipe.id}`} isInSlot={true}>
+                            <Draggable id={draggableId} isInSlot={true}>
                                 <RecipeCardPlan title={recipe.title}/>
                             </Draggable>
                         )

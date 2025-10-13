@@ -16,6 +16,8 @@ interface UseMealPlanStateReturn {
     getRecipeInSlot: (slotId: string) => RecipeItem | undefined;
     isSlotOccupied: (slotId: string) => boolean;
     getSlotForRecipe: (recipeId: number) => string | undefined;
+    getSlotsForRecipe: (recipeId: number) => string[];
+    getRecipeUsageCount: (recipeId: number) => number;
     clearAllSlots: () => void;
     clearWeekendSlots: () => void;
 }
@@ -30,13 +32,7 @@ export function useMealPlanState(): UseMealPlanStateReturn {
     const assignRecipeToSlot = useCallback((slotId: string, recipe: RecipeItem) => {
         setSlotAssignments(prev => {
             const next = new Map(prev);
-            // Remove recipe from any existing slot
-            for (const [existingSlotId, existingRecipe] of prev.entries()) {
-                if (existingRecipe.id === recipe.id) {
-                    next.delete(existingSlotId);
-                }
-            }
-            // Assign to new slot
+            // Simply assign to the new slot - allow multiple instances
             next.set(slotId, recipe);
             return next;
         });
@@ -67,6 +63,26 @@ export function useMealPlanState(): UseMealPlanStateReturn {
         return undefined;
     }, [slotAssignments]);
 
+    const getSlotsForRecipe = useCallback((recipeId: number): string[] => {
+        const slots: string[] = [];
+        for (const [slotId, recipe] of slotAssignments.entries()) {
+            if (recipe.id === recipeId) {
+                slots.push(slotId);
+            }
+        }
+        return slots;
+    }, [slotAssignments]);
+
+    const getRecipeUsageCount = useCallback((recipeId: number): number => {
+        let count = 0;
+        for (const recipe of slotAssignments.values()) {
+            if (recipe.id === recipeId) {
+                count++;
+            }
+        }
+        return count;
+    }, [slotAssignments]);
+
     const clearAllSlots = useCallback(() => {
         setSlotAssignments(new Map());
     }, []);
@@ -91,6 +107,8 @@ export function useMealPlanState(): UseMealPlanStateReturn {
         getRecipeInSlot,
         isSlotOccupied,
         getSlotForRecipe,
+        getSlotsForRecipe,
+        getRecipeUsageCount,
         clearAllSlots,
         clearWeekendSlots,
     };
