@@ -10,7 +10,11 @@ interface HandRefs {
     s?: HTMLDivElement | null;
 }
 
-function Clock() {
+interface ClockProps {
+    collapsed?: boolean;
+}
+
+function Clock({ collapsed = false }: ClockProps) {
     const clockRef = useRef<HTMLDivElement>(null);
     const handRefs = useRef<HandRefs>({});
     const timeUpdateLoopRef = useRef<number | undefined>(undefined);
@@ -121,7 +125,14 @@ function Clock() {
     }, []);
 
     return (
-        <div className="clock-container" aria-label="Clock">
+        <div
+            className="clock-container"
+            aria-label="Clock"
+            style={{
+                transform: collapsed ? 'scale(0.75)' : 'scale(1)',
+                transition: 'transform 300ms cubic-bezier(0.4,0,0.2,1)',
+            }}
+        >
             <div className="clock" role="img" ref={clockRef}>
                 <div className="clock__tick clock__tick--0"></div>
                 <div className="clock__tick clock__tick--3"></div>
