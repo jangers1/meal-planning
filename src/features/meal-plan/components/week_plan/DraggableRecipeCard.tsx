@@ -19,6 +19,9 @@ export default function DraggableRecipeCard({recipe, usageCount = 0}: DraggableR
             color="primary"
             size="lg"
             sx={{
+                width: '100%',
+                height: '100%',
+                display: 'flex',
                 '& .MuiBadge-badge': {
                     minWidth: '24px',
                     height: '24px',

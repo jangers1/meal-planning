@@ -13,8 +13,9 @@
    DRAGGABLE BASE WRAPPER
    =========================== */
 .dnd-draggable-wrapper {
-    display: block; /* Fill grid/flex cell width */
+    display: flex; /* Changed from block to flex */
     width: 100%;
+    height: 100%; /* Fill grid cell height */
 }
 
 .dnd-draggable-wrapper.dragging {
@@ -31,6 +32,7 @@
     transition: box-shadow 120ms ease-out; /* snappier shadow */
     /* Ensure child fills wrapper */
     width: 100%;
+    height: 100%; /* Fill wrapper height */
     max-width: none;
     /* Hint the compositor for smoother animations */
     will-change: transform, box-shadow;
