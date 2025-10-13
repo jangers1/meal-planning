@@ -82,7 +82,7 @@ export function DeletableItem({
                         sx={{
                             position: 'absolute',
                             top: -8,
-                            right: -8,
+                            left: -8,
                             width: 20,
                             height: 20,
                             minWidth: 20,

@@ -36,7 +36,6 @@ export default function WeekPlanTab({
     const {
         getRecipeInSlot,
         assignRecipeToSlot,
-        getSlotForRecipe,
         clearAllSlots,
         removeRecipeFromSlot,
         slotAssignments,
