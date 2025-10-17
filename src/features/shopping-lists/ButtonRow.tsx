@@ -1,5 +1,6 @@
 import {Box, Button, IconButton, Input} from "@mui/joy";
 import CloseRounded from '@mui/icons-material/CloseRounded';
+import {useDeleteMode} from "../../shared/hooks/useDeleteMode.ts";
 
 interface ButtonRowProps {
     searchTerm: string;
@@ -7,6 +8,8 @@ interface ButtonRowProps {
 }
 
 function ButtonRow({searchTerm, setSearchTerm}: ButtonRowProps) {
+    const {isDeleteMode, setDeleteMode} = useDeleteMode();
+
     return (
         <>
             <Box
@@ -42,9 +45,10 @@ function ButtonRow({searchTerm, setSearchTerm}: ButtonRowProps) {
                     Create List
                 </Button>
                 <Button
-                    color={'danger'}
+                    color={isDeleteMode ? "success" : "danger"}
+                    onClick={() => setDeleteMode(!isDeleteMode)}
                 >
-                    Delete List
+                    {isDeleteMode ? "Save Changes" : "Delete Lists"}
                 </Button>
             </Box>
         </>
