@@ -5,7 +5,6 @@ import ButtonRow from "./ButtonRow.tsx";
 import {useScrollShadows} from "../../shared/hooks/useScrollShadows.ts";
 import {gradientGlowBorderStyle} from "../../shared/utils/cardStyles.ts";
 import {DeletableItem, DeleteModeProvider} from "../../shared/components/ui/DeleteModeProvider.tsx";
-import {padding} from "@mui/system";
 
 function ShoppingList() {
     const [shoppingLists, setShoppingLists] = useState([
