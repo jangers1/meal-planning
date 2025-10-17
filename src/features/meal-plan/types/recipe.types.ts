@@ -9,6 +9,11 @@ export interface GenericRecipe extends BaseRecipe {
   type: 'generic';
 }
 
+// Prepped meal - pre-cooked meals from fridge/freezer
+export interface PreppedMeal extends BaseRecipe {
+  type: 'prepped';
+}
+
 // Regular recipe - could be extended with more properties later
 export interface Recipe extends BaseRecipe {
   type: 'recipe';
@@ -16,6 +21,6 @@ export interface Recipe extends BaseRecipe {
 }
 
 // Union type for all recipe types
-export type RecipeItem = GenericRecipe | Recipe;
+export type RecipeItem = GenericRecipe | PreppedMeal | Recipe;
 
 // Props for recipe-related operations

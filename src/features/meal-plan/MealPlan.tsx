@@ -3,7 +3,14 @@ import WeekPlanTab from './components/week_plan/WeekPlanTab';
 import useRecipeManager from './hooks/useRecipeManager';
 
 function MealPlan() {
-    const {genericRecipes, recipes, isLoading, createGenericRecipe, deleteGenericRecipe} = useRecipeManager();
+    const {
+        genericRecipes,
+        preppedMeals,
+        recipes,
+        isLoading,
+        createGenericRecipe,
+        deleteGenericRecipe,
+    } = useRecipeManager();
 
     return (
         <Sheet
@@ -23,6 +30,7 @@ function MealPlan() {
                 <TabPanel value={0} sx={{p: 0, display: 'flex', flexDirection: 'column'}}>
                     <WeekPlanTab
                         genericRecipes={genericRecipes}
+                        prepedMeals={preppedMeals}
                         recipes={recipes}
                         isLoading={isLoading}
                         onCreateGeneric={createGenericRecipe}

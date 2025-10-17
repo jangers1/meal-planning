@@ -4,20 +4,21 @@ import EditIcon from '@mui/icons-material/Edit';
 import DoneIcon from '@mui/icons-material/Done';
 import {DeletableItem, DeleteModeProvider} from "../../../../shared/components/ui/DeleteModeProvider.tsx";
 import {useDeleteMode} from "../../../../shared/hooks/useDeleteMode.ts";
-import type {GenericRecipe, Recipe} from "../../types/recipe.types";
+import type {GenericRecipe, PrepedMeal, Recipe} from "../../types/recipe.types";
 import DraggableRecipeCard from "./DraggableRecipeCard";
 import {RecipeContainerSkeleton} from "./RecipeContainerSkeleton";
 import {useMemo} from "react";
 
 interface RecipeContainerProps {
     genericRecipes: GenericRecipe[];
+    prepedMeals: PrepedMeal[];
     recipes: Recipe[];
     isLoading: boolean;
     onDeleteGeneric?: (id: number) => void;
     getRecipeUsageCount: (recipeId: number) => number;
 }
 
-function RecipeContainer({genericRecipes, recipes, isLoading, onDeleteGeneric, getRecipeUsageCount}: RecipeContainerProps) {
+function RecipeContainer({genericRecipes, prepedMeals, recipes, isLoading, onDeleteGeneric, getRecipeUsageCount}: RecipeContainerProps) {
     if (isLoading) {
         return <RecipeContainerSkeleton count={8} />;
     }
@@ -26,6 +27,7 @@ function RecipeContainer({genericRecipes, recipes, isLoading, onDeleteGeneric, g
         <DeleteModeProvider>
             <RecipeContainerInner
                 genericRecipes={genericRecipes}
+                prepedMeals={prepedMeals}
                 recipes={recipes}
                 onDeleteGeneric={onDeleteGeneric}
                 getRecipeUsageCount={getRecipeUsageCount}
@@ -35,7 +37,7 @@ function RecipeContainer({genericRecipes, recipes, isLoading, onDeleteGeneric, g
 }
 
 // Inner component that uses the delete mode hook
-function RecipeContainerInner({genericRecipes, recipes, onDeleteGeneric, getRecipeUsageCount}: Omit<RecipeContainerProps, 'isLoading'>) {
+function RecipeContainerInner({genericRecipes, prepedMeals, recipes, onDeleteGeneric, getRecipeUsageCount}: Omit<RecipeContainerProps, 'isLoading'>) {
     const {isDeleteMode, setDeleteMode} = useDeleteMode();
 
     const handleEditClick = () => {
@@ -48,6 +50,12 @@ function RecipeContainerInner({genericRecipes, recipes, onDeleteGeneric, getReci
             return getRecipeUsageCount(b.id) - getRecipeUsageCount(a.id);
         });
     }, [genericRecipes, getRecipeUsageCount]);
+
+    const sortedPrepedMeals = useMemo(() => {
+        return [...prepedMeals].sort((a, b) => {
+            return getRecipeUsageCount(b.id) - getRecipeUsageCount(a.id);
+        });
+    }, [prepedMeals, getRecipeUsageCount]);
 
     const sortedRecipes = useMemo(() => {
         return [...recipes].sort((a, b) => {
@@ -118,7 +126,7 @@ function RecipeContainerInner({genericRecipes, recipes, onDeleteGeneric, getReci
                                     key={recipe.id}
                                     itemId={recipe.id}
                                     onDelete={() => onDeleteGeneric?.(recipe.id)}
-                                    deleteButtonPosition='top-right'
+                                    deleteButtonPosition='top-left'
                                 >
                                     <DraggableRecipeCard
                                         recipe={recipe}
@@ -141,6 +149,36 @@ function RecipeContainerInner({genericRecipes, recipes, onDeleteGeneric, getReci
                                 All generic recipes deleted. Click the checkmark to exit edit mode.
                             </Box>
                         ) : null}
+                    </Box>
+                </>
+            )}
+
+            {/* Prepped Meals Section */}
+            {prepedMeals.length > 0 && (
+                <>
+                    <Typography level={'h2'}>
+                        Prepped Meals
+                    </Typography>
+                    <Divider/>
+                    <Box
+                        sx={{
+                            mt: 1,
+                            mb: 3,
+                            display: 'grid',
+                            gridAutoRows: 'minmax(60px, auto)',
+                            // Match the slot width (day column minWidth is 150px)
+                            gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
+                            gap: 2,
+                            alignContent: 'start',
+                        }}
+                    >
+                        {sortedPrepedMeals.map(meal => (
+                            <DraggableRecipeCard
+                                key={meal.id}
+                                recipe={meal}
+                                usageCount={getRecipeUsageCount(meal.id)}
+                            />
+                        ))}
                     </Box>
                 </>
             )}

@@ -7,7 +7,7 @@ import type {DragEndEvent, DragStartEvent} from '@dnd-kit/core';
 import {DndContext} from '@dnd-kit/core';
 import {DragOverlay, useDragSensors} from '../../../../shared/dnd';
 import {useCallback, useMemo, useState} from 'react';
-import type {GenericRecipe, Recipe, RecipeItem} from '../../types/recipe.types';
+import type {GenericRecipe, PrepedMeal, Recipe, RecipeItem} from '../../types/recipe.types';
 import {useMealPlanState} from '../../hooks/useMealPlanState';
 import RecipeCardPlan from './RecipeCard';
 import {DeleteModeProvider} from '../../../../shared/components/ui/DeleteModeProvider';
@@ -15,6 +15,7 @@ import '../../../../shared/dnd/styles.css';
 
 interface WeekPlanTabProps {
     genericRecipes: GenericRecipe[];
+    prepedMeals: PrepedMeal[];
     recipes: Recipe[];
     isLoading: boolean;
     onCreateGeneric: (name: string) => void;
@@ -23,6 +24,7 @@ interface WeekPlanTabProps {
 
 export default function WeekPlanTab({
                                         genericRecipes,
+                                        prepedMeals,
                                         recipes,
                                         isLoading,
                                         onCreateGeneric,
@@ -50,8 +52,8 @@ export default function WeekPlanTab({
 
     // Get all recipes for lookup
     const allRecipes = useMemo<RecipeItem[]>(() => {
-        return [...genericRecipes, ...recipes];
-    }, [genericRecipes, recipes]);
+        return [...genericRecipes, ...prepedMeals, ...recipes];
+    }, [genericRecipes, prepedMeals, recipes]);
 
     // Use smart sensor that checks each draggable's isInSlot data
     const sensors = useDragSensors();
@@ -210,6 +212,7 @@ export default function WeekPlanTab({
 
             <RecipeContainer
                 genericRecipes={genericRecipes}
+                prepedMeals={prepedMeals}
                 recipes={recipes}
                 isLoading={isLoading}
                 onDeleteGeneric={onDeleteGeneric}
