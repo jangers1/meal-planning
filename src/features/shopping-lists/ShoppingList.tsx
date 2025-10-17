@@ -1,4 +1,4 @@
-import {Box, Sheet, Typography, Card} from '@mui/joy';
+import {Box, Card, Sheet, Typography} from '@mui/joy';
 import ListCard from "./ListCard.tsx";
 import {useState} from "react";
 import ButtonRow from "./ButtonRow.tsx";
@@ -34,6 +34,10 @@ function ShoppingList() {
     ]);
 
     const {scrollRef, showTopShadow, showBottomShadow, handleScroll} = useScrollShadows();
+    const [searchTerm, setSearchTerm] = useState('');
+    const filteredLists = shoppingLists.filter(list =>
+        list.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
     return (
         <>
@@ -59,7 +63,10 @@ function ShoppingList() {
                     <Typography level={'body-lg'}>
                         Click on a list to open it on the right. By default, the current week's list is shown.
                     </Typography>
-                    <ButtonRow/>
+                    <ButtonRow
+                        searchTerm={searchTerm}
+                        setSearchTerm={setSearchTerm}
+                    />
                     <Box
                         sx={{
                             flex: 1,
@@ -85,7 +92,7 @@ function ShoppingList() {
                                 gap: 0.625,
                             }}
                         >
-                            {shoppingLists.map(list => (
+                            {filteredLists.map(list => (
                                 <Card
                                     key={list.id}
                                     variant="solid"

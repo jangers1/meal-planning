@@ -1,6 +1,12 @@
-import {Box, Button, Input} from "@mui/joy";
+import {Box, Button, IconButton, Input} from "@mui/joy";
+import CloseRounded from '@mui/icons-material/CloseRounded';
 
-function ButtonRow() {
+interface ButtonRowProps {
+    searchTerm: string;
+    setSearchTerm: (term: string) => void;
+}
+
+function ButtonRow({searchTerm, setSearchTerm}: ButtonRowProps) {
     return (
         <>
             <Box
@@ -12,10 +18,23 @@ function ButtonRow() {
                 }}
             >
                 <Input
-                    sx={{
-                        flexGrow: 1,
-                    }}
+                    sx={{flexGrow: 1}}
                     placeholder={'Search Lists'}
+                    color="primary"
+                    onChange={e => setSearchTerm(e.target.value)}
+                    value={searchTerm}
+                    endDecorator={
+                        searchTerm && (
+                            <IconButton
+                                variant={'plain'}
+                                color={'primary'}
+                                onClick={() => setSearchTerm('')}
+                                aria-label="Clear search"
+                            >
+                                <CloseRounded/>
+                            </IconButton>
+                        )
+                    }
                 />
                 <Button
 
