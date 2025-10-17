@@ -103,6 +103,7 @@ function ShoppingList() {
                                         key={list.id}
                                         onDelete={() => handleDelete(list.id)}
                                         itemId={list.id}
+                                        deleteButtonPosition='top-right'
                                     >
                                         <Card
                                             variant="solid"

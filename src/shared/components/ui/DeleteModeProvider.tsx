@@ -25,13 +25,15 @@ interface DeletableItemProps {
     itemId: string | number;
     confirmMessage?: string;
     requireConfirmation?: boolean;
+    deleteButtonPosition?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
 }
 
 export function DeletableItem({
                                   children,
                                   onDelete,
                                   confirmMessage = "Are you sure you want to delete this item?",
-                                  requireConfirmation = true
+                                  requireConfirmation = true,
+                                  deleteButtonPosition = 'top-left'
                               }: DeletableItemProps) {
     const {isDeleteMode} = useDeleteMode();
     const [showConfirmation, setShowConfirmation] = useState(false);
@@ -52,6 +54,21 @@ export function DeletableItem({
 
     const handleCancelDelete = () => {
         setShowConfirmation(false);
+    };
+
+    const getDeleteButtonPositionStyles = () => {
+        switch (deleteButtonPosition) {
+            case 'top-left':
+                return {top: -8, left: -8};
+            case 'top-right':
+                return {top: -8, right: -8};
+            case 'bottom-left':
+                return {bottom: -8, left: -8};
+            case 'bottom-right':
+                return {bottom: -8, right: -8};
+            default:
+                return {top: -8, right: -8};
+        }
     };
 
     return (
@@ -82,8 +99,7 @@ export function DeletableItem({
                         variant="solid"
                         sx={{
                             position: 'absolute',
-                            top: -8,
-                            left: -8,
+                            ...getDeleteButtonPositionStyles(),
                             width: 20,
                             height: 20,
                             minWidth: 20,

@@ -64,6 +64,7 @@ export default function MealSlot({day, mealType, recipe, isDeleteMode, onRemoveF
                                     itemId={recipe.id}
                                     onDelete={onRemoveFromSlot}
                                     requireConfirmation={false}
+                                    deleteButtonPosition='top-right'
                                 >
                                     <Draggable id={draggableId} isInSlot={true}>
                                         <RecipeCardPlan title={recipe.title}/>

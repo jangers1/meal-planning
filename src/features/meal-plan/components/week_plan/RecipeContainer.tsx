@@ -118,6 +118,7 @@ function RecipeContainerInner({genericRecipes, recipes, onDeleteGeneric, getReci
                                     key={recipe.id}
                                     itemId={recipe.id}
                                     onDelete={() => onDeleteGeneric?.(recipe.id)}
+                                    deleteButtonPosition='top-right'
                                 >
                                     <DraggableRecipeCard
                                         recipe={recipe}

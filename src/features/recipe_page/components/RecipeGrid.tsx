@@ -77,6 +77,7 @@ export function RecipeGrid({
                         itemId={r.id}
                         onDelete={() => onDeleteRecipe(r.id)}
                         confirmMessage={`Are you sure you want to delete "${r.name}"?`}
+                        deleteButtonPosition='top-right'
                     >
                         <RecipeCard
                             name={r.name}
