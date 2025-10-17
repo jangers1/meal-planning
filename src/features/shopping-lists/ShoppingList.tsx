@@ -5,6 +5,7 @@ import ButtonRow from "./ButtonRow.tsx";
 import {useScrollShadows} from "../../shared/hooks/useScrollShadows.ts";
 import {gradientGlowBorderStyle} from "../../shared/utils/cardStyles.ts";
 import {DeletableItem, DeleteModeProvider} from "../../shared/components/ui/DeleteModeProvider.tsx";
+import {padding} from "@mui/system";
 
 function ShoppingList() {
     const [shoppingLists, setShoppingLists] = useState([
@@ -39,10 +40,15 @@ function ShoppingList() {
     const filteredLists = shoppingLists.filter(list =>
         list.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
+    const [selectedListID, setSelectedListID] = useState(1);
 
     const handleDelete = (id: number) => {
         setShoppingLists(prev => prev.filter(list => list.id !== id));
     };
+
+    const handleClick = (id: number) => {
+        setSelectedListID(id);
+    }
 
     return (
         <>
@@ -107,8 +113,10 @@ function ShoppingList() {
                                     >
                                         <Card
                                             variant="solid"
+                                            onClick={() => handleClick(list.id)}
                                             sx={{
                                                 ...gradientGlowBorderStyle,
+                                                backgroundColor: selectedListID === list.id ? 'rgba(0, 255, 0, 0.3)' : 'background.surface',
                                                 padding: '10px 15px',
                                                 flexGrow: 1,
                                                 minHeight: 'min-content',
