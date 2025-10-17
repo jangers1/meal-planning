@@ -4,14 +4,14 @@ import EditIcon from '@mui/icons-material/Edit';
 import DoneIcon from '@mui/icons-material/Done';
 import {DeletableItem, DeleteModeProvider} from "../../../../shared/components/ui/DeleteModeProvider.tsx";
 import {useDeleteMode} from "../../../../shared/hooks/useDeleteMode.ts";
-import type {GenericRecipe, PrepedMeal, Recipe} from "../../types/recipe.types";
+import type {GenericRecipe, PreppedMeal, Recipe} from "../../types/recipe.types";
 import DraggableRecipeCard from "./DraggableRecipeCard";
 import {RecipeContainerSkeleton} from "./RecipeContainerSkeleton";
 import {useMemo} from "react";
 
 interface RecipeContainerProps {
     genericRecipes: GenericRecipe[];
-    prepedMeals: PrepedMeal[];
+    prepedMeals: PreppedMeal[];
     recipes: Recipe[];
     isLoading: boolean;
     onDeleteGeneric?: (id: number) => void;

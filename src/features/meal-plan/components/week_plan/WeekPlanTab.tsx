@@ -7,7 +7,7 @@ import type {DragEndEvent, DragStartEvent} from '@dnd-kit/core';
 import {DndContext} from '@dnd-kit/core';
 import {DragOverlay, useDragSensors} from '../../../../shared/dnd';
 import {useCallback, useMemo, useState} from 'react';
-import type {GenericRecipe, PrepedMeal, Recipe, RecipeItem} from '../../types/recipe.types';
+import type {GenericRecipe, PreppedMeal, Recipe, RecipeItem} from '../../types/recipe.types';
 import {useMealPlanState} from '../../hooks/useMealPlanState';
 import RecipeCardPlan from './RecipeCard';
 import {DeleteModeProvider} from '../../../../shared/components/ui/DeleteModeProvider';
@@ -15,7 +15,7 @@ import '../../../../shared/dnd/styles.css';
 
 interface WeekPlanTabProps {
     genericRecipes: GenericRecipe[];
-    prepedMeals: PrepedMeal[];
+    prepedMeals: PreppedMeal[];
     recipes: Recipe[];
     isLoading: boolean;
     onCreateGeneric: (name: string) => void;
