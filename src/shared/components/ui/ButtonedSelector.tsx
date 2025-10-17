@@ -2,27 +2,30 @@ import React, {useState} from 'react';
 import {Box, IconButton, Typography} from '@mui/joy';
 import {Add, Remove} from '@mui/icons-material';
 
-interface ServingSelectorProps {
-    initialServings?: number;
-    onServingsChange?: (servings: number) => void;
+interface ButtonedSelectorProps {
+    startingValue: number;
+    setterFunc: (value: number) => void;
+    acceptZero: boolean;
+    decoratorText?: string;
 }
 
-const ServingSelector: React.FC<ServingSelectorProps> = ({
-                                                             initialServings = 2,
-                                                             onServingsChange
-                                                         }) => {
-    const [servings, setServings] = useState(initialServings);
+function ButtonedSelector({startingValue, setterFunc, acceptZero, decoratorText}: ButtonedSelectorProps) {
+    const [value, setValue] = useState(startingValue);
 
     const handleIncrease = () => {
-        const newServings = servings + 1;
-        setServings(newServings);
-        onServingsChange?.(newServings);
+        setterFunc(value + 1);
+        setValue(value + 1);
     };
 
     const handleDecrease = () => {
-        const newServings = servings - 1;
-        setServings(newServings);
-        onServingsChange?.(newServings);
+        let newValue;
+        if (acceptZero) {
+            newValue = value > 0 ? value - 1 : 0;
+        } else {
+            newValue = value > 1 ? value - 1 : 1;
+        }
+        setValue(newValue);
+        setterFunc(newValue);
     };
 
     return (
@@ -40,14 +43,13 @@ const ServingSelector: React.FC<ServingSelectorProps> = ({
                     minWidth: '80px',
                     textAlign: 'center'
                 }}>
-                    Serves: {servings}
+                    {decoratorText} {}
                 </Typography>
 
                 <IconButton
                     variant="soft"
                     size="sm"
                     onClick={handleDecrease}
-                    disabled={servings <= 1}
                     sx={{minWidth: '24px', minHeight: '24px'}}
                 >
                     <Remove/>
@@ -66,4 +68,4 @@ const ServingSelector: React.FC<ServingSelectorProps> = ({
     );
 };
 
-export default ServingSelector;
+export default ButtonedSelector;
