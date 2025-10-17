@@ -63,6 +63,7 @@ function RecipeHeaderInput() {
                         value={title}
                         onChange={e => setTitle(e.target.value)}
                         endDecorator={
+                            title &&
                             <IconButton
                                 variant={'plain'}
                                 color={'primary'}
