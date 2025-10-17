@@ -4,7 +4,7 @@ import {useMemo, useState} from 'react';
 import {DeleteModeProvider} from "../../shared/components/ui/DeleteModeProvider.tsx";
 import {useDeleteMode} from "../../shared/hooks/useDeleteMode.ts";
 import {useRecipes} from "./hooks/useRecipes.ts";
-import {useScrollShadows} from "./hooks/useScrollShadows.ts";
+import {useScrollShadows} from "../../shared/hooks/useScrollShadows.ts";
 import {RecipeBankToolbar} from "./components/RecipeBankToolbar.tsx";
 import {RecipeGrid} from "./components/RecipeGrid.tsx";
 import {RecipeGridSkeleton} from "./components/RecipeGridSkeleton.tsx";

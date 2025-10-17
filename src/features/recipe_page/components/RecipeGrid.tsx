@@ -6,7 +6,7 @@ import React from "react";
 
 interface RecipeGridProps {
     recipes: RecipeSummary[];
-    scrollRef: React.RefObject<HTMLDivElement | null>;
+    scrollRef: React.Ref<HTMLDivElement>;
     showTopShadow: boolean;
     showBottomShadow: boolean;
     scrollStatusMessage: string;
@@ -135,4 +135,3 @@ export function RecipeGrid({
         </Box>
     );
 }
-
