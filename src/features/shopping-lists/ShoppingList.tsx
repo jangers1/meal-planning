@@ -1,11 +1,25 @@
 import {Sheet, Typography} from '@mui/joy';
+import ListCard from './ListCard';
 
 function ShoppingList() {
     return (
-        <Sheet sx={{p:2, width: '100%'}}>
-            <Typography level="h3">Shopping List</Typography>
-            <Typography level="body-md" sx={{mt:1}}>This is where shopping lists will sit</Typography>
-        </Sheet>
+        <>
+            <Sheet
+                sx={{
+                    width: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 2,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                }}
+            >
+                <Typography level="h1" sx={{ fontFamily: '"Roboto", sans-serif' }}>
+                    Interactive Todo List
+                </Typography>
+                <ListCard />
+            </Sheet>
+        </>
     );
 }
 
