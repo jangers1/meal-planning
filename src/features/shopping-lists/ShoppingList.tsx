@@ -1,36 +1,36 @@
-import {Box, Card, Sheet, Typography} from '@mui/joy';
+import {Box, Sheet, Typography, Card} from '@mui/joy';
 import ListCard from "./ListCard.tsx";
 import {useState} from "react";
-import './ShoppingList.css';
 import ButtonRow from "./ButtonRow.tsx";
 import {useScrollShadows} from "../../shared/hooks/useScrollShadows.ts";
+import {gradientGlowBorderStyle} from "../../shared/utils/cardStyles.ts";
 
 function ShoppingList() {
     const [shoppingLists] = useState([
-        {id: 1, name: 'Groceries', linkedList: null},
-        {id: 2, name: 'Electronics', linkedList: null},
-        {id: 3, name: 'Clothing', linkedList: null},
-        {id: 4, name: 'Household Items', linkedList: null},
-        {id: 5, name: 'Books', linkedList: null},
-        {id: 6, name: 'Toys', linkedList: null},
-        {id: 7, name: 'Sports Equipment', linkedList: null},
-        {id: 8, name: 'Garden Supplies', linkedList: null},
-        {id: 9, name: 'Pet Supplies', linkedList: null},
-        {id: 10, name: 'Pharmacy Items', linkedList: null},
-        {id: 11, name: 'Office Supplies', linkedList: null},
-        {id: 12, name: 'Miscellaneous', linkedList: null},
-        {id: 13, name: 'Groceries', linkedList: null},
-        {id: 14, name: 'Electronics', linkedList: null},
-        {id: 15, name: 'Clothing', linkedList: null},
-        {id: 16, name: 'Household Items', linkedList: null},
-        {id: 17, name: 'Books', linkedList: null},
-        {id: 18, name: 'Toys', linkedList: null},
-        {id: 19, name: 'Sports Equipment', linkedList: null},
-        {id: 20, name: 'Garden Supplies', linkedList: null},
-        {id: 21, name: 'Pet Supplies', linkedList: null},
-        {id: 22, name: 'Pharmacy Items', linkedList: null},
-        {id: 23, name: 'Office Supplies', linkedList: null},
-        {id: 24, name: 'Miscellaneous', linkedList: null},
+        {id: 1, name: 'Groceries'},
+        {id: 2, name: 'Electronics'},
+        {id: 3, name: 'Clothing'},
+        {id: 4, name: 'Household Items'},
+        {id: 5, name: 'Books'},
+        {id: 6, name: 'Toys'},
+        {id: 7, name: 'Sports Equipment'},
+        {id: 8, name: 'Garden Supplies'},
+        {id: 9, name: 'Pet Supplies'},
+        {id: 10, name: 'Pharmacy Items'},
+        {id: 11, name: 'Office Supplies'},
+        {id: 12, name: 'Miscellaneous'},
+        {id: 13, name: 'Groceries'},
+        {id: 14, name: 'Electronics'},
+        {id: 15, name: 'Clothing'},
+        {id: 16, name: 'Household Items'},
+        {id: 17, name: 'Books'},
+        {id: 18, name: 'Toys'},
+        {id: 19, name: 'Sports Equipment'},
+        {id: 20, name: 'Garden Supplies'},
+        {id: 21, name: 'Pet Supplies'},
+        {id: 22, name: 'Pharmacy Items'},
+        {id: 23, name: 'Office Supplies'},
+        {id: 24, name: 'Miscellaneous'},
     ]);
 
     const {scrollRef, showTopShadow, showBottomShadow, handleScroll} = useScrollShadows();
@@ -89,16 +89,14 @@ function ShoppingList() {
                                 <Card
                                     key={list.id}
                                     variant="solid"
-                                    onClick={() => {console.log(`Open List ${list.linkedList}`)}}
                                     sx={{
-                                        background: 'linear-gradient(45deg, hsl(280, 80%, 20%), hsl(310, 85%, 30%))',
-                                        padding: '10px 20px',
-                                        borderRadius: '15px',
+                                        ...gradientGlowBorderStyle,
+                                        padding: '10px 15px',
+                                        minHeight: 'min-content',
                                         cursor: 'pointer',
                                         transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                                         '&:hover': {
                                             transform: 'scale(1.06)',
-                                            filter: 'brightness(145%)',
                                             boxShadow: '0 0 15px hsl(280, 20%, 20%, 0.6)',
                                             zIndex: 5,
                                             transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
@@ -109,7 +107,7 @@ function ShoppingList() {
                                         },
                                     }}
                                 >
-                                    <Typography level="body-lg" sx={{color: 'white'}}>
+                                    <Typography level="body-lg">
                                         {list.name}
                                     </Typography>
                                 </Card>
