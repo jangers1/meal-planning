@@ -2,6 +2,7 @@ import {Box, Button, Sheet, Stack, Tab, TabList, TabPanel, Tabs, Typography} fro
 import PantryMasonry from './masonry/PantryMasonry';
 import {DeleteModeProvider} from '../../shared/components/ui/DeleteModeProvider';
 import {useDeleteMode} from '../../shared/hooks/useDeleteMode';
+import {useScrollShadows} from '../../shared/hooks/useScrollShadows';
 import {useState} from 'react';
 
 function PantryTabContent({
@@ -16,6 +17,7 @@ function PantryTabContent({
     onDeleteItem: (id: string) => void;
 }) {
     const {isDeleteMode, setDeleteMode} = useDeleteMode();
+    const {scrollRef, showTopShadow, showBottomShadow, handleScroll} = useScrollShadows();
 
     return (
         <Box sx={{display: 'flex', flexDirection: 'column', height: '100%', p: 2}}>
@@ -46,8 +48,67 @@ function PantryTabContent({
                     </Button>
                 </Stack>
             </Box>
-            <Box sx={{flex: 1, minHeight: 0}}>
-                <PantryMasonry items={items} color={color} onDeleteItem={onDeleteItem}/>
+            <Box
+                sx={{
+                    flex: 1,
+                    borderRadius: 5,
+                    backgroundColor: 'var(--joy-palette-neutral-softBg)',
+                    mt: 1,
+                    position: 'relative',
+                    boxShadow: 'inset 0 0 24px rgba(0, 0, 0, 0.1)',
+                    overflow: 'hidden'
+                }}
+            >
+                <Box
+                    ref={scrollRef}
+                    onScroll={handleScroll}
+                    sx={{
+                        position: 'absolute',
+                        inset: 0,
+                        p: 2,
+                        overflowY: 'auto',
+                    }}
+                >
+                    <PantryMasonry items={items} color={color} onDeleteItem={onDeleteItem}/>
+                </Box>
+
+                {/* Top shadow */}
+                <Box
+                    aria-hidden
+                    sx={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        height: 18,
+                        pointerEvents: 'none',
+                        background: 'linear-gradient(to bottom, rgba(0,0,0,0.18), rgba(0,0,0,0))',
+                        borderTopLeftRadius: 5,
+                        borderTopRightRadius: 5,
+                        zIndex: 2,
+                        opacity: showTopShadow ? 1 : 0,
+                        transition: 'opacity 0.3s ease'
+                    }}
+                />
+
+                {/* Bottom shadow */}
+                <Box
+                    aria-hidden
+                    sx={{
+                        position: 'absolute',
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        height: 20,
+                        pointerEvents: 'none',
+                        background: 'linear-gradient(to top, rgba(0,0,0,0.22), rgba(0,0,0,0))',
+                        borderBottomLeftRadius: 5,
+                        borderBottomRightRadius: 5,
+                        zIndex: 2,
+                        opacity: showBottomShadow ? 1 : 0,
+                        transition: 'opacity 0.3s ease'
+                    }}
+                />
             </Box>
         </Box>
     );
@@ -62,6 +123,14 @@ function Pantry() {
         {id: 'f4', title: 'Fruit Mix', quantity: 1, date: new Date()},
         {id: 'f5', title: 'Soup Jar', quantity: 3, date: new Date()},
         {id: 'f6', title: 'Yogurt Cups', quantity: 9, date: new Date()},
+        {id: 'f7', title: 'Cheese Slices', quantity: 4, date: new Date()},
+        {id: 'f8', title: 'Veggie Wraps', quantity: 6, date: new Date()},
+        {id: 'f9', title: 'Smoothie Packs', quantity: 2, date: new Date()},
+        {id: 'f10', title: 'Deli Meats', quantity: 5, date: new Date()},
+        {id: 'f11', title: 'Hard-Boiled Eggs', quantity: 12, date: new Date()},
+        {id: 'f12', title: 'Fresh Juice', quantity: 3, date: new Date()},
+        {id: 'f13', title: 'Leftover Pizza', quantity: 1, date: new Date()},
+        {id: 'f14', title: 'Grilled Vegetables', quantity: 4, date: new Date()}
     ]);
 
     const [freezerItems, setFreezerItems] = useState([
