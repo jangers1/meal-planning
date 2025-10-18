@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {Box, IconButton, Typography} from '@mui/joy';
 import {Add, Remove} from '@mui/icons-material';
 
@@ -40,6 +40,22 @@ function ButtonedSelector({
     }
 
     const [index, setIndex] = useState(initialIndex);
+
+    // Sync internal index when startingValue changes externally
+    useEffect(() => {
+        let newIndex: number;
+        if (isStringMode) {
+            if (typeof startingValue === 'string') {
+                newIndex = stringValues.findIndex(item => item.name === startingValue);
+            } else {
+                newIndex = stringValues.findIndex(item => item.id === startingValue);
+            }
+            newIndex = newIndex >= 0 ? newIndex : 0;
+        } else {
+            newIndex = typeof startingValue === 'number' ? startingValue : 0;
+        }
+        setIndex(newIndex);
+    }, [startingValue, isStringMode, stringValues]);
 
     const handleIncrease = () => {
         let newIndex;
