@@ -79,6 +79,7 @@
     width: 100%;
     box-sizing: border-box;
     display: flex;
+    overflow: visible;
 }
 
 /* Optional: subtle hover for interactivity */
@@ -86,4 +87,3 @@
     transform: translateY(-1px);
     transition: transform 120ms ease;
 }
-

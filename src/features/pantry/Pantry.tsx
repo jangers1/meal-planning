@@ -1,24 +1,24 @@
-import {Box, Button, Sheet, Stack, Typography} from '@mui/joy';
+import {Box, Button, Sheet, Stack, Tab, TabList, TabPanel, Tabs, Typography} from '@mui/joy';
 import PantryMasonry from './masonry/PantryMasonry';
 import {DeleteModeProvider} from '../../shared/components/ui/DeleteModeProvider';
 import {useDeleteMode} from '../../shared/hooks/useDeleteMode';
 import {useState} from 'react';
 
-function PantrySection({
-                           title,
-                           items,
-                           color,
-                           onDeleteItem
-                       }: {
-    title: string;
+function PantryTabContent({
+                              items,
+                              title,
+                              color,
+                              onDeleteItem
+                          }: {
     items: Array<{ id: string; title: string; quantity: number; date: Date }>;
+    title: string;
     color: 'primary' | 'success';
     onDeleteItem: (id: string) => void;
 }) {
     const {isDeleteMode, setDeleteMode} = useDeleteMode();
 
     return (
-        <>
+        <Box sx={{display: 'flex', flexDirection: 'column', height: '100%', p: 2}}>
             <Box
                 sx={{
                     display: 'flex',
@@ -27,7 +27,7 @@ function PantrySection({
                     mb: 2,
                 }}
             >
-                <Typography level="h1">
+                <Typography level={'h1'}>
                     {title}
                 </Typography>
                 <Stack
@@ -38,6 +38,7 @@ function PantrySection({
                         Add Item
                     </Button>
                     <Button
+                        size={'sm'}
                         color={isDeleteMode ? 'success' : 'danger'}
                         onClick={() => setDeleteMode(!isDeleteMode)}
                     >
@@ -45,10 +46,10 @@ function PantrySection({
                     </Button>
                 </Stack>
             </Box>
-            <Box sx={{mb: 4}}>
+            <Box sx={{flex: 1, minHeight: 0}}>
                 <PantryMasonry items={items} color={color} onDeleteItem={onDeleteItem}/>
             </Box>
-        </>
+        </Box>
     );
 }
 
@@ -81,24 +82,42 @@ function Pantry() {
     };
 
     return (
-        <Sheet sx={{p: 2, width: '100%', height: '100%', display: 'flex', flexDirection: 'column'}}>
-            <DeleteModeProvider>
-                <PantrySection
-                    title="Fridge"
-                    items={fridgeItems}
-                    color="primary"
-                    onDeleteItem={handleDeleteFridgeItem}
-                />
-            </DeleteModeProvider>
+        <Sheet
+            sx={{
+                width: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 2,
+            }}
+        >
+            <Tabs size="lg" sx={{flex: 1, display: 'flex', flexDirection: 'column'}}>
+                <TabList>
+                    <Tab color="primary">Fridge</Tab>
+                    <Tab color="success">Freezer</Tab>
+                </TabList>
 
-            <DeleteModeProvider>
-                <PantrySection
-                    title="Freezer"
-                    items={freezerItems}
-                    color="success"
-                    onDeleteItem={handleDeleteFreezerItem}
-                />
-            </DeleteModeProvider>
+                <TabPanel value={0} sx={{p: 0, flex: 1, minHeight: 0}}>
+                    <DeleteModeProvider>
+                        <PantryTabContent
+                            items={fridgeItems}
+                            title={'Fridge'}
+                            color="primary"
+                            onDeleteItem={handleDeleteFridgeItem}
+                        />
+                    </DeleteModeProvider>
+                </TabPanel>
+
+                <TabPanel value={1} sx={{p: 0, flex: 1, minHeight: 0}}>
+                    <DeleteModeProvider>
+                        <PantryTabContent
+                            items={freezerItems}
+                            title={'Freezer'}
+                            color="success"
+                            onDeleteItem={handleDeleteFreezerItem}
+                        />
+                    </DeleteModeProvider>
+                </TabPanel>
+            </Tabs>
         </Sheet>
     );
 }
