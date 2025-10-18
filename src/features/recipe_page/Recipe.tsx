@@ -1,5 +1,5 @@
 import {Box, Chip} from "@mui/joy";
-import ServingSelector from "../recipes/components/view/ServingSelector.tsx";
+import ButtonedSelector from "../../shared/components/ui/ButtonedSelector.tsx";
 import NameDisplay from "../recipes/components/view/NameDisplay.tsx";
 import Stack from "@mui/joy/Stack";
 import Typography from "@mui/joy/Typography";
@@ -18,7 +18,7 @@ function Recipe() {
         {tag: 'Gluten-Free', color: 'warning'},
         {tag: 'Dessert', color: 'success'}
     ]);
-    const [servings] = useState<number>(2);
+    const [servings, setServings] = useState<number>(2);
     const [cookingTime] = useState<number>(45); // in minutes
     const [recipeTitle] = useState<string>('Recipe Title');
     const [recipeDescription] = useState<string>('Recipe Description');
@@ -77,7 +77,12 @@ function Recipe() {
                             <NameDisplay name={recipeOwner}/>
                             <VersionControl/>
                         </Box>
-                        <ServingSelector initialServings={servings}/>
+                        <ButtonedSelector
+                            startingValue={servings}
+                            setterFunc={setServings}
+                            acceptZero={false}
+                            decoratorText={'Servings: '}
+                        />
                         <Typography level={'body-md'}>Cooking Time: {cookingTime} mins</Typography>
                     </Box>
                 </Box>
