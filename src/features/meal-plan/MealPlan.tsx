@@ -1,6 +1,7 @@
 import {Sheet, Tab, TabList, TabPanel, Tabs} from '@mui/joy';
 import WeekPlanTab from './components/week_plan/WeekPlanTab';
 import useRecipeManager from './hooks/useRecipeManager';
+import Calender from "./components/month_overview/Calender.tsx";
 
 function MealPlan() {
     const {
@@ -38,8 +39,8 @@ function MealPlan() {
                     />
                 </TabPanel>
 
-                <TabPanel value={1}>
-                    {/* Month overview implementation goes here */}
+                <TabPanel value={1} sx={{p: 0, display: 'flex', flexDirection: 'column'}}>
+                    <Calender/>
                 </TabPanel>
             </Tabs>
         </Sheet>
