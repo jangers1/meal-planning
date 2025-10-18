@@ -15,7 +15,7 @@ import '../../../../shared/dnd/styles.css';
 
 interface WeekPlanTabProps {
     genericRecipes: GenericRecipe[];
-    prepedMeals: PreppedMeal[];
+    preppedMeals: PreppedMeal[];
     recipes: Recipe[];
     isLoading: boolean;
     onCreateGeneric: (name: string) => void;
@@ -24,7 +24,7 @@ interface WeekPlanTabProps {
 
 export default function WeekPlanTab({
                                         genericRecipes,
-                                        prepedMeals,
+                                        preppedMeals,
                                         recipes,
                                         isLoading,
                                         onCreateGeneric,
@@ -52,8 +52,8 @@ export default function WeekPlanTab({
 
     // Get all recipes for lookup
     const allRecipes = useMemo<RecipeItem[]>(() => {
-        return [...genericRecipes, ...prepedMeals, ...recipes];
-    }, [genericRecipes, prepedMeals, recipes]);
+        return [...genericRecipes, ...preppedMeals, ...recipes];
+    }, [genericRecipes, preppedMeals, recipes]);
 
     // Use smart sensor that checks each draggable's isInSlot data
     const sensors = useDragSensors();
@@ -212,7 +212,7 @@ export default function WeekPlanTab({
 
             <RecipeContainer
                 genericRecipes={genericRecipes}
-                prepedMeals={prepedMeals}
+                preppedMeals={preppedMeals}
                 recipes={recipes}
                 isLoading={isLoading}
                 onDeleteGeneric={onDeleteGeneric}

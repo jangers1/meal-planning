@@ -13,9 +13,15 @@ interface DraggableRecipeCardProps {
  * Handles drag logic and visual feedback
  */
 export default function DraggableRecipeCard({recipe, usageCount = 0}: DraggableRecipeCardProps) {
+    // For prepped meals, show remaining quantity (countdown)
+    // For other recipes, show usage count (count up)
+    const badgeCount = recipe.type === 'prepped'
+        ? Math.max(0, recipe.quantity - usageCount)  // Countdown: show remaining
+        : usageCount;  // Count up: show how many times used
+
     return (
         <Badge
-            badgeContent={usageCount || null}
+            badgeContent={badgeCount || null}
             color="primary"
             size="lg"
             sx={{
@@ -31,7 +37,7 @@ export default function DraggableRecipeCard({recipe, usageCount = 0}: DraggableR
             }}
         >
             <Draggable id={`recipe-${recipe.id}`} isInSlot={false}>
-                <RecipeCardPlan title={recipe.title} />
+                <RecipeCardPlan title={recipe.title}/>
             </Draggable>
         </Badge>
     );

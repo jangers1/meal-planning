@@ -31,7 +31,7 @@ function MealPlan() {
                 <TabPanel value={0} sx={{p: 0, display: 'flex', flexDirection: 'column'}}>
                     <WeekPlanTab
                         genericRecipes={genericRecipes}
-                        prepedMeals={preppedMeals}
+                        preppedMeals={preppedMeals}
                         recipes={recipes}
                         isLoading={isLoading}
                         onCreateGeneric={createGenericRecipe}

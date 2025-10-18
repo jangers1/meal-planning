@@ -14,8 +14,8 @@ const INITIAL_RECIPES: Recipe[] = [
 ];
 
 const EXAMPLE_PREPPED_MEALS: PreppedMeal[] = [
-    {id: 101, title: 'Grilled Chicken Breast', type: 'prepped'},
-    {id: 102, title: 'Roasted Vegetables', type: 'prepped'},
+    {id: 101, title: 'Grilled Chicken Breast', type: 'prepped', quantity: 5},
+    {id: 102, title: 'Roasted Vegetables', type: 'prepped', quantity: 3},
 ];
 
 interface UseRecipeManagerReturn {
@@ -88,7 +88,8 @@ const useRecipeManager = (): UseRecipeManagerReturn => {
         const newMeal: PreppedMeal = {
             id: Date.now(),
             title: title.trim(),
-            type: 'prepped'
+            type: 'prepped',
+            quantity: 1  // Default quantity of 1 when creating a new prepped meal
         };
         setPreppedMeals(prev => [...prev, newMeal]);
     }, []);

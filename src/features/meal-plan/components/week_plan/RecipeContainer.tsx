@@ -11,23 +11,30 @@ import {useMemo} from "react";
 
 interface RecipeContainerProps {
     genericRecipes: GenericRecipe[];
-    prepedMeals: PreppedMeal[];
+    preppedMeals: PreppedMeal[];
     recipes: Recipe[];
     isLoading: boolean;
     onDeleteGeneric?: (id: number) => void;
     getRecipeUsageCount: (recipeId: number) => number;
 }
 
-function RecipeContainer({genericRecipes, prepedMeals, recipes, isLoading, onDeleteGeneric, getRecipeUsageCount}: RecipeContainerProps) {
+function RecipeContainer({
+                             genericRecipes,
+                             preppedMeals,
+                             recipes,
+                             isLoading,
+                             onDeleteGeneric,
+                             getRecipeUsageCount
+                         }: RecipeContainerProps) {
     if (isLoading) {
-        return <RecipeContainerSkeleton count={8} />;
+        return <RecipeContainerSkeleton count={8}/>;
     }
 
     return (
         <DeleteModeProvider>
             <RecipeContainerInner
                 genericRecipes={genericRecipes}
-                prepedMeals={prepedMeals}
+                preppedMeals={preppedMeals}
                 recipes={recipes}
                 onDeleteGeneric={onDeleteGeneric}
                 getRecipeUsageCount={getRecipeUsageCount}
@@ -37,7 +44,13 @@ function RecipeContainer({genericRecipes, prepedMeals, recipes, isLoading, onDel
 }
 
 // Inner component that uses the delete mode hook
-function RecipeContainerInner({genericRecipes, prepedMeals, recipes, onDeleteGeneric, getRecipeUsageCount}: Omit<RecipeContainerProps, 'isLoading'>) {
+function RecipeContainerInner({
+                                  genericRecipes,
+                                  preppedMeals,
+                                  recipes,
+                                  onDeleteGeneric,
+                                  getRecipeUsageCount
+                              }: Omit<RecipeContainerProps, 'isLoading'>) {
     const {isDeleteMode, setDeleteMode} = useDeleteMode();
 
     const handleEditClick = () => {
@@ -51,11 +64,17 @@ function RecipeContainerInner({genericRecipes, prepedMeals, recipes, onDeleteGen
         });
     }, [genericRecipes, getRecipeUsageCount]);
 
-    const sortedPrepedMeals = useMemo(() => {
-        return [...prepedMeals].sort((a, b) => {
-            return getRecipeUsageCount(b.id) - getRecipeUsageCount(a.id);
-        });
-    }, [prepedMeals, getRecipeUsageCount]);
+    const sortedPreppedMeals = useMemo(() => {
+        return [...(preppedMeals || [])]
+            .filter(meal => {
+                const usageCount = getRecipeUsageCount(meal.id);
+                const remaining = meal.quantity - usageCount;
+                return remaining > 0; // Only show meals with remaining quantity
+            })
+            .sort((a, b) => {
+                return getRecipeUsageCount(b.id) - getRecipeUsageCount(a.id);
+            });
+    }, [preppedMeals, getRecipeUsageCount]);
 
     const sortedRecipes = useMemo(() => {
         return [...recipes].sort((a, b) => {
@@ -154,7 +173,7 @@ function RecipeContainerInner({genericRecipes, prepedMeals, recipes, onDeleteGen
             )}
 
             {/* Prepped Meals Section */}
-            {prepedMeals.length > 0 && (
+            {preppedMeals && preppedMeals.length > 0 && sortedPreppedMeals.length > 0 && (
                 <>
                     <Typography level={'h2'}>
                         Prepped Meals
@@ -172,7 +191,7 @@ function RecipeContainerInner({genericRecipes, prepedMeals, recipes, onDeleteGen
                             alignContent: 'start',
                         }}
                     >
-                        {sortedPrepedMeals.map(meal => (
+                        {sortedPreppedMeals.map(meal => (
                             <DraggableRecipeCard
                                 key={meal.id}
                                 recipe={meal}
