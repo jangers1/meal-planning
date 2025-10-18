@@ -101,7 +101,8 @@ function ButtonedSelector({
             </Typography>
 
             <IconButton
-                variant="soft"
+                variant="solid"
+                color="primary"
                 size="sm"
                 onClick={handleDecrease}
                 sx={{minWidth: '24px', minHeight: '24px'}}
@@ -110,7 +111,8 @@ function ButtonedSelector({
             </IconButton>
 
             <IconButton
-                variant="soft"
+                variant="solid"
+                color="primary"
                 size="sm"
                 onClick={handleIncrease}
                 sx={{minWidth: '24px', minHeight: '24px'}}
