@@ -1,0 +1,89 @@
+/* Masonry layout using CSS Grid; responsive columns and row heights */
+
+:root {
+    /* Base row height and gap; can be adjusted via media queries */
+    --masonry-gap: 12px;
+    --masonry-row: 80px; /* each row unit */
+    --masonry-columns: 6; /* default column count */
+}
+
+@media (max-width: 1400px) {
+    :root {
+        --masonry-columns: 5;
+    }
+}
+
+@media (max-width: 1200px) {
+    :root {
+        --masonry-columns: 4;
+    }
+}
+
+@media (max-width: 900px) {
+    :root {
+        --masonry-columns: 3;
+    }
+}
+
+@media (max-width: 600px) {
+    :root {
+        --masonry-columns: 2;
+        --masonry-row: 72px;
+    }
+}
+
+@media (max-width: 420px) {
+    :root {
+        --masonry-columns: 1;
+        --masonry-row: 68px;
+    }
+}
+
+.pantry-masonry {
+    display: grid;
+    grid-auto-flow: dense;
+    gap: var(--masonry-gap);
+    grid-template-columns: repeat(var(--masonry-columns), minmax(0, 1fr));
+    grid-auto-rows: var(--masonry-row);
+}
+
+/* Size classes: width x height in grid spans */
+.tile-1x1 {
+    grid-column: span 1;
+    grid-row: span 1;
+}
+
+.tile-2x1 {
+    grid-column: span 2;
+    grid-row: span 1;
+}
+
+.tile-2x2 {
+    grid-column: span 2;
+    grid-row: span 2;
+}
+
+.tile-3x2 {
+    grid-column: span 3;
+    grid-row: span 2;
+}
+
+.tile-3x3 {
+    grid-column: span 3;
+    grid-row: span 3;
+}
+
+/* Ensure cards fill their grid area nicely */
+.pantry-card {
+    height: 100%;
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+}
+
+/* Optional: subtle hover for interactivity */
+.pantry-card:hover {
+    transform: translateY(-1px);
+    transition: transform 120ms ease;
+}
+
