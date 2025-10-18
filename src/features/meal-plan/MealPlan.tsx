@@ -28,7 +28,7 @@ function MealPlan() {
                     <Tab color="primary">Month Overview</Tab>
                 </TabList>
 
-                <TabPanel value={0} sx={{p: 0, display: 'flex', flexDirection: 'column'}}>
+                <TabPanel value={0} sx={{p: 0, flex: 1, minHeight: 0}}>
                     <WeekPlanTab
                         genericRecipes={genericRecipes}
                         preppedMeals={preppedMeals}
@@ -39,7 +39,7 @@ function MealPlan() {
                     />
                 </TabPanel>
 
-                <TabPanel value={1} sx={{p: 0, display: 'flex', flexDirection: 'column'}}>
+                <TabPanel value={1} sx={{p: 0, flex: 1, minHeight: 0}}>
                     <Calender/>
                 </TabPanel>
             </Tabs>

@@ -92,6 +92,7 @@ function Calender() {
                     alignItems: 'center',
                     justifyContent: 'flex-end',
                     gap: 2,
+                    mt: 1
                 }}
             >
                 <ButtonedSelector
@@ -119,6 +120,7 @@ function Calender() {
                     gridTemplateRows: '30px',
                     gridAutoRows: '140px',
                     gap: 1,
+                    mt: 1
                 }}
             >
                 {DAYS.map((day, idx) => (
