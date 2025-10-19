@@ -157,7 +157,17 @@ function RecipeHeaderInput() {
                                     type="number"
                                     size={'sm'}
                                     value={input.value}
-                                    onChange={(e) => input.setValue(Number(e.target.value))}
+                                    onChange={(e) => {
+                                        const raw = e.target.value;
+                                        // allow only digits (no decimals or signs)
+                                        const digitsOnly = raw.replace(/\D/g, '');
+                                        const num = digitsOnly === '' ? 0 : parseInt(digitsOnly, 10);
+                                        input.setValue(Number.isNaN(num) ? 0 : num);
+                                    }}
+                                    onBlur={() => {
+                                        // enforce positive integer minimum of 1
+                                        input.setValue(prev => Math.max(1, Math.floor(Number(prev) || 1)));
+                                    }}
                                     sx={{
                                         width: 'auto',
                                         maxWidth: '60px'
