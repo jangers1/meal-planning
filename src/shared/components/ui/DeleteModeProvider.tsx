@@ -75,10 +75,7 @@ export function DeletableItem({
         <>
             <Box
                 sx={{
-                    display: 'flex',
                     position: 'relative',
-                    width: '100%',
-                    height: '100%',
                     animation: isDeleteMode ? 'wobble 0.15s ease-in-out infinite alternate' : 'none',
                     '@keyframes wobble': {
                         '0%': {

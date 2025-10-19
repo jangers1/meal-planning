@@ -49,7 +49,7 @@ export function RecipeGrid({
                     overflowY: 'auto',
                     display: 'grid',
                     gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-                    gridAutoRows: '210px',
+                    gridAutoRows: '230px',
                     gap: 2,
                     borderRadius: 5
                 }}

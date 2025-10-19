@@ -117,8 +117,6 @@ function ShoppingList() {
                                                 ...gradientGlowBorderStyle,
                                                 backgroundColor: selectedListID === list.id ? 'rgba(0, 255, 0, 0.3)' : 'background.surface',
                                                 padding: '10px 15px',
-                                                flexGrow: 1,
-                                                minHeight: 'min-content',
                                                 cursor: 'pointer',
                                                 transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                                                 '&:hover': {

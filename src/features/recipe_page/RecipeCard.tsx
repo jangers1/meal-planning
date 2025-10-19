@@ -3,7 +3,7 @@ import Typography from "@mui/joy/Typography";
 import Box from "@mui/joy/Box";
 import Chip from '@mui/joy/Chip';
 import type {JoyColours} from '../../shared/types/ui.types.ts';
-import { gradientGlowCardStyle } from '../../shared/utils/cardStyles.ts';
+import {gradientGlowCardStyle} from '../../shared/utils/cardStyles.ts';
 
 interface RecipeTag {
     tagName: string;
@@ -27,9 +27,9 @@ function RecipeCard({name, tags, link, description}: RecipeCardProps) {
                 }}
                 sx={{
                     ...gradientGlowCardStyle,
-                    gap: 0,
-                    p: 2,
-                    flex: 1
+                    display: 'flex',
+                    flexDirection: 'column',
+                    height: '100%',
                 }}
             >
                 <Avatar
@@ -40,34 +40,39 @@ function RecipeCard({name, tags, link, description}: RecipeCardProps) {
                         right: 8
                     }}
                 />
-                <Typography level={'h3'} sx={{width: 'calc(100% - 30px)'}}>
-                    {name}
-                </Typography>
-                {description && (
-                    <Typography
-                        level="body-sm"
-                        title={description}
-                        sx={{
-                            mt: 0.5,
-                            display: '-webkit-box',
-                            WebkitLineClamp: 2,
-                            WebkitBoxOrient: 'vertical',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            minHeight: '2.4em', // reserves space so cards align (approx 2 lines)
-                            lineHeight: 1.2,
-                            color: 'text.tertiary'
-                        }}
-                    >
-                        {description}
+                <Box
+                    sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                    }}
+                >
+                    <Typography level={'h3'} sx={{width: 'calc(100% - 30px)'}}>
+                        {name}
                     </Typography>
-                )}
-                <Divider sx={{my: 2}}/>
+                    {description && (
+                        <Typography
+                            level="body-sm"
+                            title={description}
+                            sx={{
+                                mt: 0.5,
+                                display: '-webkit-box',
+                                WebkitLineClamp: 2,
+                                WebkitBoxOrient: 'vertical',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                lineHeight: 1.2,
+                                color: 'text.tertiary'
+                            }}
+                        >
+                            {description}
+                        </Typography>
+                    )}
+                </Box>
+                <Divider/>
                 <Box
                     sx={{
                         display: 'flex',
                         flexWrap: 'wrap',
-                        gap: 2,
                         overflow: 'auto',
                     }}
                 >
@@ -79,6 +84,7 @@ function RecipeCard({name, tags, link, description}: RecipeCardProps) {
                                 variant={'soft'}
                                 size={'lg'}
                                 color={chipColor}
+                                sx={{mr: 1, mb: 1}}
                             >
                                 {tag.tagName}
                             </Chip>
