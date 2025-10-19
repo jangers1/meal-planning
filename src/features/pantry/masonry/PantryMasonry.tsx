@@ -1,23 +1,7 @@
-import {
-    Box,
-    Card,
-    CardContent,
-    Chip,
-    Skeleton,
-    Typography,
-    IconButton,
-    Modal,
-    ModalDialog,
-    DialogTitle,
-    DialogContent,
-    DialogActions,
-    Button
-} from '@mui/joy';
+import {Box, Card, CardContent, Chip, Skeleton, Typography} from '@mui/joy';
 import {useMemo, useState} from 'react';
 import {useMasonryColumns, useMasonryPlacement} from './useMasonryPlacement';
-import {useDeleteMode} from '../../../shared/hooks/useDeleteMode';
-import CloseIcon from '@mui/icons-material/Close';
-import WarningRoundedIcon from '@mui/icons-material/WarningRounded';
+import {DeletableItem} from '../../../shared/components/ui/DeleteModeProvider';
 import './masonry.css';
 
 export type PantryItem = {
@@ -77,8 +61,6 @@ export default function PantryMasonry({
                                       }: PantryMasonryProps) {
     const [containerEl, setContainerEl] = useState<HTMLDivElement | null>(null);
     const columns = useMasonryColumns(containerEl, 6);
-    const {isDeleteMode} = useDeleteMode();
-    const [deleteConfirmItem, setDeleteConfirmItem] = useState<PantryItem | null>(null);
 
     // Skeleton placeholders: cycle through a pleasing mix of spans
     const skeletonTiles: Array<'3x3' | '3x2' | '2x2' | '2x1' | '1x1'> = useMemo(() => (
@@ -106,85 +88,49 @@ export default function PantryMasonry({
     );
 
     return (
-        <>
-            <Box ref={setContainerEl} className="pantry-masonry" aria-busy={loading}>
-                {loading ? (
-                    placedSkeletons.map((item: any) => {
-                        const style = {
-                            gridColumn: `${item.col} / span ${item.w}`,
-                            gridRow: `${item.row} / span ${item.h}`,
-                        } as const;
-                        return (
-                            <Card key={item.id} variant="soft" className="pantry-card" style={style} sx={{p: 1.5}}>
-                                <CardContent sx={{display: 'flex', flexDirection: 'column', gap: 1, width: '100%'}}>
-                                    <Skeleton variant="text" level="title-lg" sx={{width: '70%'}}/>
-                                    <Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
-                                        <Skeleton variant="rectangular" sx={{width: 72, height: 24, borderRadius: 12}}/>
-                                        <Skeleton variant="text" level="body-sm" sx={{width: 80}}/>
-                                    </Box>
-                                </CardContent>
-                            </Card>
-                        );
-                    })
-                ) : (
-                    placed.map((item) => {
-                        const tile = quantityToTile(item.quantity);
-                        const tileClass = `tile-${tile}`;
-                        const style = {
-                            gridColumn: `${item.col} / span ${item.w}`,
-                            gridRow: `${item.row} / span ${item.h}`,
-                        } as const;
+        <Box ref={setContainerEl} className="pantry-masonry" aria-busy={loading}>
+            {loading ? (
+                placedSkeletons.map((item: any) => {
+                    const style = {
+                        gridColumn: `${item.col} / span ${item.w}`,
+                        gridRow: `${item.row} / span ${item.h}`,
+                    } as const;
+                    return (
+                        <Card key={item.id} variant="soft" className="pantry-card" style={style} sx={{p: 1.5}}>
+                            <CardContent sx={{display: 'flex', flexDirection: 'column', gap: 1, width: '100%'}}>
+                                <Skeleton variant="text" level="title-lg" sx={{width: '70%'}}/>
+                                <Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
+                                    <Skeleton variant="rectangular" sx={{width: 72, height: 24, borderRadius: 12}}/>
+                                    <Skeleton variant="text" level="body-sm" sx={{width: 80}}/>
+                                </Box>
+                            </CardContent>
+                        </Card>
+                    );
+                })
+            ) : (
+                placed.map((item) => {
+                    const tile = quantityToTile(item.quantity);
+                    const tileClass = `tile-${tile}`;
+                    const style = {
+                        gridColumn: `${item.col} / span ${item.w}`,
+                        gridRow: `${item.row} / span ${item.h}`,
+                    } as const;
 
-                        return (
+                    return (
+                        <DeletableItem
+                            key={item.id}
+                            itemId={item.id}
+                            onDelete={() => onDeleteItem?.(item.id)}
+                            confirmMessage={`Are you sure you want to delete "${item.title}"?`}
+                            deleteButtonPosition="top-right"
+                            style={style}
+                        >
                             <Card
-                                key={item.id}
                                 variant="soft"
                                 color={color}
                                 className={`pantry-card ${tileClass}`}
-                                sx={{
-                                    p: 1,
-                                    position: 'relative',
-                                    animation: isDeleteMode ? 'wobble 0.15s ease-in-out infinite alternate' : 'none',
-                                    '@keyframes wobble': {
-                                        '0%': {
-                                            transform: 'rotate(-0.5deg)',
-                                        },
-                                        '100%': {
-                                            transform: 'rotate(0.5deg)',
-                                        },
-                                    },
-                                }}
-                                style={style}
+                                sx={{p: 1}}
                             >
-                                {isDeleteMode && onDeleteItem && (
-                                    <IconButton
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            setDeleteConfirmItem(item);
-                                        }}
-                                        size="sm"
-                                        color="danger"
-                                        variant="solid"
-                                        sx={{
-                                            position: 'absolute',
-                                            top: -8,
-                                            right: -8,
-                                            width: 20,
-                                            height: 20,
-                                            minWidth: 20,
-                                            minHeight: 20,
-                                            borderRadius: '50%',
-                                            zIndex: 1000,
-                                            backgroundColor: '#ff3b30',
-                                            '&:hover': {
-                                                backgroundColor: '#d70015',
-                                            },
-                                            boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
-                                        }}
-                                    >
-                                        <CloseIcon sx={{fontSize: 12}}/>
-                                    </IconButton>
-                                )}
                                 <CardContent
                                     sx={{
                                         display: 'flex',
@@ -216,43 +162,10 @@ export default function PantryMasonry({
                                     </Box>
                                 </CardContent>
                             </Card>
-                        );
-                    })
-                )}
-            </Box>
-
-            <Modal open={!!deleteConfirmItem} onClose={() => setDeleteConfirmItem(null)}>
-                <ModalDialog variant="outlined" role="alertdialog">
-                    <DialogTitle>
-                        <WarningRoundedIcon/>
-                        Confirmation
-                    </DialogTitle>
-                    <DialogContent>
-                        {deleteConfirmItem && `Are you sure you want to delete "${deleteConfirmItem.title}"?`}
-                    </DialogContent>
-                    <DialogActions>
-                        <Button
-                            variant="solid"
-                            color="danger"
-                            onClick={() => {
-                                if (deleteConfirmItem && onDeleteItem) {
-                                    onDeleteItem(deleteConfirmItem.id);
-                                }
-                                setDeleteConfirmItem(null);
-                            }}
-                        >
-                            Delete
-                        </Button>
-                        <Button
-                            variant="plain"
-                            color="neutral"
-                            onClick={() => setDeleteConfirmItem(null)}
-                        >
-                            Cancel
-                        </Button>
-                    </DialogActions>
-                </ModalDialog>
-            </Modal>
-        </>
+                        </DeletableItem>
+                    );
+                })
+            )}
+        </Box>
     );
 }

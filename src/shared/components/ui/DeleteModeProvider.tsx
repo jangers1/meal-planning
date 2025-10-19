@@ -26,6 +26,7 @@ interface DeletableItemProps {
     confirmMessage?: string;
     requireConfirmation?: boolean;
     deleteButtonPosition?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
+    style?: React.CSSProperties;
 }
 
 export function DeletableItem({
@@ -33,7 +34,8 @@ export function DeletableItem({
                                   onDelete,
                                   confirmMessage = "Are you sure you want to delete this item?",
                                   requireConfirmation = true,
-                                  deleteButtonPosition = 'top-left'
+                                  deleteButtonPosition = 'top-left',
+                                  style
                               }: DeletableItemProps) {
     const {isDeleteMode} = useDeleteMode();
     const [showConfirmation, setShowConfirmation] = useState(false);
@@ -74,6 +76,7 @@ export function DeletableItem({
     return (
         <>
             <Box
+                style={style}
                 sx={{
                     position: 'relative',
                     animation: isDeleteMode ? 'wobble 0.15s ease-in-out infinite alternate' : 'none',
